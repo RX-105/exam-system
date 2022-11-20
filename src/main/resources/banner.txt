@@ -1,0 +1,11 @@
+${AnsiColor.BRIGHT_WHITE}       _______
+_________  __ \______________________________
+__  __ \  / / /_  ___/  _ \_  __ \_  ___/  _ \
+_  / / / /_/ /_(__  )/  __/  / / /(__  )/  __/
+/_/ /_/\____/ /____/ \___//_/ /_//____/ \___/
+${AnsiColor.GREEN}:: Powered by SpringBoot ::     ${AnsiColor.CYAN}(ver ${spring-boot.version})
+
+${AnsiColor.GREEN}${AnsiStyle.ITALIC}${AnsiStyle.BOLD}A Spring app by n0sense.${AnsiStyle.NORMAL}${AnsiColor.WHITE}
+App Name: ${application.title}
+App Version: ${application.version}
+${AnsiColor.DEFAULT}
