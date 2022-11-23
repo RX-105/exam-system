@@ -20,6 +20,9 @@ public class ResponseEntity {
         this.data = data;
     }
 
+    public ResponseEntity() {
+    }
+
     public int getCode() {
         return code;
     }
