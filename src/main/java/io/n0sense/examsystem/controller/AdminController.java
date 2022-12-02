@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
     private AdminService adminService;
