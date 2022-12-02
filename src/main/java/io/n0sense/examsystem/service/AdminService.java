@@ -1,16 +1,17 @@
 package io.n0sense.examsystem.service;
 
 import io.n0sense.examsystem.commons.CommonStatus;
-import io.n0sense.examsystem.entity.Admin;
-import io.n0sense.examsystem.entity.Registry;
+import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.AdminRepository;
+import io.n0sense.examsystem.repository.ExamRepository;
+import io.n0sense.examsystem.repository.MajorRepository;
 import io.n0sense.examsystem.repository.RegistryRepository;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 实现管理员用户服务的类。
@@ -22,6 +23,8 @@ import java.util.Optional;
 public class AdminService {
     private final AdminRepository adminRepository;
     private final RegistryRepository registryRepository;
+    private final MajorRepository majorRepository;
+    private final ExamRepository examRepository;
 
     /**
      * 添加一个新用户，并添加注册表项。
@@ -71,5 +74,63 @@ public class AdminService {
         } else {
             return CommonStatus.ERR_USER_NOT_FOUND;
         }
+    }
+
+    public int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission, double score, String examName, LocalDateTime start, LocalDateTime end) {
+        if (this.majorRepository.existsByName(majorName)) {
+            return 1004;
+        } else if (this.examRepository.existsByName(examName)) {
+            return 1006;
+        } else {
+            Major major = new Major(0L, majorName, applicant, enrollment, score, admission);
+            major = this.majorRepository.save(major);
+            Exam exam = new Exam(0L, examName, major.getId(), start, end);
+            this.examRepository.save(exam);
+            return 0;
+        }
+    }
+
+    public ResponseEntity getEnrollmentInfo(String majorName) {
+        ResponseEntity responseEntity = new ResponseEntity();
+        Optional<Major> optionalMajor = this.majorRepository.findByName(majorName);
+        Map<String, Object> data = new HashMap<>();
+        if (optionalMajor.isPresent()) {
+            responseEntity.setCode(0);
+            List<Exam> examList = this.examRepository.findAll();
+            data.put("exam", examList);
+            responseEntity.setData(data);
+        } else {
+            responseEntity.setCode(1005);
+        }
+
+        return responseEntity;
+    }
+
+    public ResponseEntity getEnrollmentInfo() {
+        ResponseEntity responseEntity = new ResponseEntity();
+        Map<String, Object> data = new HashMap<>();
+        List<Major> majorList = this.majorRepository.findAll();
+        List<EnrollmentInfo> enrollmentInfoList = new ArrayList<>();
+        if (majorList.size() == 0) {
+            responseEntity.setCode(CommonStatus.ERR_MAJOR_NOT_FOUND);
+        } else {
+            Iterator<Major> var5 = majorList.iterator();
+
+            while(var5.hasNext()) {
+                Major major = var5.next();
+                List<Exam> examList = this.examRepository.findAll();
+                enrollmentInfoList.add(new EnrollmentInfo(major, examList));
+            }
+
+            data.put("info", enrollmentInfoList);
+            responseEntity.setCode(CommonStatus.OK);
+            responseEntity.setData(data);
+        }
+
+        return responseEntity;
+    }
+
+    public Optional<Admin> findByName(String name) {
+        return this.adminRepository.findByName(name);
     }
 }
