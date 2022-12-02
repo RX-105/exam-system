@@ -31,7 +31,7 @@ create table score(
 create table user(
 	user_id int primary key auto_increment, # 用户ID
 	table_id int, # 信息表ID
-	username varchar(20) not null, # 用户名
+	name varchar(20) not null, # 用户名
 	realname varchar(20), # 真实姓名
 	identity_id int, # 身份证号
 	gender varchar(5), # 性别
@@ -94,7 +94,7 @@ create table school(
 );
 
 create table registry(
-	user_id int primary key auto_increment, # 用户ID
+	user_id int primary key, # 用户ID
 	username varchar(20) not null, # 用户名
 	password varchar(128) not null, # 密码
 	ip varchar(40), # 注册ip
@@ -117,6 +117,6 @@ alter table config AUTO_INCREMENT=100000;
 alter table stage AUTO_INCREMENT=100000;
 alter table admin AUTO_INCREMENT=100000;
 alter table school AUTO_INCREMENT=100000;
-alter table registry AUTO_INCREMENT=100000;
+-- alter table registry AUTO_INCREMENT=100000;
 alter table log AUTO_INCREMENT=100000;
 	
