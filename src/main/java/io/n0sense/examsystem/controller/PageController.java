@@ -19,6 +19,11 @@ public class PageController {
         return path1 + "/" + path2;
     }
 
+    @GetMapping({"/{path1}/{path2}/{path3}"})
+    public String page(@PathVariable String path1, @PathVariable String path2, @PathVariable String path3) {
+        return path1 + "/" + path2 + "/" + path3;
+    }
+
     @GetMapping("/sessionAttr")
     @ResponseBody
     public String getSessionAttribute(String attribute, HttpServletRequest request) {
