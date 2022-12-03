@@ -1,4 +1,4 @@
-package io.n0sense.examsystem.service;
+package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.entity.*;
@@ -6,6 +6,7 @@ import io.n0sense.examsystem.repository.AdminRepository;
 import io.n0sense.examsystem.repository.ExamRepository;
 import io.n0sense.examsystem.repository.MajorRepository;
 import io.n0sense.examsystem.repository.RegistryRepository;
+import io.n0sense.examsystem.service.IAdminService;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 @Service
 @RequiredArgsConstructor
-public class AdminService {
+public class AdminService implements IAdminService {
     private final AdminRepository adminRepository;
     private final RegistryRepository registryRepository;
     private final MajorRepository majorRepository;
@@ -34,6 +35,7 @@ public class AdminService {
      * @param ip IP地址
      * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_USERNAME_IN_USE</code>。
      */
+    @Override
     public int register(String username, String password, String groupName, String ip){
         if (adminRepository.existsAdminByName(username)){
             return CommonStatus.ERR_USERNAME_IN_USE;
@@ -62,6 +64,7 @@ public class AdminService {
      * @param password 用户密码
      * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_INCORRECT_PASSWORD, ERR_USER_NOT_FOUNT</code>。
      */
+    @Override
     public int login(String username, String password){
         Optional<Admin> admin = adminRepository.findAdminByName(username);
         if (admin.isPresent()){
@@ -76,20 +79,24 @@ public class AdminService {
         }
     }
 
-    public int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission, double score, String examName, LocalDateTime start, LocalDateTime end) {
+    @Override
+    public int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
+                                 double score, String examName, LocalDateTime start,
+                                 LocalDateTime end) {
         if (this.majorRepository.existsByName(majorName)) {
-            return 1004;
+            return CommonStatus.ERR_MAJOR_EXISTS;
         } else if (this.examRepository.existsByName(examName)) {
-            return 1006;
+            return CommonStatus.ERR_EXAM_EXISTS;
         } else {
             Major major = new Major(0L, majorName, applicant, enrollment, score, admission);
             major = this.majorRepository.save(major);
             Exam exam = new Exam(0L, examName, major.getId(), start, end);
             this.examRepository.save(exam);
-            return 0;
+            return CommonStatus.OK;
         }
     }
 
+    @Override
     public ResponseEntity getEnrollmentInfo(String majorName) {
         ResponseEntity responseEntity = new ResponseEntity();
         Optional<Major> optionalMajor = this.majorRepository.findByName(majorName);
@@ -106,6 +113,7 @@ public class AdminService {
         return responseEntity;
     }
 
+    @Override
     public ResponseEntity getEnrollmentInfo() {
         ResponseEntity responseEntity = new ResponseEntity();
         Map<String, Object> data = new HashMap<>();
@@ -130,6 +138,7 @@ public class AdminService {
         return responseEntity;
     }
 
+    @Override
     public Optional<Admin> findByName(String name) {
         return this.adminRepository.findByName(name);
     }
