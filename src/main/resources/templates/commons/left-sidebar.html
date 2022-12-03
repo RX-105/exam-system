@@ -36,7 +36,7 @@
             </li>
 
 
-            <th:block th:unless="(${session.group} == 'student') and (${session.group == ''})">
+            <th:block th:if="(${session.role} == 'admin')">
                 <!-- 菜单 -->
                 <li class="treeview">
                     <a href="#">
@@ -72,165 +72,165 @@
                         </li>
                     </ul>
                 </li>
+
+
+                <th:block th:if="${session.group} == 'sudoers'">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-pie-chart"></i> <span>系统管理员功能</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+
+                            <li id="admin-maintain">
+                                <a th:href="@{/{role}/{group}/maintain(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 管理员维护
+                                </a>
+                            </li>
+
+                            <li id="admin-db">
+                                <a th:href="@{/{role}/{group}/db(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 数据库维护
+                                </a>
+                            </li>
+
+                            <li id="admin-stage-def">
+                                <a th:href="@{/{role}/{group}/stage-def(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 系统阶段定义
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </th:block>
+
+
+                <th:block th:if="${session.group} == 'aca-aff'">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i> <span>教务管理员功能</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+
+                            <li id="ticket-assign">
+                                <a th:href="@{/{role}/{group}/ticket-assign(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 准考证分配
+                                </a>
+                            </li>
+
+                            <li id="room-assign">
+                                <a th:href="@{/{role}/{group}/room-assign(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 考场安排
+                                </a>
+                            </li>
+
+                            <li id="add-score">
+                                <a th:href="@{/{role}/{group}/add-score(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 成绩录入
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </th:block>
+
+
+                <th:block th:if="${session.group} == 'recruit'">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-edit"></i> <span>招生管理员功能</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+
+                            <li id="stage-set">
+                                <a th:href="@{/{role}/{group}/stage-set(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 当前阶段设置
+                                </a>
+                            </li>
+
+                            <li id="recruit-maintain">
+                                <a th:href="@{/{role}/{group}/recruit-maintain(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 招考信息维护
+                                </a>
+                            </li>
+
+                            <li id="confirm">
+                                <a th:href="@{/{role}/{group}/confirm(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 现场确认
+                                </a>
+                            </li>
+
+                            <li id="accept-line-set">
+                                <a th:href="@{/{role}/{group}/accept-line-set(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 设置录取分数线
+                                </a>
+                            </li>
+
+                            <li id="password-clear">
+                                <a th:href="@{/{role}/{group}/password-clear(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 学生密码清零
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </th:block>
             </th:block>
 
 
-            <th:block th:if="${session.group} == 'sudoers'">
+            <th:block th:if="${session.role} == 'student'">
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-pie-chart"></i> <span>系统管理员功能</span>
+                        <i class="fa fa-table"></i> <span>考生选项</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
 
-                        <li id="admin-maintain">
-                            <a th:href="@{/{role}/{group}/maintain(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 管理员维护
-                            </a>
-                        </li>
-
-                        <li id="admin-db">
-                            <a th:href="@{/{role}/{group}/db(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 数据库维护
-                            </a>
-                        </li>
-
-                        <li id="admin-stage-def">
-                            <a th:href="@{/{role}/{group}/stage-def(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 系统阶段定义
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </th:block>
-
-
-            <th:block th:if="${session.group} == 'aca-aff'">
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-laptop"></i> <span>教务管理员功能</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-
-                        <li id="ticket-assign">
-                            <a th:href="@{/{role}/{group}/ticket-assign(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 准考证分配
-                            </a>
-                        </li>
-
-                        <li id="room-assign">
-                            <a th:href="@{/{role}/{group}/room-assign(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 考场安排
-                            </a>
-                        </li>
-
-                        <li id="add-score">
-                            <a th:href="@{/{role}/{group}/add-score(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 成绩录入
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </th:block>
-
-
-            <th:block th:if="${session.group} == 'recruit'">
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-edit"></i> <span>招生管理员功能</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-
-                        <li id="stage-set">
-                            <a th:href="@{/{role}/{group}/stage-set(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 当前阶段设置
-                            </a>
-                        </li>
-
-                        <li id="recruit-maintain">
-                            <a th:href="@{/{role}/{group}/recruit-maintain(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 招考信息维护
-                            </a>
-                        </li>
-
-                        <li id="confirm">
-                            <a th:href="@{/{role}/{group}/confirm(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 现场确认
-                            </a>
-                        </li>
-
-                        <li id="accept-line-set">
-                            <a th:href="@{/{role}/{group}/accept-line-set(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 设置录取分数线
-                            </a>
-                        </li>
-
-                        <li id="password-clear">
-                            <a th:href="@{/{role}/{group}/password-clear(role=${session.role}, group=${session.group})}">
-                                <i class="fa fa-circle-o"></i> 学生密码清零
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </th:block>
-
-
-            <th:block th:if="${session.group} == 'student'">
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>考生</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-
-                        <li id="tables-simple">
-                            <a data-th-href="@{/tables/simple}">
+                        <li id="user-login-history">
+                            <a th:href="@{/{role}/login-history(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 查看登录历史
                             </a>
                         </li>
 
-                        <li id="tables-data">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="registration-notice">
+                            <a th:href="@{/{role}/registration-notice(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 查看报考须知
                             </a>
                         </li>
 
-                        <li id="tables-data2">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="exam-register">
+                            <a th:href="@{/{role}/exam-register(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 在线报名
                             </a>
                         </li>
 
-                        <li id="tables-data3">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="upload-avatar">
+                            <a th:href="@{/{role}/upload-avatar(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 上传照片
                             </a>
                         </li>
 
-                        <li id="tables-data4">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="register-form-print">
+                            <a th:href="@{/{role}/register-form-print(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 报名表打印
                             </a>
                         </li>
 
-                        <li id="tables-data5">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="ticket-print">
+                            <a th:href="@{/{role}/ticket-print(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 准考证打印
                             </a>
                         </li>
 
-                        <li id="tables-data6">
-                            <a data-th-href="@{/tables/data}">
+                        <li id="query">
+                            <a th:href="@{/{role}/query(role=${session.role})}">
                                 <i class="fa fa-circle-o"></i> 成绩与录取查询
                             </a>
                         </li>
