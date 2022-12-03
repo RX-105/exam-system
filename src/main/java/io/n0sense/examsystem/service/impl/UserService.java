@@ -20,6 +20,13 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final RegistryRepository registryRepository;
+    /**
+     * 添加一个新用户(学生)，并添加注册表项。
+     * @param username 用户名
+     * @param password 用户密码
+     * @param ip IP地址
+     * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_USERNAME_IN_USE</code>。
+     */
     @Override
     public int register(@NonNull String username, @NonNull String password, String ip) {
         // 注册表中记录的用户名可能包含管理员侧的用户名，需要同时检查。
@@ -43,6 +50,12 @@ public class UserService implements IUserService {
         }
     }
 
+    /**
+     * 检查给定的信息是否匹配。
+     * @param username 用户名
+     * @param password 用户密码
+     * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_INCORRECT_PASSWORD, ERR_USER_NOT_FOUNT</code>。
+     */
     @Override
     public int login(@NonNull String username, @NonNull String password) {
         if (registryRepository.existsByUsername(username)){
@@ -56,5 +69,10 @@ public class UserService implements IUserService {
         } else {
             return CommonStatus.ERR_USER_NOT_FOUND;
         }
+    }
+
+    @Override
+    public Optional<User> findByName(String username) {
+        return userRepository.findByName(username);
     }
 }
