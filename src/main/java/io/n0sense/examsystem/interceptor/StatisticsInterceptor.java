@@ -2,8 +2,10 @@ package io.n0sense.examsystem.interceptor;
 
 import io.n0sense.examsystem.entity.Visits;
 import io.n0sense.examsystem.repository.VisitsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
