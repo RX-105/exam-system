@@ -1,4 +1,4 @@
-package io.n0sense.examsystem.controller;
+package io.n0sense.examsystem.controller.admin;
 
 import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.commons.GroupConstants;

@@ -1,8 +1,7 @@
-package io.n0sense.examsystem.controller;
+package io.n0sense.examsystem.controller.user;
 
 import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.commons.GroupConstants;
-import io.n0sense.examsystem.entity.User;
 import io.n0sense.examsystem.service.impl.UserService;
 import io.n0sense.examsystem.util.IpUtil;
 import lombok.RequiredArgsConstructor;
