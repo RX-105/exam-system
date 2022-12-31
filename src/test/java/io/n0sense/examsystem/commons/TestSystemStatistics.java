@@ -1,10 +1,11 @@
 package io.n0sense.examsystem.commons;
 
+import com.sun.management.OperatingSystemMXBean;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.text.DecimalFormat;
+import java.lang.management.ManagementFactory;
 
 @SpringBootTest
 public class TestSystemStatistics {
@@ -12,10 +13,8 @@ public class TestSystemStatistics {
     private SystemStatistics statistics;
     @Test
     void getStat(){
-        long free = (long) statistics.getStat("heap_free_memory");
-        long total = (long) statistics.getStat("heap_total_memory");
-        System.out.println("free: " + free);
-        System.out.println("total: " + total);
-        System.out.println("ratio: " + String.format("%.2f", (double)free/total * 100));
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        double cpu = osBean.getCpuLoad();
+        System.out.println("ratio: " + cpu);//String.format("%.2f", statistics.getStat("cpu_usage")));
     }
 }
