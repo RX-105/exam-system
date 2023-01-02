@@ -13,6 +13,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(statisticsInterceptor)
-                .addPathPatterns("/**");
+                .addPathPatterns("/**")
+                .excludePathPatterns("/static/**")
+                .excludePathPatterns("/api/**");
     }
 }
