@@ -6,45 +6,32 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
 import java.util.Properties;
 
 /**
  * Code from: <a href="https://gist.github.com/yusufcakmak/215ede715bab0e1d6489">yusufcakmak</a>
  */
+@Component
 public class HibernateUtil {
     // FIXME:静态变量不能使用@Value、@Autowired等方式获取当前上下文中的配置信息
     //XML based configuration
-    private static SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     //Annotation based configuration
-    private static SessionFactory sessionAnnotationFactory;
+    private SessionFactory sessionAnnotationFactory;
     //Property based configuration
-    private static SessionFactory sessionJavaConfigFactory;
-    public static String jdbcUrl;
+    private SessionFactory sessionJavaConfigFactory;
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
     @Value("${spring.datasource.driver-class-name}")
-    private static String driverClassName;
+    private String driverClassName;
     @Value("${spring.datasource.username}")
-    private static String username;
+    private String username;
     @Value("${spring.datasource.password}")
-    private static String password;
+    private String password;
 
-    static {
-        InputStream inputStream;
-        Properties properties;
-        try{
-            properties = new Properties();
-            inputStream = HibernateUtil.class.getResourceAsStream("application.properties");
-            properties.load(inputStream);
-
-            jdbcUrl = properties.getProperty("spring.datasource.url");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private static SessionFactory buildSessionFactory() {
+    private SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
@@ -64,7 +51,7 @@ public class HibernateUtil {
         }
     }
 
-    private static SessionFactory buildSessionAnnotationFactory() {
+    private SessionFactory buildSessionAnnotationFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
@@ -84,7 +71,7 @@ public class HibernateUtil {
         }
     }
 
-    private static SessionFactory buildSessionJavaConfigFactory() {
+    private SessionFactory buildSessionJavaConfigFactory() {
         try {
             Configuration configuration = new Configuration();
 
@@ -117,27 +104,25 @@ public class HibernateUtil {
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             System.out.println("Hibernate Java Config serviceRegistry created");
 
-            SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-            return sessionFactory;
+            return configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
 
-    public static SessionFactory getSessionFactory() {
+    public SessionFactory getSessionFactory() {
         if (sessionFactory == null) sessionFactory = buildSessionFactory();
         return sessionFactory;
     }
 
-    public static SessionFactory getSessionAnnotationFactory() {
+    public SessionFactory getSessionAnnotationFactory() {
         if (sessionAnnotationFactory == null)
             sessionAnnotationFactory = buildSessionAnnotationFactory();
         return sessionAnnotationFactory;
     }
 
-    public static SessionFactory getSessionJavaConfigFactory() {
+    public SessionFactory getSessionJavaConfigFactory() {
         if (sessionJavaConfigFactory == null)
             sessionJavaConfigFactory = buildSessionJavaConfigFactory();
         return sessionJavaConfigFactory;
