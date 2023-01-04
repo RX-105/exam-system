@@ -9,21 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class PageController {
-    @GetMapping("/{path:^.*(?!static)}")
-    public String page(@PathVariable String path) {
-        return path;
-    }
-
-    @GetMapping("/{path1:^.*(?!static)}/{path2}")
-    public String page(@PathVariable String path1, @PathVariable String path2) {
-        return path1 + "/" + path2;
-    }
-
-    @GetMapping({"/{path1:^.*(?!static)}/{path2}/{path3}"})
-    public String page(@PathVariable String path1, @PathVariable String path2, @PathVariable String path3) {
-        return path1 + "/" + path2 + "/" + path3;
-    }
-
+    // 不应该使用通配符把所有URL都拦截到这里来，因为这样会误杀静态资源
+    // 只能把用到的页面映射一下
     @GetMapping("/sessionAttr")
     @ResponseBody
     public String getSessionAttribute(String attribute, HttpServletRequest request) {
