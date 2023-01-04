@@ -19,10 +19,10 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/api/admin")
-public class AdminController {
+public class AdminRestController {
     @Autowired
     private AdminService adminService;
-    private final Logger logger = LoggerFactory.getLogger(AdminController.class);
+    private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
     public ModelAndView register(String username, String password, String groupName, HttpServletRequest request, Model model) {
