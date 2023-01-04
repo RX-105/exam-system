@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller()
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
-public class UserController {
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+public class UserRestController {
+    private final Logger logger = LoggerFactory.getLogger(UserRestController.class);
     private final UserService userService;
 
     @PostMapping("/login")
