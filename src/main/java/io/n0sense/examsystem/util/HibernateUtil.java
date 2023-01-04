@@ -15,7 +15,6 @@ import java.util.Properties;
  */
 @Component
 public class HibernateUtil {
-    // FIXME:静态变量不能使用@Value、@Autowired等方式获取当前上下文中的配置信息
     //XML based configuration
     private SessionFactory sessionFactory;
     //Annotation based configuration
