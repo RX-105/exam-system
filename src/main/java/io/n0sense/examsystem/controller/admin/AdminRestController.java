@@ -17,6 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
+/**
+ * 管理员页面中的REST API控制器。
+ */
 @Controller
 @RequestMapping("/api/admin")
 public class AdminRestController {
@@ -28,14 +31,17 @@ public class AdminRestController {
     public ModelAndView register(String username, String password, String groupName, HttpServletRequest request, Model model) {
         int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
         if (result == CommonStatus.OK) {
+            // 检查判断为登陆成功
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", groupName);
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
+            // 用户密码已经存在
             model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
+            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/register");
         } else {
+            // 其他错误
             this.logger.error("register: Unresolved result " + result);
             return new ModelAndView("404");
         }
@@ -46,17 +52,21 @@ public class AdminRestController {
         int result = this.adminService.login(username, password);
         Admin admin = (Admin) this.adminService.findByName(username).get();
         if (result == 0) {
+            // 判断为信息正确
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", admin.getGroupName());
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
+            // 判断为密码错误
             model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
+            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/login");
         } else if (result == CommonStatus.ERR_USER_NOT_FOUND) {
+            // 判断为用户不存在
             model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
+            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/login");
         } else {
+            // 其他错误
             this.logger.error("login: Unresolved result " + result);
             return new ModelAndView("404");
         }
