@@ -4,20 +4,12 @@ import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
-import io.n0sense.examsystem.util.IpUtil;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * 实现管理员用户服务的类。

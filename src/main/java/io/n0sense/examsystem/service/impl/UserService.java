@@ -1,7 +1,6 @@
 package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.commons.CommonStatus;
-import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Registry;
 import io.n0sense.examsystem.entity.User;
 import io.n0sense.examsystem.repository.RegistryRepository;
