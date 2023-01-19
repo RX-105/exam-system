@@ -14,8 +14,8 @@ public class SystemStatistics {
     private static Runtime instance;
     private static OperatingSystemMXBean osBean;
     private static File root;
-    private static long MB_FACTOR = 1024L * 1024L;
-    private static long GB_FACTOR = 1024L * 1024L * 1024L;
+    private static final long MB_FACTOR = 1024L * 1024L;
+    private static final long GB_FACTOR = 1024L * 1024L * 1024L;
 
     public SystemStatistics() {
         // 获取堆内存数据
