@@ -45,62 +45,68 @@
                     <h3 class="box-title">你的登录记录</h3>
                 </div>
 
-                <div class="box-body">
+                <!-- 表格本体 -->
+                <div th:if="${logins}">
 
-                    <!-- 数据表格 -->
-                    <div class="table-box">
+                    <div class="box-body">
 
-                        <!--数据列表-->
-                        <table id="" class="table table-bordered table-striped table-hover dataTable">
-                            <thead>
-                            <tr>
-                                <th class="">记录ID</th>
-                                <th class="">用户名</th>
-                                <th class="">用户组</th>
-                                <th class="">登陆时间</th>
-                                <th class="">登录IP</th>
-                            </tr>
-                            </thead>
+                        <!-- 数据表格 -->
+                        <div class="table-box">
 
-                            <tbody>
-                            <tr th:each="login : ${logins}">
-                                <td th:text="${login.getLogId()}"></td>
-                                <td th:text="${login.getUsername()}"></td>
-                                <td th:switch="${login.getGroupName()}">
-                                    <span th:case="sudoers">网站管理员</span>
-                                    <span th:case="aca-aff">教务管理员</span>
-                                    <span th:case="recruit">招生管理员</span>
-                                    <span th:case="student">学生</span>
-                                </td>
-                                <td th:text="${login.getTime()}"></td>
-                                <td th:text="${login.getIp()}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <!--数据列表/-->
+                            <!--数据列表-->
+                            <table id="" class="table table-bordered table-striped table-hover dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="">记录ID</th>
+                                    <th class="">用户名</th>
+                                    <th class="">用户组</th>
+                                    <th class="">登陆时间</th>
+                                    <th class="">登录IP</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="login : ${logins}">
+                                    <td th:text="${login.getLogId()}"></td>
+                                    <td th:text="${login.getUsername()}"></td>
+                                    <td th:switch="${login.getGroupName()}">
+                                        <span th:case="sudoers">网站管理员</span>
+                                        <span th:case="aca-aff">教务管理员</span>
+                                        <span th:case="recruit">招生管理员</span>
+                                        <span th:case="student">学生</span>
+                                    </td>
+                                    <td th:text="${login.getTime()}"></td>
+                                    <td th:text="${login.getIp()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!--数据列表/-->
+
+                        </div>
+                        <!-- 数据表格 /-->
 
                     </div>
-                    <!-- 数据表格 /-->
-
-                </div>
-                <!-- /.box-body -->
-                <!-- 分页 -->
-                <div>
+                    <!-- /.box-body -->
+                    <!-- 分页 -->
+                    <div>
                     <span th:if="${loginsPage.hasPrevious()} == true">
                         <a th:href="@{/admin/login-history?page={prev}(prev=${loginsPage.getNumber()-1})}">上一页</a>
                     </span>
-                    <span>
+                        <span>
                         当前第
                         <span th:text="${loginsPage.getNumber()+1}"></span>
                         页，共
                         <span th:text="${loginsPage.getTotalPages()}"></span>
                         页。
                     </span>
-                    <span th:if="${loginsPage.hasNext()} == true">
+                        <span th:if="${loginsPage.hasNext()} == true">
                         <a th:href="@{/admin/login-history?page={prev}(prev=${loginsPage.getNumber()+1})}">下一页</a>
                     </span>
+                    </div>
+                    <!-- 分页 -->
                 </div>
-                <!-- 分页 -->
+                <!-- 表格本体 -->
+                <div class="text-center" style="color: red" th:if="${msg}" th:text="${msg}"></div>
 
             </div>
             <!-- 登陆历史 /-->
