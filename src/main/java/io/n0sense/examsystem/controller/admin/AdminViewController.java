@@ -2,24 +2,33 @@ package io.n0sense.examsystem.controller.admin;
 
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
+import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.Visits;
+import io.n0sense.examsystem.repository.LogRepository;
 import io.n0sense.examsystem.repository.VisitsRepository;
+import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+/**
+ * 实现管理员页面功能的控制器。
+ */
 @Controller
 @RequestMapping("/admin")
 public class AdminViewController {
@@ -29,6 +38,8 @@ public class AdminViewController {
     private VisitsRepository visitsRepository;
     @Autowired
     private HibernateUtil hibernateUtil;
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
@@ -61,5 +72,19 @@ public class AdminViewController {
         model.addAttribute("total_user", totalUser.longValue());
 
         return new ModelAndView("/admin/status");
+    }
+
+    @GetMapping("/login-history")
+    public ModelAndView getLoginHistoryView(Integer page, Model model, HttpServletRequest request){
+        Page<Log> loginHistoryPage = adminService.getUserLogins(
+                (String) request.getSession().getAttribute("username"),
+                (null == page ? 0 : page),
+                10
+        );
+        List<Log> loginHistory = loginHistoryPage.toList();
+        model.addAttribute("loginsPage", loginHistoryPage);
+        model.addAttribute("logins", loginHistory);
+
+        return new ModelAndView("/admin/login-history");
     }
 }
