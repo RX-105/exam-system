@@ -58,8 +58,13 @@ public class AdminViewController {
                 10
         );
         List<Log> loginHistory = loginHistoryPage.toList();
-        model.addAttribute("loginsPage", loginHistoryPage);
-        model.addAttribute("logins", loginHistory);
+
+        if (page != null && loginHistoryPage.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("loginsPage", loginHistoryPage);
+            model.addAttribute("logins", loginHistory);
+        }
 
         return new ModelAndView("/admin/login-history");
     }
