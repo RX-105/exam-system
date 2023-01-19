@@ -186,4 +186,24 @@ public class AdminService implements IAdminService {
     public Page<Log> getGroupLogin(String groupName, int page, int size){
         return logRepository.findAllByGroupName(groupName, PageRequest.of(page, size));
     }
+
+    /**
+     * 根据用户名在指定时间区间内获取该用户的所有登录记录。开始时间具体为当天00:00:00，结束时间具体为当天23:59:59。
+     * @param username 查找日志的目标用户名
+     * @param page 目标页码， 从0开始
+     * @param size 每页大小
+     * @param from 开始日期
+     * @param to 结束日期
+     * @return 满足用户名条件的所有日志分页对象
+     */
+    public Page<Log> queryLogByTimeRange(String username, int page, int size,
+                                         LocalDate from, LocalDate to){
+        logRepository.findAllByUsernameAndTimeBetween(
+                username,
+                from.atStartOfDay(),
+                to.atTime(23, 59, 59),
+                PageRequest.of(page, size)
+        );
+        return null;
+    }
 }
