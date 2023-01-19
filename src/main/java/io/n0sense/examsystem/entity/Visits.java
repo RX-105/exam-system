@@ -1,7 +1,6 @@
 package io.n0sense.examsystem.entity;
 
 import lombok.*;
-import org.hibernate.annotations.SQLInsert;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
