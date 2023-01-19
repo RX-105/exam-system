@@ -3,9 +3,7 @@ package io.n0sense.examsystem.interceptor;
 import io.n0sense.examsystem.entity.Visits;
 import io.n0sense.examsystem.repository.VisitsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +12,9 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class StatisticsInterceptor implements HandlerInterceptor {
-    @Autowired
-    private VisitsRepository visitsRepository;
+    private final VisitsRepository visitsRepository;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Optional<Visits> optionalVisits = visitsRepository.findById(LocalDate.now());

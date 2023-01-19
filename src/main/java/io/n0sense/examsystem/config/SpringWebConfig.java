@@ -8,8 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SpringWebConfig implements WebMvcConfigurer {
+    private final StatisticsInterceptor statisticsInterceptor;
     @Autowired
-    private StatisticsInterceptor statisticsInterceptor;
+    public SpringWebConfig(StatisticsInterceptor statisticsInterceptor){
+        this.statisticsInterceptor = statisticsInterceptor;
+    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(statisticsInterceptor)
