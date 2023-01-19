@@ -14,6 +14,7 @@ import java.util.Properties;
  * Code from: <a href="https://gist.github.com/yusufcakmak/215ede715bab0e1d6489">yusufcakmak</a>
  */
 @Component
+@lombok.extern.java.Log
 public class HibernateUtil {
     //XML based configuration
     private SessionFactory sessionFactory;
@@ -35,17 +36,17 @@ public class HibernateUtil {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
             configuration.configure("hibernate.cfg.xml");
-            System.out.println("Hibernate Configuration loaded");
+            log.info("Hibernate Configuration loaded");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate serviceRegistry created");
+            log.info("Hibernate serviceRegistry created");
 
             SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
             return sessionFactory;
         } catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            log.warning("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -55,17 +56,17 @@ public class HibernateUtil {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
             configuration.configure("hibernate-annotation.cfg.xml");
-            System.out.println("Hibernate Annotation Configuration loaded");
+            log.info("Hibernate Annotation Configuration loaded");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate Annotation serviceRegistry created");
+            log.info("Hibernate Annotation serviceRegistry created");
 
             SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
             return sessionFactory;
         } catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            log.warning("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -101,11 +102,11 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(Visits.class);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate Java Config serviceRegistry created");
+            log.info("Hibernate Java Config serviceRegistry created");
 
             return configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            log.warning("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
