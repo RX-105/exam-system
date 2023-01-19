@@ -35,9 +35,9 @@ public class VisitsService implements IVisitsService {
     @Override
     public Long getTotalVisits() {
         Transaction transaction = session.beginTransaction();
-        BigDecimal totalVisit = (BigDecimal) session
-                .createSQLQuery("select sum(count) from visits")
-                .getSingleResult();
+        BigDecimal totalVisit =
+                session.createNativeQuery("select sum(count) from visits", BigDecimal.class)
+                                .getSingleResult();
         transaction.commit();
         return totalVisit.longValue();
     }
@@ -45,9 +45,9 @@ public class VisitsService implements IVisitsService {
     @Override
     public Long getTotalUsers() {
         Transaction transaction = session.beginTransaction();
-        BigInteger totalUser = (BigInteger) session
-                .createSQLQuery("select count(*) from visits")
-                .getSingleResult();
+        BigInteger totalUser =
+                session.createNativeQuery("select count(*) from visits", BigInteger.class)
+                        .getSingleResult();
         transaction.commit();
         return totalUser.longValue();
     }
