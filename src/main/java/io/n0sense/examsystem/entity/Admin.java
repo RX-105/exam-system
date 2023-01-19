@@ -1,11 +1,10 @@
 package io.n0sense.examsystem.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.DynamicInsert;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity

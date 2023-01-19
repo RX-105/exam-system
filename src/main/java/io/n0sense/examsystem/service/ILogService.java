@@ -3,7 +3,7 @@ package io.n0sense.examsystem.service;
 import io.n0sense.examsystem.entity.Log;
 import org.springframework.data.domain.Page;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 
 public interface ILogService {
