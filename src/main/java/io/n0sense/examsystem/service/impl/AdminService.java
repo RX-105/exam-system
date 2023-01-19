@@ -2,17 +2,22 @@ package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.entity.*;
-import io.n0sense.examsystem.repository.AdminRepository;
-import io.n0sense.examsystem.repository.ExamRepository;
-import io.n0sense.examsystem.repository.MajorRepository;
-import io.n0sense.examsystem.repository.RegistryRepository;
+import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
+import io.n0sense.examsystem.util.IpUtil;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * 实现管理员用户服务的类。
@@ -26,6 +31,7 @@ public class AdminService implements IAdminService {
     private final RegistryRepository registryRepository;
     private final MajorRepository majorRepository;
     private final ExamRepository examRepository;
+    private final LogRepository logRepository;
 
     /**
      * 添加一个新用户，并添加注册表项。
@@ -141,5 +147,21 @@ public class AdminService implements IAdminService {
     @Override
     public Optional<Admin> findByName(String name) {
         return this.adminRepository.findByName(name);
+    }
+
+
+    /**
+     * 添加一条新的登陆记录，登录信息来源自session中的数据。
+     * @param request HTTP Servlet请求对象
+     */
+    public void recordLogin(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Log login = Log.builder()
+                .username((String) session.getAttribute("username"))
+                .groupName((String) session.getAttribute("group"))
+                .ip(IpUtil.getIpAddress(request))
+                .time(LocalDateTime.now())
+                .build();
+        logRepository.save(login);
     }
 }
