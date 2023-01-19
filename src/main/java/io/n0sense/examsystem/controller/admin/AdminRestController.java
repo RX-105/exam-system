@@ -5,6 +5,7 @@ import io.n0sense.examsystem.commons.GroupConstants;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.service.impl.AdminService;
+import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ import java.util.List;
 public class AdminRestController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private LogService logService;
     private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
@@ -40,7 +43,7 @@ public class AdminRestController {
             request.getSession().setAttribute("group", groupName);
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
             // 记录登录日志
-            adminService.recordLogin(request);
+            logService.recordLogin(request);
 
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
@@ -64,7 +67,7 @@ public class AdminRestController {
             request.getSession().setAttribute("group", admin.getGroupName());
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
             // 记录登录日志
-            adminService.recordLogin(request);
+            logService.recordLogin(request);
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
             // 判断为密码错误
@@ -104,7 +107,7 @@ public class AdminRestController {
 
     @PostMapping("/queryLoginByTime")
     public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model){
-        Page<Log> logPage = adminService.queryLogByTimeRange(
+        Page<Log> logPage = logService.queryLogByTimeRange(
                 username,
                 (page == null ? 0 : page),
                 10,
