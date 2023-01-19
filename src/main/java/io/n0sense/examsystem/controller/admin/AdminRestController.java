@@ -3,11 +3,13 @@ package io.n0sense.examsystem.controller.admin;
 import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.commons.GroupConstants;
 import io.n0sense.examsystem.entity.Admin;
+import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 管理员页面中的REST API控制器。
@@ -35,6 +39,9 @@ public class AdminRestController {
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", groupName);
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
+            // 记录登录日志
+            adminService.recordLogin(request);
+
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
             // 用户密码已经存在
@@ -56,6 +63,8 @@ public class AdminRestController {
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", admin.getGroupName());
             request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
+            // 记录登录日志
+            adminService.recordLogin(request);
             return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
             // 判断为密码错误
@@ -91,5 +100,22 @@ public class AdminRestController {
             this.logger.error("publishEnrollmentInfo: Unresolved result " + result);
             return new ModelAndView("404");
         }
+    }
+
+    @PostMapping("/queryLoginByTime")
+    public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model){
+        Page<Log> logPage = adminService.queryLogByTimeRange(
+                username,
+                (page == null ? 0 : page),
+                10,
+                from,
+                to
+        );
+        List<Log> logList = logPage.toList();
+
+        model.addAttribute("loginsPage", logPage);
+        model.addAttribute("logins", logList);
+
+        return new ModelAndView("/admin/login-history");
     }
 }
