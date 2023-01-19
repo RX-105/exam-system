@@ -164,4 +164,26 @@ public class AdminService implements IAdminService {
                 .build();
         logRepository.save(login);
     }
+
+    /**
+     * 根据用户名获取该用户的所有登录记录。
+     * @param username 查找日志的目标用户名
+     * @param page 目标页码， 从0开始
+     * @param size 每页大小
+     * @return 满足用户名条件的所有日志分页对象
+     */
+    public Page<Log> getUserLogins(String username, int page, int size){
+        return logRepository.findAllByUsername(username, PageRequest.of(page, size));
+    }
+
+    /**
+     * 根据组名获取该分组的所有登录记录。
+     * @param groupName 查找日志的目标组名
+     * @param page 目标页码， 从0开始
+     * @param size 每页大小
+     * @return 满足组名条件的所有日志分页对象
+     */
+    public Page<Log> getGroupLogin(String groupName, int page, int size){
+        return logRepository.findAllByGroupName(groupName, PageRequest.of(page, size));
+    }
 }
