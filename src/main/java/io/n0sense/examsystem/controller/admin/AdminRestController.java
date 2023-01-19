@@ -7,9 +7,9 @@ import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.util.IpUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,11 +27,10 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminRestController {
-    @Autowired
-    private AdminService adminService;
-    @Autowired
-    private LogService logService;
+    private final AdminService adminService;
+    private final LogService logService;
     private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
