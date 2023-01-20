@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class StatisticsInterceptor implements HandlerInterceptor {
     private final VisitsRepository visitsRepository;
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Optional<Visits> optionalVisits = visitsRepository.findById(LocalDate.now());
         Visits visits;
         if (optionalVisits.isPresent()){
