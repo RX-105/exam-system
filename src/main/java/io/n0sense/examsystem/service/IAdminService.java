@@ -2,8 +2,10 @@ package io.n0sense.examsystem.service;
 
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.ResponseEntity;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface IAdminService {
@@ -14,4 +16,9 @@ public interface IAdminService {
     ResponseEntity getEnrollmentInfo(String majorName);
     ResponseEntity getEnrollmentInfo();
     Optional<Admin> findByName(String name);
+    Page<Admin> getAllAdmins(int page, int size);
+
+    Page<Admin> getAllAdmins(String excludeGroupName, int page, int size);
+    boolean resetPassword(Long id);
+    void dropUser(Long id);
 }

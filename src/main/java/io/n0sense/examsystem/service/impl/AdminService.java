@@ -6,6 +6,8 @@ import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -139,5 +141,33 @@ public class AdminService implements IAdminService {
     @Override
     public Optional<Admin> findByName(String name) {
         return this.adminRepository.findByName(name);
+    }
+
+    @Override
+    public Page<Admin> getAllAdmins(int page, int size) {
+        return adminRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public Page<Admin> getAllAdmins(String excludeGroupName, int page, int size) {
+        return adminRepository.findAllByGroupNameIsNotContaining(excludeGroupName, PageRequest.of(page, size));
+    }
+
+    @Override
+    public boolean resetPassword(Long id) {
+        Optional<Admin> optionalAdmin = adminRepository.findById(id);
+        if (optionalAdmin.isPresent()){
+            Admin admin = optionalAdmin.get();
+            admin.setPassword(PasswordEncoder.SHA256Encrypt("1234"));
+            adminRepository.save(admin);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void dropUser(Long id) {
+        adminRepository.deleteById(id);
     }
 }
