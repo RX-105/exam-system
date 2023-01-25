@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -53,5 +55,13 @@ public class TestAdminRepository {
     void testExists(){
         String adminName = "admin";
         System.out.println(adminRepository.existsAdminByName(adminName));
+    }
+
+    @Test
+    void testExclude(){
+        List<Admin> adminList = adminRepository
+                .findAllByGroupNameIsNotContaining("sudoers", PageRequest.of(1,10))
+                .toList();
+        System.out.println(adminList.size());
     }
 }
