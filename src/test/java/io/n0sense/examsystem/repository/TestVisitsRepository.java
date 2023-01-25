@@ -1,6 +1,5 @@
 package io.n0sense.examsystem.repository;
 
-import io.n0sense.examsystem.commons.SystemStatistics;
 import io.n0sense.examsystem.entity.Visits;
 import io.n0sense.examsystem.util.HibernateUtil;
 import org.hibernate.Session;
@@ -37,7 +36,8 @@ public class TestVisitsRepository {
     void testSession(){
         Session session = hibernateUtil.getSessionJavaConfigFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        BigDecimal result = (BigDecimal) session.createSQLQuery("SELECT SUM(count) FROM visits")
+        BigDecimal result = session
+                .createNativeQuery("SELECT SUM(count) FROM visits", BigDecimal.class)
                 .getSingleResult();
         System.out.println("count: " + result.longValueExact());
         transaction.commit();
