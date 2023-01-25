@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -105,7 +107,7 @@ public class AdminRestController {
     }
 
     @PostMapping("/queryLoginByTime")
-    public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model){
+    public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model) {
         Page<Log> logPage = logService.queryLogByTimeRange(
                 username,
                 (page == null ? 0 : page),
@@ -119,5 +121,22 @@ public class AdminRestController {
         model.addAttribute("logins", logList);
 
         return new ModelAndView("/admin/login-history");
+    }
+
+    @PostMapping("/resetPassword")
+    @ResponseBody
+    public String resetPassword(Long id) {
+        if (adminService.resetPassword(id)) {
+            return "ID为" + id + "的用户的密码重置成功，新密码是1234。";
+        } else {
+            return "未能重置ID为" + id + "的用户的密码。";
+        }
+    }
+
+    @PostMapping("/dropUser")
+    @ResponseBody
+    public String dropUser(Long id) {
+        adminService.dropUser(id);
+        return "ID为" + id + "的用户已经移除。";
     }
 }
