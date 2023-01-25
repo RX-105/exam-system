@@ -2,7 +2,9 @@ package io.n0sense.examsystem.controller.admin;
 
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
+import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
+import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.service.impl.VisitsService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.List;
 public class AdminViewController {
     private final LogService logService;
     private final VisitsService visitsService;
+    private final AdminService adminService;
 
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
@@ -67,5 +70,23 @@ public class AdminViewController {
         }
 
         return new ModelAndView("/admin/login-history");
+    }
+
+    @GetMapping("/sudoers/maintain")
+    public ModelAndView getSudoersMaintainView(Integer page, Model model){
+        Page<Admin> commonAdminPage = adminService.getAllAdmins(
+                "sudoers",
+                (null == page ? 0 : page),
+                10
+        );
+
+        if (page != null && commonAdminPage.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("adminsPage", commonAdminPage);
+            model.addAttribute("admins", commonAdminPage.toList());
+        }
+
+        return new ModelAndView("/admin/sudoers/maintain");
     }
 }
