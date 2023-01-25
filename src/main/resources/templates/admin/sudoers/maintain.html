@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,80 +36,131 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
+            <!-- 所有管理员 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">所有管理员（不含系统管理员）</h3>
                 </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
 
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
+                <!-- 表格本体 -->
+                <div th:if="${admins}">
 
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
+                    <div class="box-body">
 
-                            <p>日PV</p>
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--数据列表-->
+                            <table id="" class="table table-bordered table-striped table-hover dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="">管理员ID</th>
+                                    <th class="">用户名</th>
+                                    <th class="">用户组</th>
+                                    <th class="">操作</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="admin : ${admins}">
+                                    <td th:text="${admin.getAdminId()}"></td>
+                                    <td th:text="${admin.getName()}"></td>
+                                    <td th:switch="${admin.getGroupName()}">
+                                        <span th:case="aca-aff">教务管理员</span>
+                                        <span th:case="recruit">招生管理员</span>
+                                    </td>
+                                    <td>
+                                        <a th:onclick="resetPw([[${admin.getAdminId()}]], false)">重置密码</a>
+                                        |
+                                        <a th:onclick="dropUser([[${admin.getAdminId()}]], false)">移除用户</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!--数据列表/-->
+
                         </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
+                        <!-- 数据表格 /-->
+
                     </div>
+                    <!-- /.box-body -->
+                    <!-- 分页 -->
+                    <div>
+                    <span th:if="${adminsPage.hasPrevious()} == true">
+                        <a th:href="@{/admin/sudoers/maintain?page={prev}(prev=${adminsPage.getNumber()-1})}">上一页</a>
+                    </span>
+                        <span>
+                        当前第
+                        <span th:text="${adminsPage.getNumber()+1}"></span>
+                        页，共
+                        <span th:text="${adminsPage.getTotalPages()}"></span>
+                        页。
+                    </span>
+                        <span th:if="${adminsPage.hasNext()} == true">
+                        <a th:href="@{/admin/sudoers/maintain?page={next}(next=${adminsPage.getNumber()+1})}">下一页</a>
+                    </span>
+                    </div>
+                    <!-- 分页 -->
                 </div>
-                <!-- ./col -->
+                <!-- 表格本体 -->
+                <div class="text-center" style="color: red" th:if="${msg}" th:text="${msg}"></div>
+
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是管理员维护页面。
-            </p>
+            <!-- 所有管理员 /-->
+            <!-- 手动添加管理员 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">手动添加管理员</h3>
+                </div>
 
+                <div style="padding: 20px 20px 50px;">
+                    <form action="/api/admin/register" method="post">
+                        <div class="form-group has-feedback">
+                            <input type="text" class="form-control" placeholder="你的名字" name="username">
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <input type="text" class="form-control" placeholder="组名" name="groupName">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <input type="password" class="form-control" placeholder="密码" name="password">
+                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <input type="password" class="form-control" placeholder="确认密码">
+                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                        </div>
+                    </form>
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="manualRegister()">注册</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 手动添加管理员 /-->
         </section>
         <!-- 正文区域 /-->
+        <!-- 双选项提示框 /-->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                    </div>
+                    <div class="modal-body" id="modalMessage">
+                        嗯...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="modalDismiss" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="modalConfirm">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 双选项提示框 /-->
 
     </div>
     <!-- 内容区域 /-->
@@ -148,6 +199,93 @@
         // 激活导航位置
         setSidebarActive("admin-maintain");
     });
+
+    function toggleSingleOptionModal(option) {
+        let dismissBtn = document.getElementById("modalDismiss");
+        if (option){
+            dismissBtn.style.visibility = 'hidden';
+        } else {
+            dismissBtn.style.visibility = 'visible';
+        }
+    }
+
+    function toggleModal(){
+        $('#myModal').modal("toggle");
+    }
+
+    function setModalMessage(message){
+        document.getElementById('modalMessage').innerHTML = message;
+    }
+
+    function setConfirmAction(fn){
+        document.getElementById('modalConfirm').onclick = fn;
+    }
+
+    function resetPw(id, confirm) {
+        let messageHTML;
+        if (confirm) {
+            let endpoint = '/api/admin/resetPassword';
+            let formdata = new FormData();
+            formdata.append('id', id);
+            toggleModal();
+            axios({
+                method: "post",
+                url: endpoint,
+                data: formdata,
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+                .then(response => {
+                    alert(response.data);
+                })
+                .catch(exception => {
+                    alert(exception.data);
+                });
+        } else {
+            messageHTML = "<p>你正在尝试重置ID为" + id + "用户的密码。这是个<b style='color: red'>危险动作</b>，在执行之前需要再次确认。</p>"
+                + "<p>你确定要重置这个用户的密码吗？</p>";
+            setModalMessage(messageHTML)
+            document.getElementById('modalConfirm').setAttribute('onclick', 'javascript:resetPw(' + id + ', true)')
+            toggleSingleOptionModal(false);
+            toggleModal();
+        }
+    }
+
+    function dropUser(id, confirm){
+        let messageHTML;
+        if (confirm) {
+            let endpoint = '/api/admin/dropUser';
+            let formdata = new FormData();
+            formdata.append('id', id);
+            toggleModal();
+            axios({
+                method: "post",
+                url: endpoint,
+                data: formdata,
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+                .then(response => {
+                    alert(response.data);
+                })
+                .catch(exception => {
+                    alert(exception.data);
+                });
+        } else {
+            messageHTML = "<p>你正在尝试删除ID为" + id + "的用户。这是个<b style='color: red'>危险动作</b>，在执行之前需要再次确认。</p>"
+                + "<p>你确定要删除这个用户吗？</p>";
+            setModalMessage(messageHTML)
+            document.getElementById('modalConfirm').setAttribute('onclick', 'javascript:dropUser(' + id + ', true)')
+            toggleSingleOptionModal(false);
+            toggleModal();
+        }
+    }
+
+    function manualRegister() {
+        let username = "";
+    }
 </script>
 </body>
 </html>
