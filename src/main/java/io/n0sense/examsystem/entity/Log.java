@@ -27,6 +27,8 @@ public class Log {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
     private String ip;
+    private String action;
+    private String extras;
 
     @Override
     public boolean equals(Object o) {
