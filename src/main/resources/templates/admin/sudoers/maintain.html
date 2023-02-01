@@ -116,51 +116,33 @@
                 </div>
 
                 <div style="padding: 20px 20px 50px;">
-                    <form action="/api/admin/register" method="post">
+                    <form>
                         <div class="form-group has-feedback">
-                            <input type="text" class="form-control" placeholder="你的名字" name="username">
+                            <input type="text" class="form-control" placeholder="用户名" id="username">
                             <span class="glyphicon glyphicon-user form-control-feedback"></span>
                         </div>
                         <div class="form-group has-feedback">
-                            <input type="text" class="form-control" placeholder="组名" name="groupName">
+                            <input type="text" class="form-control" placeholder="组名" id="groupName">
                             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                         </div>
                         <div class="form-group has-feedback">
-                            <input type="password" class="form-control" placeholder="密码" name="password">
+                            <input type="password" class="form-control" placeholder="密码" id="password">
                             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                         </div>
                         <div class="form-group has-feedback">
-                            <input type="password" class="form-control" placeholder="确认密码">
+                            <input type="password" class="form-control" placeholder="确认密码" id="password2">
                             <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
                         </div>
                     </form>
                     <div class="col-xs-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="manualRegister()">注册</button>
+                        <button type="button" class="btn btn-primary btn-block btn-flat" onclick="manualRegister()">注册</button>
                     </div>
                 </div>
             </div>
             <!-- 手动添加管理员 /-->
         </section>
         <!-- 正文区域 /-->
-        <!-- 双选项提示框 /-->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">提示信息</h4>
-                    </div>
-                    <div class="modal-body" id="modalMessage">
-                        嗯...
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" id="modalDismiss" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" id="modalConfirm">确定</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 双选项提示框 /-->
+        <div th:replace="commons/modal"></div>
 
     </div>
     <!-- 内容区域 /-->
@@ -284,7 +266,42 @@
     }
 
     function manualRegister() {
-        let username = "";
+        let username = document.getElementById('username').value;
+        let groupName = document.getElementById('groupName').value;
+        let password = document.getElementById('password').value;
+        let password2 = document.getElementById('password2').value;
+        if (
+            username === ""
+            || groupName === ""
+            || password === ""
+            || password2 === ""
+        ){
+            alert("你应当填完所有的输入框。");
+        } else {
+            if (password === password2){
+                let endpoint = '/api/admin/register2';
+                let formdata = new FormData();
+                formdata.append('username', username);
+                formdata.append('groupName', groupName);
+                formdata.append('password', password);
+                axios({
+                    method: "post",
+                    url: endpoint,
+                    data: formdata,
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                })
+                    .then(response => {
+                        alert(response.data);
+                    })
+                    .catch(exception => {
+                        alert(exception.data);
+                    });
+            } else {
+                alert("两次输入的密码不匹配。")
+            }
+        }
     }
 </script>
 </body>
