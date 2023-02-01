@@ -4,6 +4,7 @@ spring:
     username: root
     password: MYSQL123
     driver-class-name: com.mysql.cj.jdbc.Driver
+    host: 127.0.0.1
   servlet:
     multipart:
       enabled: true
