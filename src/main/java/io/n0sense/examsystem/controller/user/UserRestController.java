@@ -1,7 +1,7 @@
 package io.n0sense.examsystem.controller.user;
 
 import io.n0sense.examsystem.commons.CommonStatus;
-import io.n0sense.examsystem.commons.GroupConstants;
+import io.n0sense.examsystem.commons.CommonConstants;
 import io.n0sense.examsystem.service.impl.UserService;
 import io.n0sense.examsystem.util.IpUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class UserRestController {
         int result = userService.login(username, password);
         if (result == CommonStatus.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", GroupConstants.ROLE_STUDENT);
-            return new ModelAndView("/" + GroupConstants.ROLE_STUDENT + "/home");
+            request.getSession().setAttribute("role", CommonConstants.ROLE_STUDENT);
+            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
         } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
             model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + GroupConstants.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
         } else if (result == CommonStatus.ERR_USER_NOT_FOUND) {
             model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + GroupConstants.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
         } else {
             this.logger.error("login: Unresolved result " + result);
             return new ModelAndView("404");
@@ -46,11 +46,11 @@ public class UserRestController {
         int result = userService.register(username, password, IpUtil.getIpAddress(request));
         if (result == CommonStatus.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", GroupConstants.ROLE_STUDENT);
-            return new ModelAndView("/" + GroupConstants.ROLE_STUDENT + "/home");
+            request.getSession().setAttribute("role", CommonConstants.ROLE_STUDENT);
+            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
             model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + GroupConstants.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
         } else {
             this.logger.error("register: Unresolved result " + result);
             return new ModelAndView("404");
