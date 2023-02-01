@@ -106,7 +106,15 @@ create table log(
 	username varchar(20), # 用户名
 	group_name varchar(20), # 所属组
 	time datetime not null, # 时间
-	ip varchar(40) # 请求ip
+	ip varchar(40), # 请求ip
+	action varchar(32), # 行为
+	extras varchar(255) # 附加信息
+);
+
+create table backup(
+    backup_id int primary key auto_increment,
+    time datetime,
+    filename varchar(255)
 );
 
 alter table exam AUTO_INCREMENT=100000;
@@ -119,4 +127,5 @@ alter table admin AUTO_INCREMENT=100000;
 alter table school AUTO_INCREMENT=100000;
 -- alter table registry AUTO_INCREMENT=100000;
 alter table log AUTO_INCREMENT=100000;
+alter table backup AUTO_INCREMENT=100000;
 	
