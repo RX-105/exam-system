@@ -20,17 +20,20 @@ public class LogService implements ILogService {
     private final LogRepository logRepository;
 
     /**
-     * 添加一条新的登陆记录，登录信息来源自session中的数据。
-     * @param request HTTP Servlet请求对象
+     * 新增一条日志记录。
+     * @param action 日志记录的行为类别，参考{@link io.n0sense.examsystem.commons.Actions}
+     * @param message 日志记录的额外信息
+     * @param request 即HttpServletRequest对象，用于获取用户名、用户组和IP
      */
-    @Override
-    public void recordLogin(HttpServletRequest request){
+    public void record(String action, String message, HttpServletRequest request){
         HttpSession session = request.getSession();
         Log login = Log.builder()
                 .username((String) session.getAttribute("username"))
                 .groupName((String) session.getAttribute("group"))
                 .ip(IpUtil.getIpAddress(request))
                 .time(LocalDateTime.now())
+                .action(action)
+                .extras(message)
                 .build();
         logRepository.save(login);
     }
@@ -43,7 +46,9 @@ public class LogService implements ILogService {
      * @return 满足用户名条件的所有日志分页对象
      */
     public Page<Log> getUserLogins(String username, int page, int size){
-        return logRepository.findAllByUsername(username, PageRequest.of(page, size));
+        return logRepository.findAllByUsernameAndAction(
+                username, "login", PageRequest.of(page, size)
+        );
     }
 
     /**
@@ -54,7 +59,9 @@ public class LogService implements ILogService {
      * @return 满足组名条件的所有日志分页对象
      */
     public Page<Log> getGroupLogin(String groupName, int page, int size){
-        return logRepository.findAllByGroupName(groupName, PageRequest.of(page, size));
+        return logRepository.findAllByGroupNameAndAction(
+                groupName, "login", PageRequest.of(page, size)
+        );
     }
 
     /**
@@ -68,12 +75,12 @@ public class LogService implements ILogService {
      */
     public Page<Log> queryLogByTimeRange(String username, int page, int size,
                                          LocalDate from, LocalDate to){
-        logRepository.findAllByUsernameAndTimeBetween(
+        return logRepository.findAllByUsernameAndActionAndTimeBetween(
                 username,
+                "login",
                 from.atStartOfDay(),
                 to.atTime(23, 59, 59),
                 PageRequest.of(page, size)
         );
-        return null;
     }
 }
