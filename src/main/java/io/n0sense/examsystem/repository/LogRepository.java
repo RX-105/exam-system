@@ -8,8 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 public interface LogRepository extends JpaRepository<Log, Long> {
-    Page<Log> findAllByUsername(String username, Pageable pageable);
-    Page<Log> findAllByGroupName(String groupName, Pageable pageable);
-    Page<Log> findAllByUsernameAndTimeBetween(
-            String username, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    // 按照用户名和行为搜索
+    Page<Log> findAllByUsernameAndAction(String username, String action, Pageable pageable);
+    // 按照组名和行为搜索
+    Page<Log> findAllByGroupNameAndAction(String groupName, String action, Pageable pageable);
+    // 按照用户名和行为搜索，并指定时间范围
+    Page<Log> findAllByUsernameAndActionAndTimeBetween(
+            String username, String action, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }
