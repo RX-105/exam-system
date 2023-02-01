@@ -15,6 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Table(name = "admin")
 @DynamicInsert
+@Builder
 public class Admin extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +37,5 @@ public class Admin extends BaseEntity{
     @Override
     public int hashCode() {
         return getClass().hashCode();
-    }
-
-    public static AdminBuilder build(){
-        return new AdminBuilder();
     }
 }

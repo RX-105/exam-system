@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 public class TestAdminBuilder {
     @Test
     void testBuilder(){
-        Admin admin = Admin.build()
+        Admin admin = Admin.builder()
                 .name("demo")
                 .password("1234")
                 .groupName("sudoers")
-                .get();
+                .build();
         log.info("admin.name = " + admin.getName());
     }
 }
