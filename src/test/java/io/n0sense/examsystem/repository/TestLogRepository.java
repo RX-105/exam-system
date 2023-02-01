@@ -20,15 +20,16 @@ public class TestLogRepository {
     @Test
     void testGetAllLogins() {
         System.out.println("By username="
-                + logRepository.findAllByUsername("aca", Pageable.ofSize(15)).getNumber());
+                + logRepository.findAllByUsernameAndAction("aca", "login", Pageable.ofSize(15)).toList().size());
         System.out.println("By groupName="
-                + logRepository.findAllByGroupName("aca-aff", PageRequest.of(0, 15)).toList().size());
+                + logRepository.findAllByGroupNameAndAction("aca-aff", "login", PageRequest.of(0, 15)).toList().size());
     }
 
     @Test
     void testGetByTimeRange(){
-        Page<Log> logPage = logRepository.findAllByUsernameAndTimeBetween(
+        Page<Log> logPage = logRepository.findAllByUsernameAndActionAndTimeBetween(
                 "aca",
+                "login",
                 LocalDate.parse("2023-01-18").atStartOfDay(),
                 LocalDate.parse("2023-01-19").atStartOfDay(),
                 PageRequest.of(0, 10)
