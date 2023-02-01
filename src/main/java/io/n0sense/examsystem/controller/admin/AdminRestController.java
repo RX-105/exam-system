@@ -1,7 +1,9 @@
 package io.n0sense.examsystem.controller.admin;
 
+import io.n0sense.examsystem.annotation.RecordLog;
+import io.n0sense.examsystem.commons.Actions;
 import io.n0sense.examsystem.commons.CommonStatus;
-import io.n0sense.examsystem.commons.GroupConstants;
+import io.n0sense.examsystem.commons.CommonConstants;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.service.impl.AdminService;
@@ -13,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,21 +37,20 @@ public class AdminRestController {
     private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
+    @RecordLog(action = Actions.LOGIN)
     public ModelAndView register(String username, String password, String groupName, HttpServletRequest request, Model model) {
         int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
         if (result == CommonStatus.OK) {
             // 检查判断为登陆成功
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", groupName);
-            request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
-            // 记录登录日志
-            logService.recordLogin(request);
+            request.getSession().setAttribute("role", CommonConstants.ROLE_ADMIN);
 
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
             // 用户密码已经存在
             model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/register");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN + "/register");
         } else {
             // 其他错误
             this.logger.error("register: Unresolved result " + result);
@@ -58,7 +58,25 @@ public class AdminRestController {
         }
     }
 
+    @PostMapping({"/register2"})
+    @ResponseBody
+    public String register(String username, String password, String groupName, HttpServletRequest request) {
+        int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
+        if (result == CommonStatus.OK) {
+            // 检查判断为注册成功
+            return "用户注册成功。";
+        } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
+            // 用户密码已经存在
+            return "用户名已占用。";
+        } else {
+            // 其他错误
+            this.logger.error("register: Unresolved result " + result);
+            return "发生未知错误。";
+        }
+    }
+
     @PostMapping({"/login"})
+    @RecordLog(action = Actions.LOGIN)
     public ModelAndView login(String username, String password, Model model, HttpServletRequest request) {
         int result = this.adminService.login(username, password);
         Admin admin = (Admin) this.adminService.findByName(username).get();
@@ -66,18 +84,17 @@ public class AdminRestController {
             // 判断为信息正确
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", admin.getGroupName());
-            request.getSession().setAttribute("role", GroupConstants.ROLE_ADMIN);
-            // 记录登录日志
-            logService.recordLogin(request);
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/home");
+            request.getSession().setAttribute("role", CommonConstants.ROLE_ADMIN);
+
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN + "/home");
         } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
             // 判断为密码错误
             model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/login");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN + "/login");
         } else if (result == CommonStatus.ERR_USER_NOT_FOUND) {
             // 判断为用户不存在
             model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN + "/login");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN + "/login");
         } else {
             // 其他错误
             this.logger.error("login: Unresolved result " + result);
@@ -90,16 +107,16 @@ public class AdminRestController {
         int result = this.adminService.addEnrollmentInfo(majorName, applicant, enrollment, admission, score, examName, start, end);
         if (result == CommonStatus.ERR_MAJOR_EXISTS) {
             model.addAttribute("msg", "已经有这个专业了。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN +
-                    "/" + GroupConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN +
+                    "/" + CommonConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
         } else if (result == CommonStatus.ERR_EXAM_EXISTS) {
             model.addAttribute("msg", "已经有这项考试了。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN +
-                    "/" + GroupConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN +
+                    "/" + CommonConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
         } else if (result == CommonStatus.OK) {
             model.addAttribute("msg", "添加完成。");
-            return new ModelAndView("/" + GroupConstants.ROLE_ADMIN +
-                    "/" + GroupConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + CommonConstants.ROLE_ADMIN +
+                    "/" + CommonConstants.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
         } else {
             this.logger.error("publishEnrollmentInfo: Unresolved result " + result);
             return new ModelAndView("404");
@@ -123,6 +140,7 @@ public class AdminRestController {
         return new ModelAndView("/admin/login-history");
     }
 
+    // TODO: 这不是真的REST，得改
     @PostMapping("/resetPassword")
     @ResponseBody
     public String resetPassword(Long id) {
