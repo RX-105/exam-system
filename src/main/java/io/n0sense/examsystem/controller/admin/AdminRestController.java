@@ -6,6 +6,7 @@ import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.commons.CommonConstants;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
+import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.util.IpUtil;
@@ -60,18 +61,27 @@ public class AdminRestController {
 
     @PostMapping({"/register2"})
     @ResponseBody
-    public String register(String username, String password, String groupName, HttpServletRequest request) {
+    public R register(String username, String password, String groupName, HttpServletRequest request) {
         int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
         if (result == CommonStatus.OK) {
             // 检查判断为注册成功
-            return "用户注册成功。";
+            return R.builder()
+                    .status(result)
+                    .message("用户注册成功。")
+                    .build();
         } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
             // 用户密码已经存在
-            return "用户名已占用。";
+            return R.builder()
+                    .status(result)
+                    .message("用户名已占用。")
+                    .build();
         } else {
             // 其他错误
             this.logger.error("register: Unresolved result " + result);
-            return "发生未知错误。";
+            return R.builder()
+                    .status(CommonStatus.ERR_UNSPECIFIED)
+                    .message("发生未知错误。")
+                    .build();
         }
     }
 
