@@ -6,6 +6,7 @@ package io.n0sense.examsystem.commons;
  * @since 2022/11/23
  */
 public interface CommonStatus {
+    int ERR_UNSPECIFIED = -1;
     int OK = 0;
     int ERR_USERNAME_IN_USE = 1001;
     int ERR_INCORRECT_PASSWORD = 1002;
