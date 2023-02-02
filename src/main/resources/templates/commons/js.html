@@ -44,3 +44,40 @@
 <script data-th-src="@{/static/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
 <script data-th-src="@{/static/plugins/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
 <script data-th-src="@{/static/plugins/axios/axios.min.js}"></script>
+<script>
+    /**
+     * 使用GET方式请求指定的API。
+     * @param {string} endpoint 请求的API
+     * @param {JSON} param JSON参数对象
+     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} success Promise对象then函数传入的回调
+     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} fail Promise对象catch函数传入的回调
+     */
+    function doGet(endpoint, param, success, fail) {
+        axios.get(endpoint,param)
+            .then(success)
+            .catch(fail);
+    }
+    /**
+     * 使用POST方式请求指定的API，请求体数据格式为form-data。
+     * @param {string} endpoint 请求的API
+     * @param {JSON} data JSON参数对象
+     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} success Promise对象then函数传入的回调
+     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} fail Promise对象catch函数传入的回调
+     */
+    function doPost(endpoint, data, success, fail) {
+        let formData = new FormData();
+        for (let key in data) {
+            formData.append(key, data[key]);
+        }
+        axios({
+            method: "post",
+            url: endpoint,
+            data: formData,
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+            .then(success)
+            .catch(fail);
+    }
+</script>
