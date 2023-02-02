@@ -153,18 +153,27 @@ public class AdminRestController {
     // TODO: 这不是真的REST，得改
     @PostMapping("/resetPassword")
     @ResponseBody
-    public String resetPassword(Long id) {
+    public R resetPassword(Long id) {
         if (adminService.resetPassword(id)) {
-            return "ID为" + id + "的用户的密码重置成功，新密码是1234。";
+            return R.builder()
+                    .status(CommonStatus.OK)
+                    .message("ID为" + id + "的用户的密码重置成功，新密码是1234。")
+                    .build();
         } else {
-            return "未能重置ID为" + id + "的用户的密码。";
+            return R.builder()
+                    .status(CommonStatus.ERR_OPERATION_FAILED)
+                    .message("未能重置ID为" + id + "的用户的密码。")
+                    .build();
         }
     }
 
     @PostMapping("/dropUser")
     @ResponseBody
-    public String dropUser(Long id) {
+    public R dropUser(Long id) {
         adminService.dropUser(id);
-        return "ID为" + id + "的用户已经移除。";
+        return R.builder()
+                .status(CommonStatus.OK)
+                .message("ID为" + id + "的用户已经移除。")
+                .build();
     }
 }
