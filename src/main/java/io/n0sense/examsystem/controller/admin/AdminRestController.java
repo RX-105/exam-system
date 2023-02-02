@@ -2,14 +2,14 @@ package io.n0sense.examsystem.controller.admin;
 
 import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.Actions;
-import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.commons.CommonConstants;
+import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.LogService;
-import io.n0sense.examsystem.util.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,7 +39,7 @@ public class AdminRestController {
     @PostMapping({"/register"})
     @RecordLog(action = Actions.LOGIN)
     public ModelAndView register(String username, String password, String groupName, HttpServletRequest request, Model model) {
-        int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
+        int result = this.adminService.register(username, password, groupName);
         if (result == CommonStatus.OK) {
             // 检查判断为登陆成功
             request.getSession().setAttribute("username", username);
@@ -61,8 +60,8 @@ public class AdminRestController {
 
     @PostMapping({"/register2"})
     @ResponseBody
-    public R register(String username, String password, String groupName, HttpServletRequest request) {
-        int result = this.adminService.register(username, password, groupName, IpUtil.getIpAddress(request));
+    public R register(String username, String password, String groupName) {
+        int result = this.adminService.register(username, password, groupName);
         if (result == CommonStatus.OK) {
             // 检查判断为注册成功
             return R.builder()
@@ -89,7 +88,8 @@ public class AdminRestController {
     @RecordLog(action = Actions.LOGIN)
     public ModelAndView login(String username, String password, Model model, HttpServletRequest request) {
         int result = this.adminService.login(username, password);
-        Admin admin = (Admin) this.adminService.findByName(username).get();
+        // 通过login方法的话，admin一定不是null，不用担心这里的isPresent()检查
+        Admin admin = this.adminService.findByName(username).get();
         if (result == 0) {
             // 判断为信息正确
             request.getSession().setAttribute("username", username);
