@@ -5,11 +5,10 @@ import io.n0sense.examsystem.entity.ResponseEntity;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public interface IAdminService {
-    int register(String username, String password, String groupName, String ip);
+    int register(String username, String password, String groupName);
     int login(String username, String password);
     int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
                           double score, String examName, LocalDateTime start, LocalDateTime end);
