@@ -4,7 +4,9 @@ import io.n0sense.examsystem.commons.CommonStatus;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
+import io.n0sense.examsystem.util.IpUtil;
 import io.n0sense.examsystem.util.PasswordEncoder;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,18 +27,17 @@ public class AdminService implements IAdminService {
     private final RegistryRepository registryRepository;
     private final MajorRepository majorRepository;
     private final ExamRepository examRepository;
-    private final LogRepository logRepository;
+    private final HttpServletRequest request;
 
     /**
      * 添加一个新用户，并添加注册表项。
      * @param username 用户名
      * @param password 用户密码
      * @param groupName 组名
-     * @param ip IP地址
      * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_USERNAME_IN_USE</code>。
      */
     @Override
-    public int register(String username, String password, String groupName, String ip){
+    public int register(String username, String password, String groupName){
         if (adminRepository.existsAdminByName(username)){
             return CommonStatus.ERR_USERNAME_IN_USE;
         } else {
@@ -50,8 +51,12 @@ public class AdminService implements IAdminService {
             if (savedAdmin.isPresent()){
                 admin = savedAdmin.get();
                 Registry registry = new Registry(
-                        admin.getAdminId(), admin.getName(), admin.getPassword(), ip,
-                        LocalDateTime.now());
+                        admin.getAdminId(),
+                        admin.getName(),
+                        admin.getPassword(),
+                        IpUtil.getIpAddress(request),
+                        LocalDateTime.now()
+                );
                 registryRepository.save(registry);
             }
             return CommonStatus.OK;
