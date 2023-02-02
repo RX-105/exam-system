@@ -206,23 +206,16 @@
     function resetPw(id, confirm) {
         let messageHTML;
         if (confirm) {
-            let endpoint = '/api/admin/resetPassword';
-            let formdata = new FormData();
-            formdata.append('id', id);
-            toggleModal();
-            axios({
-                method: "post",
-                url: endpoint,
-                data: formdata,
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            })
-                .then(response => {
-                    alert(response.data);
-                })
-                .catch(exception => {
-                    alert(exception.data);
+            doPost('/api/admin/resetPassword',
+                {
+                    "id": id
+                },
+                response => {
+                    alert(response.data.message);
+                    window.location.reload()
+                },
+                exception => {
+                    alert(exception.data.message);
                 });
         } else {
             messageHTML = "<p>你正在尝试重置ID为" + id + "用户的密码。这是个<b style='color: red'>危险动作</b>，在执行之前需要再次确认。</p>"
@@ -234,26 +227,20 @@
         }
     }
 
-    function dropUser(id, confirm){
+    function dropUser(id, confirm) {
         let messageHTML;
         if (confirm) {
-            let endpoint = '/api/admin/dropUser';
-            let formdata = new FormData();
-            formdata.append('id', id);
             toggleModal();
-            axios({
-                method: "post",
-                url: endpoint,
-                data: formdata,
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            })
-                .then(response => {
-                    alert(response.data);
-                })
-                .catch(exception => {
-                    alert(exception.data);
+            doPost('/api/admin/dropUser',
+                {
+                    "id": id
+                },
+                response => {
+                    alert(response.data.message);
+                    window.location.reload()
+                },
+                exception => {
+                    alert(exception.data.message);
                 });
         } else {
             messageHTML = "<p>你正在尝试删除ID为" + id + "的用户。这是个<b style='color: red'>危险动作</b>，在执行之前需要再次确认。</p>"
@@ -278,26 +265,20 @@
         ){
             alert("你应当填完所有的输入框。");
         } else {
-            if (password === password2){
-                let endpoint = '/api/admin/register2';
-                let formdata = new FormData();
-                formdata.append('username', username);
-                formdata.append('groupName', groupName);
-                formdata.append('password', password);
-                axios({
-                    method: "post",
-                    url: endpoint,
-                    data: formdata,
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                })
-                    .then(response => {
-                        alert(response.data);
-                    })
-                    .catch(exception => {
+            if (password === password2) {
+                doPost('/api/admin/register2', {
+                        "username": username,
+                        "groupName": groupName,
+                        "password": password
+                    },
+                    response => {
+                        alert(response.data.message);
+                        window.location.reload();
+                    },
+                    exception => {
                         alert(exception.data);
-                    });
+                    }
+                )
             } else {
                 alert("两次输入的密码不匹配。")
             }
