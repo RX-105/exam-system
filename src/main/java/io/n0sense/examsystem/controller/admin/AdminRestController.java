@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.controller.admin;
 
+import io.n0sense.examsystem.annotation.NoNullArgs;
 import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
@@ -41,6 +42,7 @@ public class AdminRestController {
     @PostMapping({"/register"})
     @ResponseBody
     @RecordLog(action = Actions.LOGIN)
+    @NoNullArgs
     public R register(String username, String password, String groupName, HttpServletRequest request) {
         int result = this.adminService.register(username, password, groupName);
         Map<String, Object> data = new HashMap<>();
@@ -76,6 +78,7 @@ public class AdminRestController {
 
     @PostMapping({"/register2"})
     @ResponseBody
+    @NoNullArgs
     public R register(String username, String password, String groupName) {
         int result = this.adminService.register(username, password, groupName);
         if (result == Status.OK) {
@@ -101,8 +104,9 @@ public class AdminRestController {
     }
 
     @PostMapping({"/login"})
-    @RecordLog(action = Actions.LOGIN)
     @ResponseBody
+    @RecordLog(action = Actions.LOGIN)
+    @NoNullArgs
     public R login(String username, String password, HttpServletRequest request) {
         Map<String, Object> data = new HashMap<>();
         int result = this.adminService.login(username, password);
@@ -177,6 +181,7 @@ public class AdminRestController {
 
     @PostMapping("/resetPassword")
     @ResponseBody
+    @NoNullArgs
     public R resetPassword(Long id) {
         if (adminService.resetPassword(id)) {
             return R.builder()
@@ -193,6 +198,7 @@ public class AdminRestController {
 
     @PostMapping("/dropUser")
     @ResponseBody
+    @NoNullArgs
     public R dropUser(Long id) {
         adminService.dropUser(id);
         return R.builder()
