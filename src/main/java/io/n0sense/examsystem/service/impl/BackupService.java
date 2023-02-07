@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -41,7 +42,7 @@ public class BackupService implements IBackupService {
     @Override
     @RecordLog(action = Actions.CREATE_BACKUP)
     public void dumpDatabase() throws IOException {
-        String mysqlDumpPath = mysqlHome + "\\mysqldump";
+        String mysqlDumpPath = mysqlHome + File.separator + "mysqldump";
         LocalDateTime now = LocalDateTime.now();
         String fileName = tableName +
                 "-" + now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) +
@@ -52,7 +53,7 @@ public class BackupService implements IBackupService {
                 " -p" + password +
                 " --default-character-set=utf8" +
                 " --hex-blob" +
-                " --result-file=" + backupLocation + fileName +
+                " --result-file=" + backupLocation + File.separator + fileName +
                 " " + tableName;
         Backup backup = Backup.builder()
                 .filename(fileName)
@@ -65,13 +66,14 @@ public class BackupService implements IBackupService {
 
     @Override
     @RecordLog(action = Actions.RESTORE_BACKUP)
-    public void restoreDBFromId(Long id) throws NoSuchElementException, IOException {
+    public void applyFromId(Long id) throws NoSuchElementException, IOException {
         Backup backup = backupRepository.findById(id).orElseThrow();
-        if (!new File(backup.getFilename()).exists()){
+        File backupFile = new File(backupLocation + File.separator + backup.getFilename());
+        if (!backupFile.exists()) {
             throw new FileNotFoundException();
         }
 
-        String mysqlPath = mysqlHome + "\\mysql";
+        String mysqlPath = mysqlHome + File.separator + "mysql";
         String command = mysqlPath +
                 " -h" + host +
                 " -u" + username +
@@ -79,5 +81,29 @@ public class BackupService implements IBackupService {
                 " " + tableName +
                 " < " + backup.getFilename();
         runtime.exec(command);
+        log.info("尝试还原数据库，备份ID为" + id + "，备份文件名为" + backup.getFilename());
+    }
+
+    @Override
+    @RecordLog(action = Actions.REMOVE_BACKUP)
+    public void removeBackup(Long id) throws NoSuchElementException, IOException {
+        Backup backup = backupRepository.findById(id).orElseThrow();
+        File backupFile = new File(backupLocation + File.separator + backup.getFilename());
+        if (!backupFile.exists()) {
+            log.info("尝试移除一个备份记录，但文件不存在，ID为" + id + "，文件名为" + backup.getFilename());
+            throw new FileNotFoundException();
+        }
+        if (backupFile.delete()) {
+            backupRepository.deleteById(id);
+            log.info("移除了一个备份记录，ID为" + id + "，文件名为" + backup.getFilename());
+        } else {
+            log.info("尝试移除一个备份文件，操作失败，ID为" + id + "，文件名为" + backup.getFilename());
+            throw new IOException();
+        }
+    }
+
+    @Override
+    public List<Backup> findAll() {
+        return backupRepository.findAll();
     }
 }
