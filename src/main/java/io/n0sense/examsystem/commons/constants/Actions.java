@@ -1,4 +1,4 @@
-package io.n0sense.examsystem.commons;
+package io.n0sense.examsystem.commons.constants;
 
 public interface Actions {
     String LOGIN = "login";
