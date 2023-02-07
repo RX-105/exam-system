@@ -1,6 +1,6 @@
 package io.n0sense.examsystem.service.impl;
 
-import io.n0sense.examsystem.commons.CommonStatus;
+import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.Registry;
 import io.n0sense.examsystem.entity.User;
 import io.n0sense.examsystem.repository.RegistryRepository;
@@ -32,7 +32,7 @@ public class UserService implements IUserService {
         // 这tm什么鬼设计啊！
         if (userRepository.existsByName(username) ||
                 registryRepository.existsByUsername(username)){
-            return CommonStatus.ERR_USERNAME_IN_USE;
+            return Status.ERR_USERNAME_IN_USE;
         } else {
             User user = new User();
             user.setName(username);
@@ -45,7 +45,7 @@ public class UserService implements IUserService {
                     LocalDateTime.now()
             );
             registryRepository.save(registry);
-            return CommonStatus.OK;
+            return Status.OK;
         }
     }
 
@@ -61,12 +61,12 @@ public class UserService implements IUserService {
             Registry registry = registryRepository.findByUsername(username).get();
             String encryptedPassword = PasswordEncoder.SHA256Encrypt(password);
             if (encryptedPassword.equals(registry.getPassword())){
-                return CommonStatus.OK;
+                return Status.OK;
             } else {
-                return CommonStatus.ERR_INCORRECT_PASSWORD;
+                return Status.ERR_INCORRECT_PASSWORD;
             }
         } else {
-            return CommonStatus.ERR_USER_NOT_FOUND;
+            return Status.ERR_USER_NOT_FOUND;
         }
     }
 

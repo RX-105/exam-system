@@ -1,6 +1,6 @@
 package io.n0sense.examsystem.service.impl;
 
-import io.n0sense.examsystem.commons.CommonStatus;
+import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
@@ -39,7 +39,7 @@ public class AdminService implements IAdminService {
     @Override
     public int register(String username, String password, String groupName){
         if (adminRepository.existsAdminByName(username)){
-            return CommonStatus.ERR_USERNAME_IN_USE;
+            return Status.ERR_USERNAME_IN_USE;
         } else {
             Admin admin = new Admin();
             admin.setName(username);
@@ -59,7 +59,7 @@ public class AdminService implements IAdminService {
                 );
                 registryRepository.save(registry);
             }
-            return CommonStatus.OK;
+            return Status.OK;
         }
     }
 
@@ -75,12 +75,12 @@ public class AdminService implements IAdminService {
         if (admin.isPresent()){
             String encodedPassword = PasswordEncoder.SHA256Encrypt(password);
             if (encodedPassword.equals(admin.get().getPassword())){
-                return CommonStatus.OK;
+                return Status.OK;
             } else {
-                return CommonStatus.ERR_INCORRECT_PASSWORD;
+                return Status.ERR_INCORRECT_PASSWORD;
             }
         } else {
-            return CommonStatus.ERR_USER_NOT_FOUND;
+            return Status.ERR_USER_NOT_FOUND;
         }
     }
 
@@ -89,15 +89,15 @@ public class AdminService implements IAdminService {
                                  double score, String examName, LocalDateTime start,
                                  LocalDateTime end) {
         if (this.majorRepository.existsByName(majorName)) {
-            return CommonStatus.ERR_MAJOR_EXISTS;
+            return Status.ERR_MAJOR_EXISTS;
         } else if (this.examRepository.existsByName(examName)) {
-            return CommonStatus.ERR_EXAM_EXISTS;
+            return Status.ERR_EXAM_EXISTS;
         } else {
             Major major = new Major(0L, majorName, applicant, enrollment, score, admission);
             major = this.majorRepository.save(major);
             Exam exam = new Exam(0L, examName, major.getId(), start, end);
             this.examRepository.save(exam);
-            return CommonStatus.OK;
+            return Status.OK;
         }
     }
 
@@ -125,7 +125,7 @@ public class AdminService implements IAdminService {
         List<Major> majorList = this.majorRepository.findAll();
         List<EnrollmentInfo> enrollmentInfoList = new ArrayList<>();
         if (majorList.size() == 0) {
-            responseEntity.setCode(CommonStatus.ERR_MAJOR_NOT_FOUND);
+            responseEntity.setCode(Status.ERR_MAJOR_NOT_FOUND);
         } else {
             Iterator<Major> var5 = majorList.iterator();
 
@@ -136,7 +136,7 @@ public class AdminService implements IAdminService {
             }
 
             data.put("info", enrollmentInfoList);
-            responseEntity.setCode(CommonStatus.OK);
+            responseEntity.setCode(Status.OK);
             responseEntity.setData(data);
         }
 
