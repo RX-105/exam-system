@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface RecordLog {
     /**
-     * action参数用于记录这条日志的行为，其指定的行为在{@link io.n0sense.examsystem.commons.Actions}
+     * action参数用于记录这条日志的行为，其指定的行为在{@link io.n0sense.examsystem.commons.constants.Actions Actions}
      * 已经预先定义好，任何情况下都只应该引用这个类里面的常量，以方便未来分类。如果不指定，默认为normal。
      */
     String action() default "normal";
