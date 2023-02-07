@@ -9,38 +9,39 @@ import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.service.impl.AdminService;
+import io.n0sense.examsystem.service.impl.BackupService;
 import io.n0sense.examsystem.service.impl.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * 管理员页面中的REST API控制器。
  */
-@Controller
+@RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminRestController {
     private final AdminService adminService;
     private final LogService logService;
+    private final BackupService backupService;
     private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
-    @ResponseBody
     @RecordLog(action = Actions.LOGIN)
     @NoNullArgs
     public R register(String username, String password, String groupName, HttpServletRequest request) {
@@ -77,7 +78,6 @@ public class AdminRestController {
     }
 
     @PostMapping({"/register2"})
-    @ResponseBody
     @NoNullArgs
     public R register(String username, String password, String groupName) {
         int result = this.adminService.register(username, password, groupName);
@@ -104,7 +104,6 @@ public class AdminRestController {
     }
 
     @PostMapping({"/login"})
-    @ResponseBody
     @RecordLog(action = Actions.LOGIN)
     @NoNullArgs
     public R login(String username, String password, HttpServletRequest request) {
@@ -180,7 +179,6 @@ public class AdminRestController {
     }
 
     @PostMapping("/resetPassword")
-    @ResponseBody
     @NoNullArgs
     public R resetPassword(Long id) {
         if (adminService.resetPassword(id)) {
@@ -197,13 +195,78 @@ public class AdminRestController {
     }
 
     @PostMapping("/dropUser")
-    @ResponseBody
     @NoNullArgs
     public R dropUser(Long id) {
         adminService.dropUser(id);
         return R.builder()
                 .status(Status.OK)
                 .message("ID为" + id + "的用户已经移除。")
+                .build();
+    }
+
+    @GetMapping("/backup")
+    @NoNullArgs
+    public R addBackup() {
+        try {
+            backupService.dumpDatabase();
+        } catch (IOException e) {
+            return R.builder()
+                    .status(Status.ERR_OPERATION_FAILED)
+                    .message("无法创建备份。")
+                    .build();
+        }
+        return R.builder()
+                .status(Status.OK)
+                .message("备份创建成功。")
+                .build();
+    }
+
+    @PostMapping("/backup/{id}")
+    @NoNullArgs
+    public R applyBackup(@PathVariable("id") Long id) {
+        try {
+            backupService.applyFromId(id);
+        } catch (FileNotFoundException e) {
+            return R.builder()
+                    .status(Status.ERR_FILE_NOT_FOUND)
+                    .message("备份文件丢失。")
+                    .build();
+        } catch (IOException e) {
+            return R.builder()
+                    .status(Status.ERR_OPERATION_FAILED)
+                    .message("无法创建备份。")
+                    .build();
+        } catch (NoSuchElementException e) {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .message("该备份不存在。")
+                    .build();
+        }
+        return R.builder()
+                .status(Status.OK)
+                .message("数据库还原完成。")
+                .build();
+    }
+
+    @DeleteMapping("/backup/{id}")
+    @NoNullArgs
+    public R removeBackup(@PathVariable("id") Long id) {
+        try {
+            backupService.removeBackup(id);
+        } catch (FileNotFoundException | NoSuchElementException e) {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .message("该备份不存在。")
+                    .build();
+        } catch (IOException e) {
+            return R.builder()
+                    .status(Status.ERR_OPERATION_FAILED)
+                    .message("无法移除备份。")
+                    .build();
+        }
+        return R.builder()
+                .status(Status.OK)
+                .message("已移除该备份。")
                 .build();
     }
 }
