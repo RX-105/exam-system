@@ -1,8 +1,7 @@
 package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.annotation.RecordLog;
-import io.n0sense.examsystem.commons.Actions;
-import io.n0sense.examsystem.commons.CommonConstants;
+import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.repository.BackupRepository;
 import io.n0sense.examsystem.service.IBackupService;
@@ -32,8 +31,10 @@ public class BackupService implements IBackupService {
     private String password;
     @Value("${spring.datasource.host}")
     private String host;
-    private final String tableName = CommonConstants.TABLE_NAME;
-    private final String mysqlHome = CommonConstants.MYSQL_HOME;
+    @Value("${spring.datasource.table-name}")
+    private String tableName;
+    @Value("${spring.datasource.mysql-home}")
+    private String mysqlHome;
 
     @Override
     @RecordLog(action = Actions.CREATE_BACKUP)
