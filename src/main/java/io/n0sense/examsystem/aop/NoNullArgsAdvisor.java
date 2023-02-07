@@ -1,6 +1,7 @@
 package io.n0sense.examsystem.aop;
 
 import io.n0sense.examsystem.annotation.NoNullArgs;
+import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.R;
 import lombok.extern.java.Log;
 import org.aspectj.lang.JoinPoint;
@@ -48,7 +49,7 @@ public class NoNullArgsAdvisor {
         excludedIndexes.remove(-1);
         for (int i = 0; i < args.length; i++) {
             if (args[i] == null && !excludedIndexes.contains(i)) {
-                result.setStatus(-1);
+                result.setStatus(Status.ERR_PARAMETER_NOT_PRESENT);
                 result.setMessage("参数不完整。");
                 HashMap<String, Object> data = (HashMap<String, Object>) result.getData();
                 if (data == null) {
