@@ -5,6 +5,8 @@ spring:
     password: MYSQL123
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: 127.0.0.1
+    table-name: examsystem
+    mysql-home: C:\Program Files\MySQL\MySQL Server 8.0\bin
   servlet:
     multipart:
       enabled: true
