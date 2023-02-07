@@ -5,6 +5,7 @@ import java.lang.annotation.*;
 /**
  * 如果为一个方法添加这个注释，与这个注解配套的AOP增强类将会在该方法执行结束后向数据库添加一条日志。这个注解的两个参数，
  * action和message，用于表明日志记录的行为以及附加信息，都将被写入数据库。
+ * @see io.n0sense.examsystem.commons.constants.Actions
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
