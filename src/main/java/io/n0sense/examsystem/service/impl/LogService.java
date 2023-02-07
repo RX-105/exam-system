@@ -4,13 +4,13 @@ import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.repository.LogRepository;
 import io.n0sense.examsystem.service.ILogService;
 import io.n0sense.examsystem.util.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -21,7 +21,7 @@ public class LogService implements ILogService {
 
     /**
      * 新增一条日志记录。
-     * @param action 日志记录的行为类别，参考{@link io.n0sense.examsystem.commons.Actions}
+     * @param action 日志记录的行为类别，参考{@link io.n0sense.examsystem.commons.constants.Actions Actions}
      * @param message 日志记录的额外信息
      * @param request 即HttpServletRequest对象，用于获取用户名、用户组和IP
      */
