@@ -1,10 +1,9 @@
 package io.n0sense.examsystem.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class PageController {
@@ -14,5 +13,9 @@ public class PageController {
     @ResponseBody
     public String getSessionAttribute(String attribute, HttpServletRequest request) {
         return (String) request.getSession().getAttribute(attribute);
+    }
+    @GetMapping({"/admin/404", "/student/404"})
+    public String get404View(){
+        return "/404";
     }
 }
