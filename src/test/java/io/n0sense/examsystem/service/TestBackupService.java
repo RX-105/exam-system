@@ -24,7 +24,7 @@ public class TestBackupService {
     @Test
     void testRestore(){
         try{
-            backupService.restoreDBFromId(100010L);
+            backupService.applyFromId(100010L);
         } catch (Exception e){
             e.printStackTrace();
         }
