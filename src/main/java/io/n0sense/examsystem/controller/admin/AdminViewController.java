@@ -3,8 +3,10 @@ package io.n0sense.examsystem.controller.admin;
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
 import io.n0sense.examsystem.entity.Admin;
+import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.service.impl.AdminService;
+import io.n0sense.examsystem.service.impl.BackupService;
 import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.service.impl.VisitsService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class AdminViewController {
     private final LogService logService;
     private final VisitsService visitsService;
     private final AdminService adminService;
+    private final BackupService backupService;
 
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
@@ -88,5 +91,13 @@ public class AdminViewController {
         }
 
         return new ModelAndView("/admin/sudoers/maintain");
+    }
+
+    @GetMapping("/sudoers/db")
+    public ModelAndView getSudoersDBView(Model model) {
+        List<Backup> backupList = backupService.findAll();
+        model.addAttribute("backup", backupList);
+
+        return new ModelAndView("/admin/sudoers/db");
     }
 }
