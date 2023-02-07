@@ -1,7 +1,7 @@
 package io.n0sense.examsystem.controller.user;
 
-import io.n0sense.examsystem.commons.CommonStatus;
-import io.n0sense.examsystem.commons.CommonConstants;
+import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.service.impl.UserService;
 import io.n0sense.examsystem.util.IpUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +25,16 @@ public class UserRestController {
     @PostMapping("/login")
     public ModelAndView login(String username, String password, Model model, HttpServletRequest request) {
         int result = userService.login(username, password);
-        if (result == CommonStatus.OK) {
+        if (result == Status.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", CommonConstants.ROLE_STUDENT);
-            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
-        } else if (result == CommonStatus.ERR_INCORRECT_PASSWORD) {
+            request.getSession().setAttribute("role", Identities.ROLE_STUDENT);
+            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+        } else if (result == Status.ERR_INCORRECT_PASSWORD) {
             model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
-        } else if (result == CommonStatus.ERR_USER_NOT_FOUND) {
+            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+        } else if (result == Status.ERR_USER_NOT_FOUND) {
             model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
         } else {
             this.logger.error("login: Unresolved result " + result);
             return new ModelAndView("404");
@@ -44,13 +44,13 @@ public class UserRestController {
     @PostMapping("/register")
     public ModelAndView register(String username, String password, Model model, HttpServletRequest request){
         int result = userService.register(username, password, IpUtil.getIpAddress(request));
-        if (result == CommonStatus.OK) {
+        if (result == Status.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", CommonConstants.ROLE_STUDENT);
-            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
-        } else if (result == CommonStatus.ERR_USERNAME_IN_USE) {
+            request.getSession().setAttribute("role", Identities.ROLE_STUDENT);
+            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+        } else if (result == Status.ERR_USERNAME_IN_USE) {
             model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + CommonConstants.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
         } else {
             this.logger.error("register: Unresolved result " + result);
             return new ModelAndView("404");
