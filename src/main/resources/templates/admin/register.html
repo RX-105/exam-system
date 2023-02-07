@@ -27,26 +27,24 @@
     <div class="register-box-body">
         <p class="login-box-msg">新用户注册</p>
 
-        <form action="/api/admin/register" method="post">
+        <form>
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="你的名字" name="username">
+                <input type="text" class="form-control" placeholder="你的名字" id="username">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="组名" name="groupName">
+                <input type="text" class="form-control" placeholder="组名" id="groupName">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="密码" name="password">
+                <input type="password" class="form-control" placeholder="密码" id="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="确认密码">
+                <input type="password" class="form-control" placeholder="确认密码" id="password2">
                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
             </div>
-            <th:block th:if="${msg}">
-                <span th:text="${msg}"></span>
-            </th:block>
+            <div id="msg"></div>
             <div class="row">
                 <div class="col-xs-8">
                     <div class="checkbox icheck">
@@ -57,16 +55,20 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+                    <button type="button" class="btn btn-primary btn-block btn-flat" onclick="register()">注册</button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
 
         <a href="login.html" class="text-center">我有账号，现在就去登录</a>
+        <div><b id="message" style="color: red"></b></div>
     </div>
     <!-- /.forms-box -->
 </div>
+
+<!-- js -->
+<div th:replace="commons/js"></div>
 
 <script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
 <script th:src="@{/static/plugins/bootstrap/js/bootstrap.min.js}"></script>
@@ -79,6 +81,45 @@
             increaseArea: '20%' // optional
         });
     });
+    function register() {
+        let username = document.getElementById('username').value;
+        let groupName = document.getElementById('groupName').value;
+        let password = document.getElementById('password').value;
+        let password2 = document.getElementById('password2').value;
+        if (
+            username === ""
+            || groupName === ""
+            || password === ""
+            || password2 === ""
+        ){
+            alert("你应当填完所有的输入框。");
+        } else {
+            if (password === password2) {
+                doPost('/api/admin/register', {
+                        "username": username,
+                        "groupName": groupName,
+                        "password": password
+                    },
+                    response => {
+                        if (response.data.status === 0){
+                            window.location = response.data.data['location']
+                        } else if (response.data.status === 1001){
+                            document.getElementById("message").innerText = response.data.message
+                            document.querySelector("#username").style['border-color'] = 'red'
+                        } else {
+                            window.location = response.data.data['location']
+                        }
+                    },
+                    exception => {
+                        alert(exception.data);
+                    }
+                )
+            } else {
+                document.getElementById("message").innerText = "两次输入的密码不匹配。"
+                document.querySelector("#password2").style['border-color'] = 'red'
+            }
+        }
+    }
 </script>
 </body>
 
