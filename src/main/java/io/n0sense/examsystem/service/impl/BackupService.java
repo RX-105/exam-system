@@ -35,6 +35,8 @@ public class BackupService implements IBackupService {
     private String tableName;
     @Value("${spring.datasource.mysql-home}")
     private String mysqlHome;
+    @Value("${spring.datasource.backup-location}")
+    private String backupLocation;
 
     @Override
     @RecordLog(action = Actions.CREATE_BACKUP)
@@ -50,7 +52,7 @@ public class BackupService implements IBackupService {
                 " -p" + password +
                 " --default-character-set=utf8" +
                 " --hex-blob" +
-                " --result-file=.\\" + fileName +
+                " --result-file=" + backupLocation + fileName +
                 " " + tableName;
         Backup backup = Backup.builder()
                 .filename(fileName)

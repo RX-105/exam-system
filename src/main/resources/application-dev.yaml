@@ -7,6 +7,7 @@ spring:
     host: 127.0.0.1
     table-name: examsystem
     mysql-home: C:\Program Files\MySQL\MySQL Server 8.0\bin
+    backup-location: .\
   servlet:
     multipart:
       enabled: true
