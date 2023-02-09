@@ -114,7 +114,8 @@ create table log(
 create table backup(
     backup_id int primary key auto_increment,
     time datetime,
-    filename varchar(255)
+    filename varchar(255),
+    creator varchar(32)
 );
 
 alter table exam AUTO_INCREMENT=100000;
