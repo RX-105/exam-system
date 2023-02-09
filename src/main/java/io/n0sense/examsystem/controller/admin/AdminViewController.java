@@ -94,9 +94,18 @@ public class AdminViewController {
     }
 
     @GetMapping("/sudoers/db")
-    public ModelAndView getSudoersDBView(Model model) {
-        List<Backup> backupList = backupService.findAll();
-        model.addAttribute("backup", backupList);
+    public ModelAndView getSudoersDBView(Integer page, Model model) {
+        Page<Backup> backupPage = backupService.findAll(
+                (null == page ? 0 : page),
+                10
+        );
+        List<Backup> backupList = backupPage.toList();
+        if (page != null && backupPage.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("backups", backupList);
+            model.addAttribute("backupPage", backupPage);
+        }
 
         return new ModelAndView("/admin/sudoers/db");
     }
