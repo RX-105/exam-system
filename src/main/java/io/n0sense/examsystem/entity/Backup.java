@@ -21,4 +21,5 @@ public class Backup {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
     private String filename;
+    private String creator;
 }
