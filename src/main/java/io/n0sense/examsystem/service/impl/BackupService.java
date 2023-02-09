@@ -5,10 +5,12 @@ import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.repository.BackupRepository;
 import io.n0sense.examsystem.service.IBackupService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -24,8 +25,8 @@ import java.util.NoSuchElementException;
 @Log
 public class BackupService implements IBackupService {
     private final Runtime runtime = Runtime.getRuntime();
-    @Autowired
     private final BackupRepository backupRepository;
+    private final HttpSession session;
     @Value("${spring.datasource.username}")
     private String username;
     @Value("${spring.datasource.password}")
@@ -58,6 +59,7 @@ public class BackupService implements IBackupService {
         Backup backup = Backup.builder()
                 .filename(fileName)
                 .time(now)
+                .creator((String) session.getAttribute("username"))
                 .build();
         backupRepository.save(backup);
         runtime.exec(command);
@@ -103,7 +105,7 @@ public class BackupService implements IBackupService {
     }
 
     @Override
-    public List<Backup> findAll() {
-        return backupRepository.findAll();
+    public Page<Backup> findAll(int page, int size) {
+        return backupRepository.findAll(PageRequest.of(page, size));
     }
 }
