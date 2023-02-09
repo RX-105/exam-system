@@ -12,6 +12,7 @@ import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.BackupService;
 import io.n0sense.examsystem.service.impl.LogService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,10 @@ public class AdminRestController {
     private final AdminService adminService;
     private final LogService logService;
     private final BackupService backupService;
-    private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
+    private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
-    @RecordLog(action = Actions.LOGIN)
+    @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
     @NoNullArgs
     public R register(String username, String password, String groupName, HttpServletRequest request) {
         int result = this.adminService.register(username, password, groupName);
@@ -67,7 +68,7 @@ public class AdminRestController {
                     .build();
         } else {
             // 其他错误
-            this.logger.error("register: Unresolved result " + result);
+            this.log.error("register: Unresolved result " + result);
             data.put("location", "/404");
             return R.builder()
                     .status(Status.ERR_UNSPECIFIED)
@@ -78,10 +79,12 @@ public class AdminRestController {
     }
 
     @PostMapping({"/register2"})
+    @RecordLog(action = Actions.REGISTER, message = "为他人注册")
     @NoNullArgs
-    public R register(String username, String password, String groupName) {
+    public R register(String username, String password, String groupName, HttpSession session) {
         int result = this.adminService.register(username, password, groupName);
         if (result == Status.OK) {
+            log.info(session.getAttribute("username") + "为" + username + "创建了用户");
             // 检查判断为注册成功
             return R.builder()
                     .status(result)
@@ -95,7 +98,7 @@ public class AdminRestController {
                     .build();
         } else {
             // 其他错误
-            this.logger.error("register: Unresolved result " + result);
+            this.log.error("register: Unresolved result " + result);
             return R.builder()
                     .status(Status.ERR_UNSPECIFIED)
                     .message("发生未知错误。")
@@ -132,7 +135,7 @@ public class AdminRestController {
                     .build();
         } else {
             // 其他错误
-            this.logger.error("login: Unresolved result " + result);
+            this.log.error("login: Unresolved result " + result);
             return R.builder()
                     .status(Status.ERR_UNSPECIFIED)
                     .message("发生未知错误。")
@@ -156,7 +159,7 @@ public class AdminRestController {
             return new ModelAndView("/" + Identities.ROLE_ADMIN +
                     "/" + Identities.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
         } else {
-            this.logger.error("publishEnrollmentInfo: Unresolved result " + result);
+            this.log.error("publishEnrollmentInfo: Unresolved result " + result);
             return new ModelAndView("404");
         }
     }
