@@ -80,6 +80,23 @@
             .then(success)
             .catch(fail);
     }
+
+    function doDelete(endpoint, data, success, fail) {
+        let formData = new FormData();
+        for (let key in data) {
+            formData.append(key, data[key]);
+        }
+        axios({
+            method: "delete",
+            url: endpoint,
+            data: formData,
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+            .then(success)
+            .catch(fail);
+    }
 </script>
 <script>
     /**
