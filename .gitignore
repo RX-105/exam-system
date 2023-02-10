@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Exceptions ##
+src/main/resources/application-dev.yaml
