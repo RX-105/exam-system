@@ -46,18 +46,6 @@
 <script data-th-src="@{/static/plugins/axios/axios.min.js}"></script>
 <script>
     /**
-     * 使用GET方式请求指定的API。
-     * @param {string} endpoint 请求的API
-     * @param {JSON} param JSON参数对象
-     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} success Promise对象then函数传入的回调
-     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} fail Promise对象catch函数传入的回调
-     */
-    function doGet(endpoint, param, success, fail) {
-        axios.get(endpoint,param)
-            .then(success)
-            .catch(fail);
-    }
-    /**
      * 使用POST方式请求指定的API，请求体数据格式为form-data。
      * @param {string} endpoint 请求的API
      * @param {JSON} data JSON参数对象
@@ -81,12 +69,12 @@
             .catch(fail);
     }
 
-    function doDelete(endpoint, data, success, fail) {
+    function doDelete(endpoint, data) {
         let formData = new FormData();
         for (let key in data) {
             formData.append(key, data[key]);
         }
-        axios({
+        return axios({
             method: "delete",
             url: endpoint,
             data: formData,
@@ -94,8 +82,6 @@
                 "Content-Type": "multipart/form-data"
             }
         })
-            .then(success)
-            .catch(fail);
     }
 </script>
 <script>
@@ -104,12 +90,33 @@
      * @param {string} messageHTML 提示框的内容，使用HTML格式。
      * @param {boolean} useSingleOption 默认为false，包含关闭和确定两个选项；如果设置为true，则会移除关闭选项。
      * @param {string | null} onclickFnAttr 确定按钮按下时执行的动作，内容为eval()函数参数类似的函数字符串；如果不设置，默认为关闭提示框。
+     * 这里不能使用函数对象或箭头函数，只能是字符串。如果想传递具体函数，使用{@code makeModal2()}。
      * @see 使用{@link toggleModal}函数切换提示框状态，使用{@link showModal}或{@link hideModal}手动切换状态。
      */
     function makeModal(messageHTML, useSingleOption = false, onclickFnAttr = "hideModal()") {
         document.getElementById('modalMessage').innerHTML = messageHTML;
         if (onclickFnAttr != null) {
             document.getElementById('modalConfirm').setAttribute('onclick', 'javascript:'+onclickFnAttr);
+        }
+        let dismissBtn = document.getElementById("modalDismiss");
+        if (useSingleOption){
+            dismissBtn.style.visibility = 'hidden';
+        } else {
+            dismissBtn.style.visibility = 'visible';
+        }
+        showModal();
+    }
+    /**
+     * 生成一个提示框。和{@code makeModal()}不一样的是，这个函数的的onClickFn参数接受的是函数对象。
+     * @param {string} messageHTML 提示框的内容，使用HTML格式。
+     * @param {boolean} useSingleOption 默认为false，包含关闭和确定两个选项；如果设置为true，则会移除关闭选项。
+     * @param {Function} onclickFn 确定按钮按下时执行的动作，内容为函数对象。
+     * @see 使用{@link toggleModal}函数切换提示框状态，使用{@link showModal}或{@link hideModal}手动切换状态。
+     */
+    function makeModal2(messageHTML, useSingleOption = false, onclickFn = () => hideModal()) {
+        document.getElementById('modalMessage').innerHTML = messageHTML;
+        if (onclickFn != null) {
+            document.getElementById('modalConfirm').onclick = onclickFn();
         }
         let dismissBtn = document.getElementById("modalDismiss");
         if (useSingleOption){
