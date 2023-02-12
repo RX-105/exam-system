@@ -259,7 +259,7 @@ public class AdminRestController {
         } catch (FileNotFoundException | NoSuchElementException e) {
             return R.builder()
                     .status(Status.ERR_NO_SUCH_ELEMENT)
-                    .message("该备份不存在。")
+                    .message("备份文件可能不存在，但已移除该记录。")
                     .build();
         } catch (IOException e) {
             return R.builder()
