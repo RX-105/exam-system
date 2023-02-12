@@ -92,6 +92,7 @@ public class BackupService implements IBackupService {
         Backup backup = backupRepository.findById(id).orElseThrow();
         File backupFile = new File(backupLocation + File.separator + backup.getFilename());
         if (!backupFile.exists()) {
+            backupRepository.deleteById(id);
             log.info("尝试移除一个备份记录，但文件不存在，ID为" + id + "，文件名为" + backup.getFilename());
             throw new FileNotFoundException();
         }
