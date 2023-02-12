@@ -30,29 +30,27 @@ public class RecordLogAdvisor {
         if (returnType == int.class || returnType == Integer.class) {
             try {
                 if (((int) result) == Status.OK) {
-                    doRecord(recordLog);
+                    doRecord(recordLog.action(), recordLog.message());
                 }
             } catch (ClassCastException ignored) {
             }
         } else if (returnType == R.class) {
             try {
                 if (((R) result).getStatus() == Status.OK) {
-                    doRecord(recordLog);
+                    doRecord(recordLog.action(), recordLog.message());
                 }
             } catch (ClassCastException ignored) {
             }
         } else {
-            doRecord(recordLog);
+            doRecord(recordLog.action(), recordLog.message());
         }
     }
 
-    protected void doRecord(RecordLog recordLog) {
-        String[] actions = recordLog.action();
-        String[] messages = recordLog.message();
+    protected void doRecord(String[] actions, String[] messages) {
         if (messages.length < actions.length) {
             int oldLength = messages.length;
             messages = Arrays.copyOf(messages, actions.length);
-            Arrays.fill(messages, oldLength, oldLength+1, "");
+            Arrays.fill(messages, oldLength, oldLength + 1, "");
         }
         for (int i = 0; i < actions.length; i++) {
             logService.record(actions[i], messages[i], request);
