@@ -2,6 +2,7 @@ package io.n0sense.examsystem.controller.admin;
 
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
+import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.entity.Log;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 实现管理员页面功能的控制器。
@@ -55,6 +57,17 @@ public class AdminViewController {
         } else {
             return new ModelAndView("/admin/login");
         }
+    }
+
+    @GetMapping("/register")
+    public ModelAndView getAdminRegister(Model model) {
+        Map<String, String> identities = Map.of(
+                Identities.GROUP_SYSTEM_ADMIN, "系统管理员",
+                Identities.GROUP_ACADEMIC_AFFAIRS, "教务管理员",
+                Identities.GROUP_RECRUIT_AFFAIRS, "招生管理员"
+        );
+        model.addAttribute("identities", identities);
+        return new ModelAndView("/admin/register");
     }
 
     @GetMapping("/status")

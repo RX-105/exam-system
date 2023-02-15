@@ -14,9 +14,4 @@ public class AdminPageController {
     public String getAdminHome(){
         return "/admin/home";
     }
-
-    @GetMapping("/register")
-    public String getAdminRegister(){
-        return "/admin/register";
-    }
 }
