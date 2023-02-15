@@ -37,7 +37,7 @@ public class AdminService implements IAdminService {
      * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_USERNAME_IN_USE</code>。
      */
     @Override
-    public int register(String username, String password, String groupName){
+    public int register(String username, String password, String groupName, Long schoolId){
         if (adminRepository.existsAdminByName(username)){
             return Status.ERR_USERNAME_IN_USE;
         } else {
@@ -45,6 +45,7 @@ public class AdminService implements IAdminService {
             admin.setName(username);
             admin.setPassword(PasswordEncoder.SHA256Encrypt(password));
             admin.setGroupName(groupName);
+            admin.setSchoolId(schoolId);
             adminRepository.save(admin);
 
             Optional<Admin> savedAdmin = adminRepository.findAdminByName(username);

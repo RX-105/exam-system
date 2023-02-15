@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface IAdminService {
-    int register(String username, String password, String groupName);
+
+    int register(String username, String password, String groupName, Long schoolId);
+
     int login(String username, String password);
     int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
                           double score, String examName, LocalDateTime start, LocalDateTime end);
