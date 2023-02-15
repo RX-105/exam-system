@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class AdminPageController {
-    @GetMapping("/login")
-    public String getAdminLogin(){
-        return "/admin/login";
-    }
-
     @GetMapping("/home")
     public String getAdminHome(){
         return "/admin/home";

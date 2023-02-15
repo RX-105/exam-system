@@ -8,6 +8,7 @@ import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.Stage;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,22 @@ public class AdminViewController {
     public void addCommonAttributes(Model model) {
         model.addAttribute("version", version);
     }
+
+    @GetMapping("/login")
+    public ModelAndView getAdminLoginView(HttpSession session){
+        boolean remember;
+        try {
+            remember = Boolean.parseBoolean((String) session.getAttribute("remember"));
+        } catch (ClassCastException e) {
+            remember = (Boolean) session.getAttribute("remember");
+        }
+        if (remember) {
+            return new ModelAndView("/admin/home");
+        } else {
+            return new ModelAndView("/admin/login");
+        }
+    }
+
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
         // ## 系统状态 ##
