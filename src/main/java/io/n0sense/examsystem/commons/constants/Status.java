@@ -21,4 +21,5 @@ public interface Status {
     int ERR_MAJOR_NOT_FOUND = 1005;
     int ERR_EXAM_EXISTS = 1006;
     int ERR_EXAM_NOT_FOUND = 1007;
+    int ERR_TIME_NOT_ALLOWED = 1008;
 }
