@@ -72,14 +72,17 @@ create table stage(
 	name varchar(20) not null, # 阶段名称
 	start_time datetime, # 开始时间
 	end_time datetime, # 结束时间
-	remark varchar(200) # 描述
+	remark varchar(200), # 描述
+	definer varchar(20) # 定义者
 );
 
 create table admin(
 	admin_id int primary key auto_increment, # 管理员ID
 	name varchar(20) not null, # 名称
 	password varchar(128), # 密码
-	group_name varchar(20) # 所在组
+	group_name varchar(20), # 所在组
+    school_id int, # 外键学校ID
+    foreign key (school_id) references school(school_id)
 );
 
 create table school(
