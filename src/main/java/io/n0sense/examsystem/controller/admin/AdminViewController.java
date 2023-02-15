@@ -9,10 +9,12 @@ import io.n0sense.examsystem.entity.Stage;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -31,6 +33,13 @@ public class AdminViewController {
     private final AdminService adminService;
     private final BackupService backupService;
     private final StageService stageService;
+    @Value("${spring.application.version}")
+    private String version;
+
+    @ModelAttribute
+    public void addCommonAttributes(Model model) {
+        model.addAttribute("version", version);
+    }
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
         // ## 系统状态 ##
