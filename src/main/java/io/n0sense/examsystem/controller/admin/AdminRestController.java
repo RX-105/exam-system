@@ -8,9 +8,11 @@ import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.R;
+import io.n0sense.examsystem.entity.Stage;
 import io.n0sense.examsystem.service.impl.AdminService;
 import io.n0sense.examsystem.service.impl.BackupService;
 import io.n0sense.examsystem.service.impl.LogService;
+import io.n0sense.examsystem.service.impl.StageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -40,20 +42,22 @@ public class AdminRestController {
     private final AdminService adminService;
     private final LogService logService;
     private final BackupService backupService;
+    private final StageService stageService;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
     @PostMapping({"/register"})
     @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
     @NoNullArgs
-    public R register(String username, String password, String groupName, HttpServletRequest request) {
-        int result = this.adminService.register(username, password, groupName);
-        Map<String, Object> data = new HashMap<>();
+    public R register(String username, String password, String groupName, Long schoolId, HttpServletRequest request) {
+        // TODO: 2023/2/15 注册新增一个参数，前端要改
+        int result = this.adminService.register(username, password, groupName, schoolId);
         if (result == Status.OK) {
             // 检查判断为注册成功
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", groupName);
             request.getSession().setAttribute("role", Identities.ROLE_ADMIN);
 
+            Map<String, Object> data = new HashMap<>();
             data.put("location", "/" + Identities.ROLE_ADMIN + "/home");
             return R.builder()
                     .status(result)
@@ -68,12 +72,10 @@ public class AdminRestController {
                     .build();
         } else {
             // 其他错误
-            this.log.error("register: Unresolved result " + result);
-            data.put("location", "/404");
+            this.log.error("register: 预期外的错误  " + result);
             return R.builder()
                     .status(Status.ERR_UNSPECIFIED)
-                    .message("register: Unresolved result " + result)
-                    .data(data)
+                    .message("发生未知错误。")
                     .build();
         }
     }
@@ -81,8 +83,8 @@ public class AdminRestController {
     @PostMapping({"/register2"})
     @RecordLog(action = Actions.REGISTER, message = "为他人注册")
     @NoNullArgs
-    public R register(String username, String password, String groupName, HttpSession session) {
-        int result = this.adminService.register(username, password, groupName);
+    public R register(String username, String password, String groupName, Long schoolId, HttpSession session) {
+        int result = this.adminService.register(username, password, groupName, schoolId);
         if (result == Status.OK) {
             log.info(session.getAttribute("username") + "为" + username + "创建了用户");
             // 检查判断为注册成功
@@ -109,7 +111,7 @@ public class AdminRestController {
     @PostMapping({"/login"})
     @RecordLog(action = Actions.LOGIN)
     @NoNullArgs
-    public R login(String username, String password, HttpServletRequest request) {
+    public R login(String username, String password, Boolean remember, HttpServletRequest request) {
         Map<String, Object> data = new HashMap<>();
         int result = this.adminService.login(username, password);
         // 通过login方法的话，admin一定不是null，不用担心这里的isPresent()检查
@@ -119,6 +121,9 @@ public class AdminRestController {
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", admin.getGroupName());
             request.getSession().setAttribute("role", Identities.ROLE_ADMIN);
+            if (remember) {
+                request.getSession().setAttribute("remember", true);
+            }
 
             data.put("location", "/" + Identities.ROLE_ADMIN + "/home");
             return R.builder()
@@ -135,7 +140,7 @@ public class AdminRestController {
                     .build();
         } else {
             // 其他错误
-            this.log.error("login: Unresolved result " + result);
+            this.log.error("login: 预期外的错误  " + result);
             return R.builder()
                     .status(Status.ERR_UNSPECIFIED)
                     .message("发生未知错误。")
@@ -270,6 +275,78 @@ public class AdminRestController {
         return R.builder()
                 .status(Status.OK)
                 .message("已移除该备份。")
+                .build();
+    }
+
+    @PostMapping("/stage")
+    @NoNullArgs
+    public R defineStage(String name, LocalDateTime start, LocalDateTime end, String remarks, HttpSession session) {
+        Stage stage = Stage.builder()
+                .name(name)
+                .startTime(start)
+                .endTime(end)
+                .remark(remarks)
+                .definer((String) session.getAttribute("username"))
+                .build();
+        int result = stageService.defineStage(stage);
+        if (result == Status.OK) {
+            return R.builder()
+                    .status(result)
+                    .message("定义阶段完成。")
+                    .build();
+        } else if (result == Status.ERR_TIME_NOT_ALLOWED) {
+            return R.builder()
+                    .status(result)
+                    .message("时间段不可用，比如这个名称的阶段已经存在，且时间存在重合。")
+                    .build();
+        } else {
+            log.error("defineStage: 预期外的错误 " + result);
+            return R.builder()
+                    .status(Status.ERR_UNSPECIFIED)
+                    .message("发生未知错误。")
+                    .build();
+        }
+    }
+
+    @PostMapping("/stage/{id}")
+    @NoNullArgs
+    public R editStageTime(@PathVariable("id") Long id,
+                           LocalDateTime start, LocalDateTime end) {
+        int result;
+        try {
+            result = stageService.updateTime(id, start, end);
+        } catch (NoSuchElementException e) {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .message("请求修改的阶段并不存在。")
+                    .build();
+        }
+        if (result == Status.OK) {
+            return R.builder()
+                    .status(result)
+                    .message("修改完成。")
+                    .build();
+        } else if (result == Status.ERR_TIME_NOT_ALLOWED) {
+            return R.builder()
+                    .status(result)
+                    .message("时间段不可用，比如这个时间与同阶段的其他时间存在重合。")
+                    .build();
+        } else {
+            log.error("editStageTime: 预期外的错误 " + result);
+            return R.builder()
+                    .status(Status.ERR_UNSPECIFIED)
+                    .message("发生未知错误。")
+                    .build();
+        }
+    }
+
+    @DeleteMapping("/stage/{id}")
+    @NoNullArgs
+    public R removeStage(@PathVariable("id") Long id) {
+        stageService.removeStage(id);
+        return R.builder()
+                .status(Status.OK)
+                .message("已移除这个阶段。")
                 .build();
     }
 }
