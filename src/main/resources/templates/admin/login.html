@@ -39,7 +39,7 @@
             <div class="row">
                 <div class="col-xs-8">
                     <div class="checkbox icheck">
-                        <label><input type="checkbox"> 记住 下次自动登录</label>
+                        <label><input type="checkbox" id="remember"> 记住 下次自动登录</label>
                     </div>
                 </div>
                 <!-- /.col -->
@@ -76,6 +76,7 @@
     function login() {
         let username = document.getElementById('username').value;
         let password = document.getElementById('password').value;
+        const remember = document.getElementById('remember').value === 'on'
         console.log(username+" "+password);
         if (
             username === ""
@@ -85,9 +86,10 @@
         } else {
             doPost('/api/admin/login', {
                     "username": username,
-                    "password": password
-                },
-                response => {
+                    "password": password,
+                    "remember": remember
+                })
+                .then(response => {
                     if (response.data.status === 0){
                         window.location = response.data.data['location']
                     } else if (response.data.status === 1002){
@@ -96,13 +98,15 @@
                     } else {
                         window.location = response.data.data['location']
                     }
-                },
-                exception => {
+                })
+                .catch(exception => {
                     alert(exception.data);
-                }
-            )
+                });
         }
     }
+</script>
+<script th:if="${session.get('remember')}">
+
 </script>
 </body>
 
