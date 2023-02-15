@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,78 +36,119 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>日PV</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
+            <!-- 阶段修改提示 /-->
+            <div class="callout callout-info">
+                <h4>
+                    <i class="icon fa fa-info" style="margin-right: 10px"></i>
+                    阶段也有时间限制...
+                </h4>
+                <p>同一个名称的阶段可以存在多个，但是时间段不允许存在交集。你在定义新的阶段或者修改现有阶段时，这条规则将会生效。</p>
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是阶段定义页面。
-            </p>
+            <!-- 阶段修改提示 /-->
+            <!-- 阶段列表 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">已定义的阶段</h3>
+                </div>
 
+                <!-- 表格本体 -->
+                <div th:if="${stages}">
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--数据列表-->
+                            <table id="" class="table table-bordered table-striped table-hover dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="">名称</th>
+                                    <th class="">开始时间</th>
+                                    <th class="">结束时间</th>
+                                    <th class="">说明</th>
+                                    <th class="">操作</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="stage : ${stages}" th:id="|stage-${stage.getStageId()}|">
+                                    <td name="name" th:text="${stage.getName()}"></td>
+                                    <td name="start" th:text="${stage.getStartTime()}"></td>
+                                    <td name="end" th:text="${stage.getEndTime()}"></td>
+                                    <td name="remark" th:text="${stage.getRemark()}"></td>
+                                    <td name="action">
+                                        <a th:onclick="edit([[${stage.getStageId()}]])" id="edit">更改时间</a>
+                                        |
+                                        <a th:onclick="remove([[${stage.getStageId()}]], false)">移除</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!--数据列表/-->
+
+                        </div>
+                        <!-- 数据表格 /-->
+
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- 分页 -->
+                    <div>
+                        <span th:if="${stagePage.hasPrevious()} == true">
+                            <a th:href="@{/admin/sudoers/stage-def?page={prev}(prev=${stagePage.getNumber()-1})}">上一页</a>
+                        </span>
+                        <span>
+                            当前第<span th:text="${stagePage.getNumber()+1}"></span>页，
+                            共<span th:text="${stagePage.getTotalPages()}"></span>页。
+                        </span>
+                        <span th:if="${stagePage.hasNext()} == true">
+                            <a th:href="@{/admin/sudoers/stage-def?page={next}(next=${stagePage.getNumber()+1})}">下一页</a>
+                        </span>
+                    </div>
+                    <!-- 分页 -->
+                </div>
+                <!-- 表格本体 -->
+                <div class="text-center" style="color: red" th:if="${msg}" th:text="${msg}"></div>
+
+            </div>
+            <!-- 阶段列表 /-->
+            <!-- 定义新的阶段 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">定义新的阶段</h3>
+                </div>
+
+                <div style="padding: 20px 20px 50px;">
+                    <form>
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">阶段名称</span>
+                            <input type="text" class="form-control" placeholder="阶段名称" id="stage-name">
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">开始时间</span>
+                            <input type="datetime-local" class="form-control" placeholder="开始时间" id="stage-start-time">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">结束时间</span>
+                            <input type="datetime-local" class="form-control" placeholder="结束时间" id="stage-end-time">
+                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">阶段描述</span>
+                            <textarea class="form-control" placeholder="在这里输入" id="stage-remarks"></textarea>
+                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                        </div>
+                    </form>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-block btn-flat" onclick="defineStage()">提交</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 定义新的阶段 /-->
         </section>
         <!-- 正文区域 /-->
 
@@ -116,6 +157,8 @@
 
     <!-- 页脚 -->
     <div th:replace="~{commons/footer}"></div>
+    <!-- 提示框 -->
+    <div th:replace="~{commons/modal}"></div>
 
 </div>
 
@@ -148,6 +191,96 @@
         // 激活导航位置
         setSidebarActive("admin-stage-def");
     });
+
+    function edit(id) {
+        const dataParent = document.getElementById("stage-"+id).children;
+        const editElem = dataParent['action'].children['edit'];
+        const start = dataParent['start'].innerText;
+        const end = dataParent['end'].innerText;
+        editElem.innerText = "完成";
+        editElem.onclick = () => {
+            submitChanges(id);
+        };
+        dataParent['start'].innerHTML =
+            "<input type='datetime-local' name='start-datetime' value='"+ start +"'>";
+        dataParent['end'].innerHTML =
+            "<input type='datetime-local' name='end-datetime' value='"+ end +"'>";
+    }
+    function submitChanges(id) {
+        const trChildren = document.getElementById("stage-"+id).children;
+        const start = trChildren['start'].children['start-datetime'].value,
+            end = trChildren['end'].children['end-datetime'].value;
+        if (new Date(start) > new Date(end)) {
+            makeModal("开始时间不能在结束时间之后。", true);
+            return
+        }
+        doPost("/api/admin/stage/"+id, {
+            "start": start,
+            "end": end
+        })
+            .then((response) => {
+                if (response.data.status === 0) {
+                    alert(response.data.message);
+                    window.location.reload();
+                } else if (response.data.status in [102, 1008]) {
+                    makeModal(response.data.message, true);
+                } else {
+                    alert(response.data.message);
+                    window.location.href = response.data.data['location'];
+                }
+            })
+            .catch((exception) => {
+                alert(exception.data);
+            })
+    }
+    function remove(id, confirm) {
+        if (confirm) {
+            doDelete("/api/admin/stage/"+id, {})
+                .then((response) => {
+                    if (response.data.status === 0) {
+                        alert(response.data.message);
+                        window.location.reload();
+                    } else {
+                        alert(response.data.message);
+                        window.location.href = response.data.data['location']
+                    }
+                })
+                .catch((exception) => {
+                    alert(exception.data);
+                })
+        } else {
+            const messageHTML = "<p>你确定要移除这个阶段吗？</p>";
+            makeModal(messageHTML, false, "remove("+id+", true)");
+        }
+
+    }
+    function defineStage() {
+        const name = document.getElementById("stage-name").value,
+            start = document.getElementById("stage-start-time").value,
+            end = document.getElementById("stage-end-time").value,
+            remarks = document.getElementById("stage-remarks").value;
+        console.log(name+" "+start+" "+end+" "+remarks)
+        doPost("/api/admin/stage", {
+            "name": name,
+            "start": start,
+            "end": end,
+            "remarks": remarks
+        })
+            .then((response) => {
+                if (response.data.status === 0) {
+                    alert(response.data.message);
+                    window.location.reload();
+                } else if (response.data.status === 1008) {
+                    makeModal(response.data.message, true);
+                } else {
+                    alert(response.data.message);
+                    window.location.href = response.data.data['location'];
+                }
+            })
+            .catch((exception) => {
+                alert(exception.data);
+            });
+    }
 </script>
 </body>
 </html>
