@@ -14,6 +14,11 @@
     <link rel="stylesheet" th:href="@{/static/plugins/ionicons/css/ionicons.min.css}">
     <link rel="stylesheet" th:href="@{/static/plugins/adminLTE/css/AdminLTE.css}">
     <link rel="stylesheet" th:href="@{/static/plugins/iCheck/square/blue.css}">
+    <style>
+        .input-group-addon{
+            min-width: 80px;
+        }
+    </style>
 </head>
 
 <body class="hold-transition register-page">
@@ -28,19 +33,27 @@
         <p class="login-box-msg">新用户注册</p>
 
         <form>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">用户名</span>
                 <input type="text" class="form-control" placeholder="你的名字" id="username">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="组名" id="groupName">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">用户分组</span>
+                <select class="form-control" title="用户分组" id="groupName">
+                    <option th:each="identity : ${identities}"
+                            th:value="${identity.getKey()}"
+                            th:text="${identity.getValue()}"></option>
+                </select>
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">密码</span>
                 <input type="password" class="form-control" placeholder="密码" id="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">确认密码</span>
                 <input type="password" class="form-control" placeholder="确认密码" id="password2">
                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
             </div>
@@ -69,10 +82,6 @@
 
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
-
-<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
-<script th:src="@{/static/plugins/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/static/plugins/iCheck/icheck.min.js}"></script>
 <script>
     $(function () {
         $('input').iCheck({
@@ -118,6 +127,13 @@
                 document.getElementById("message").innerText = "两次输入的密码不匹配。";
                 document.querySelector("#password2").style['border-color'] = 'red';
             }
+        }
+    }
+    function toggleDropdown(t) {
+        if (t.parentElement.classList.contains('open')) {
+            t.parentElement.classList.add('open')
+        } else {
+            t.parentElement.classList.remove('open')
         }
     }
 </script>
