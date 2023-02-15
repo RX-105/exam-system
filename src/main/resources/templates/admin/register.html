@@ -99,24 +99,24 @@
                         "username": username,
                         "groupName": groupName,
                         "password": password
-                    },
-                    response => {
+                    })
+                    .then(response => {
                         if (response.data.status === 0){
-                            window.location = response.data.data['location']
+                            window.location = response.data.data['location'];
                         } else if (response.data.status === 1001){
-                            document.getElementById("message").innerText = response.data.message
-                            document.querySelector("#username").style['border-color'] = 'red'
+                            document.getElementById("message").innerText = response.data.message;
+                            document.querySelector("#username").style['border-color'] = 'red';
                         } else {
-                            window.location = response.data.data['location']
+                            alert(response.data.message);
+                            window.location = response.data.data['location'];
                         }
-                    },
-                    exception => {
+                    })
+                    .catch(exception => {
                         alert(exception.data);
-                    }
-                )
+                    });
             } else {
-                document.getElementById("message").innerText = "两次输入的密码不匹配。"
-                document.querySelector("#password2").style['border-color'] = 'red'
+                document.getElementById("message").innerText = "两次输入的密码不匹配。";
+                document.querySelector("#password2").style['border-color'] = 'red';
             }
         }
     }
