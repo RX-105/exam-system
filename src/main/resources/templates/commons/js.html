@@ -46,36 +46,32 @@
 <script data-th-src="@{/static/plugins/axios/axios.min.js}"></script>
 <script>
     /**
-     * 使用POST方式请求指定的API，请求体数据格式为form-data。
+     * 使用POST方式请求指定的API，请求体数据格式为form-data，返回一个Promise对象。
      * @param {string} endpoint 请求的API
-     * @param {JSON} data JSON参数对象
-     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} success Promise对象then函数传入的回调
-     * @param {(reason: *) => (PromiseLike<TResult> | TResult)} fail Promise对象catch函数传入的回调
+     * @param {JSON | Object} data JSON参数对象
+     * @return {Promise} Promise对象
      */
-    function doPost(endpoint, data, success, fail) {
-        let formData = new FormData();
-        for (let key in data) {
-            formData.append(key, data[key]);
-        }
-        axios({
-            method: "post",
-            url: endpoint,
-            data: formData,
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        })
-            .then(success)
-            .catch(fail);
+    function doPost(endpoint, data) {
+        return request(endpoint, data, "post");
     }
 
+    /**
+     * 使用DELETE方式请求指定的API，请求体数据格式为form-data，返回一个Promise对象。
+     * @param {string} endpoint 请求的API
+     * @param {JSON | Object} data JSON参数对象
+     * @return {Promise} Promise对象
+     */
     function doDelete(endpoint, data) {
+        return request(endpoint, data, "delete");
+    }
+
+    function request(endpoint, data, method) {
         let formData = new FormData();
         for (let key in data) {
             formData.append(key, data[key]);
         }
         return axios({
-            method: "delete",
+            method: method,
             url: endpoint,
             data: formData,
             headers: {
