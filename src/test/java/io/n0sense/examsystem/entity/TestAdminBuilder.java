@@ -11,6 +11,7 @@ public class TestAdminBuilder {
                 .name("demo")
                 .password("1234")
                 .groupName("sudoers")
+                .schoolId(100000L)
                 .build();
         log.info("admin.name = " + admin.getName());
     }

@@ -22,7 +22,7 @@ public class TestAdminRepository {
     @Test
     @Order(1)
     void test1Insert(){
-        Admin admin = new Admin(1002L, "demo2", "1234", "sudoers");
+        Admin admin = new Admin(1002L, "demo2", "1234", "sudoers", 100000L);
         adminRepository.save(admin);
     }
 
