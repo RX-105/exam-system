@@ -34,3 +34,4 @@ build/
 
 ## Exceptions ##
 src/main/resources/application-dev.yaml
+/data.sql
