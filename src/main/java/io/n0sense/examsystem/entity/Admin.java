@@ -25,6 +25,7 @@ public class Admin extends BaseEntity{
     private String name;
     private String password;
     private String groupName;
+    private Long schoolId;
 
     @Override
     public boolean equals(Object o) {
