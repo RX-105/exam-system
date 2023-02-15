@@ -14,6 +14,7 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "stage")
 public class Stage {
     @Id
@@ -27,6 +28,7 @@ public class Stage {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
     private String remark;
+    private String definer;
 
     @Override
     public boolean equals(Object o) {
