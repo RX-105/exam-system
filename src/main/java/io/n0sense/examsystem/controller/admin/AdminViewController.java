@@ -5,10 +5,9 @@ import io.n0sense.examsystem.commons.SystemStatistics;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.entity.Log;
-import io.n0sense.examsystem.service.impl.AdminService;
-import io.n0sense.examsystem.service.impl.BackupService;
-import io.n0sense.examsystem.service.impl.LogService;
-import io.n0sense.examsystem.service.impl.VisitsService;
+import io.n0sense.examsystem.entity.Stage;
+import io.n0sense.examsystem.service.impl.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class AdminViewController {
     private final VisitsService visitsService;
     private final AdminService adminService;
     private final BackupService backupService;
-
+    private final StageService stageService;
     @GetMapping("/status")
     public ModelAndView getStatusView(Model model) {
         // ## 系统状态 ##
@@ -108,5 +106,22 @@ public class AdminViewController {
         }
 
         return new ModelAndView("/admin/sudoers/db");
+    }
+
+    @GetMapping("/sudoers/stage-def")
+    public ModelAndView getSudoersStageDefView(Integer page, Model model) {
+        Page<Stage> stagePage =  stageService.findAll(
+                (null == page ? 0 : page),
+                10
+        );
+        List<Stage> stages = stagePage.toList();
+        if (page != null && stagePage.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("stages", stages);
+            model.addAttribute("stagePage", stagePage);
+        }
+
+        return new ModelAndView("/admin/sudoers/stage-def");
     }
 }
