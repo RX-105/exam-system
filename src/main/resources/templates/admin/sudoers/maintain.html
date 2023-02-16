@@ -7,6 +7,11 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <div th:replace="~{commons/css}"></div>
+    <style>
+        .input-group-addon{
+            min-width: 80px;
+        }
+    </style>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -117,21 +122,24 @@
 
                 <div style="padding: 20px 20px 50px;">
                     <form>
-                        <div class="form-group has-feedback">
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">用户名称</span>
                             <input type="text" class="form-control" placeholder="用户名" id="username">
                             <span class="glyphicon glyphicon-user form-control-feedback"></span>
                         </div>
-                        <div class="form-group has-feedback">
-                            <input type="text" class="form-control" placeholder="组名" id="groupName">
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">用户组</span>
+                            <select class="form-control" title="用户分组" id="groupName">
+                                <option th:each="identity : ${identities}"
+                                        th:value="${identity.getKey()}"
+                                        th:text="${identity.getValue()}"></option>
+                            </select>
                             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                         </div>
-                        <div class="form-group has-feedback">
-                            <input type="password" class="form-control" placeholder="密码" id="password">
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">密码</span>
+                            <input type="password" class="form-control" placeholder="留空则为1234" id="password">
                             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <input type="password" class="form-control" placeholder="确认密码" id="password2">
-                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
                         </div>
                     </form>
                     <div class="col-xs-4">
@@ -209,12 +217,12 @@
             doPost('/api/admin/resetPassword',
                 {
                     "id": id
-                },
-                response => {
+                })
+                .then(response => {
                     alert(response.data.message);
                     window.location.reload()
-                },
-                exception => {
+                })
+                .catch(exception => {
                     alert(exception.data.message);
                 });
         } else {
@@ -234,12 +242,12 @@
             doPost('/api/admin/dropUser',
                 {
                     "id": id
-                },
-                response => {
+                })
+                .then(response => {
                     alert(response.data.message);
                     window.location.reload()
-                },
-                exception => {
+                })
+                .catch(exception => {
                     alert(exception.data.message);
                 });
         } else {
@@ -256,32 +264,24 @@
         let username = document.getElementById('username').value;
         let groupName = document.getElementById('groupName').value;
         let password = document.getElementById('password').value;
-        let password2 = document.getElementById('password2').value;
-        if (
-            username === ""
-            || groupName === ""
-            || password === ""
-            || password2 === ""
-        ){
+        if (password === "") {
+            password = "1234";
+        }
+        if (username === "") {
             alert("你应当填完所有的输入框。");
         } else {
-            if (password === password2) {
-                doPost('/api/admin/register2', {
-                        "username": username,
-                        "groupName": groupName,
-                        "password": password
-                    },
-                    response => {
-                        alert(response.data.message);
-                        window.location.reload();
-                    },
-                    exception => {
-                        alert(exception.data);
-                    }
-                )
-            } else {
-                alert("两次输入的密码不匹配。")
-            }
+            doPost('/api/admin/register2', {
+                    "username": username,
+                    "groupName": groupName,
+                    "password": password
+                })
+                .then(response => {
+                    alert(response.data.message);
+                    window.location.reload();
+                })
+                .catch(exception => {
+                    alert(exception.data);
+                });
         }
     }
 </script>
