@@ -41,25 +41,22 @@ public class AdminService implements IAdminService {
         if (adminRepository.existsAdminByName(username)){
             return Status.ERR_USERNAME_IN_USE;
         } else {
-            Admin admin = new Admin();
-            admin.setName(username);
-            admin.setPassword(PasswordEncoder.SHA256Encrypt(password));
-            admin.setGroupName(groupName);
-            admin.setSchoolId(schoolId);
-            adminRepository.save(admin);
-
-            Optional<Admin> savedAdmin = adminRepository.findAdminByName(username);
-            if (savedAdmin.isPresent()){
-                admin = savedAdmin.get();
-                Registry registry = new Registry(
-                        admin.getAdminId(),
-                        admin.getName(),
-                        admin.getPassword(),
-                        IpUtil.getIpAddress(request),
-                        LocalDateTime.now()
-                );
-                registryRepository.save(registry);
-            }
+            Admin admin = adminRepository.save(
+                    Admin.builder()
+                    .name(username)
+                    .password(PasswordEncoder.SHA256Encrypt(password))
+                    .groupName(groupName)
+                    .schoolId(schoolId)
+                    .build()
+            );
+            Registry registry = new Registry(
+                    admin.getAdminId(),
+                    admin.getName(),
+                    admin.getPassword(),
+                    IpUtil.getIpAddress(request),
+                    LocalDateTime.now()
+            );
+            registryRepository.save(registry);
             return Status.OK;
         }
     }
