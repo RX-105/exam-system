@@ -15,6 +15,7 @@ import io.n0sense.examsystem.service.impl.LogService;
 import io.n0sense.examsystem.service.impl.StageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +57,9 @@ public class AdminRestController {
 
     @PostMapping({"/register"})
     @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
-    @NoNullArgs
-    public R register(String username, String password, String groupName, Long schoolId, HttpServletRequest request) {
+    public R register(@NonNull String username, @NonNull String password,
+                      @NonNull String groupName, @NonNull Long schoolId,
+                      HttpServletRequest request) {
         // TODO: 2023/2/15 注册新增一个参数，前端要改
         int result = this.adminService.register(username, password, groupName, schoolId);
         if (result == Status.OK) {
@@ -91,8 +93,8 @@ public class AdminRestController {
 
     @PostMapping({"/register2"})
     @RecordLog(action = Actions.REGISTER, message = "为他人注册")
-    @NoNullArgs
-    public R register(String username, String password, String groupName, Long schoolId, HttpSession session) {
+    public R register(@NonNull String username, @NonNull String password,
+                      @NonNull String groupName, @NonNull Long schoolId, HttpSession session) {
         int result = this.adminService.register(username, password, groupName, schoolId);
         if (result == Status.OK) {
             log.info(session.getAttribute("username") + "为" + username + "创建了用户");
@@ -196,8 +198,7 @@ public class AdminRestController {
     }
 
     @PostMapping("/resetPassword")
-    @NoNullArgs
-    public R resetPassword(Long id) {
+    public R resetPassword(@NonNull Long id) {
         if (adminService.resetPassword(id)) {
             return R.builder()
                     .status(Status.OK)
@@ -212,8 +213,7 @@ public class AdminRestController {
     }
 
     @PostMapping("/dropUser")
-    @NoNullArgs
-    public R dropUser(Long id) {
+    public R dropUser(@NonNull Long id) {
         adminService.dropUser(id);
         return R.builder()
                 .status(Status.OK)
@@ -222,7 +222,6 @@ public class AdminRestController {
     }
 
     @GetMapping("/backup")
-    @NoNullArgs
     public R addBackup() {
         try {
             backupService.dumpDatabase();
@@ -239,8 +238,7 @@ public class AdminRestController {
     }
 
     @PostMapping("/backup/{id}")
-    @NoNullArgs
-    public R applyBackup(@PathVariable("id") Long id) {
+    public R applyBackup(@PathVariable("id") @NonNull Long id) {
         try {
             backupService.applyFromId(id);
         } catch (FileNotFoundException e) {
@@ -266,8 +264,7 @@ public class AdminRestController {
     }
 
     @DeleteMapping("/backup/{id}")
-    @NoNullArgs
-    public R removeBackup(@PathVariable("id") Long id) {
+    public R removeBackup(@PathVariable("id") @NonNull Long id) {
         try {
             backupService.removeBackup(id);
         } catch (FileNotFoundException | NoSuchElementException e) {
@@ -288,8 +285,9 @@ public class AdminRestController {
     }
 
     @PostMapping("/stage")
-    @NoNullArgs
-    public R defineStage(String name, LocalDateTime start, LocalDateTime end, String remarks, HttpSession session) {
+    public R defineStage(@NonNull String name, @NonNull LocalDateTime start,
+                         @NonNull LocalDateTime end, @NonNull String remarks,
+                         HttpSession session) {
         Stage stage = Stage.builder()
                 .name(name)
                 .startTime(start)
@@ -318,9 +316,8 @@ public class AdminRestController {
     }
 
     @PostMapping("/stage/{id}")
-    @NoNullArgs
-    public R editStageTime(@PathVariable("id") Long id,
-                           LocalDateTime start, LocalDateTime end) {
+    public R editStageTime(@PathVariable("id") @NonNull Long id,
+                           @NonNull LocalDateTime start, @NonNull LocalDateTime end) {
         int result;
         try {
             result = stageService.updateTime(id, start, end);
@@ -350,8 +347,7 @@ public class AdminRestController {
     }
 
     @DeleteMapping("/stage/{id}")
-    @NoNullArgs
-    public R removeStage(@PathVariable("id") Long id) {
+    public R removeStage(@PathVariable("id") @NonNull Long id) {
         stageService.removeStage(id);
         return R.builder()
                 .status(Status.OK)
