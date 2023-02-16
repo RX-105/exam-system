@@ -27,14 +27,14 @@ public class UserRestController {
         int result = userService.login(username, password);
         if (result == Status.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", Identities.ROLE_STUDENT);
-            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+            request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getValue());
+            return new ModelAndView("/" + Identities.ROLE_STUDENT.getValue() + "/home");
         } else if (result == Status.ERR_INCORRECT_PASSWORD) {
             model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + Identities.ROLE_STUDENT.getValue() + "/home");
         } else if (result == Status.ERR_USER_NOT_FOUND) {
             model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + Identities.ROLE_STUDENT.getValue() + "/home");
         } else {
             this.logger.error("login: Unresolved result " + result);
             return new ModelAndView("404");
@@ -46,11 +46,11 @@ public class UserRestController {
         int result = userService.register(username, password, IpUtil.getIpAddress(request));
         if (result == Status.OK) {
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("role", Identities.ROLE_STUDENT);
-            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+            request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getValue());
+            return new ModelAndView("/" + Identities.ROLE_STUDENT.getValue() + "/home");
         } else if (result == Status.ERR_USERNAME_IN_USE) {
             model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT + "/home");
+            return new ModelAndView("/" + Identities.ROLE_STUDENT.getValue() + "/home");
         } else {
             this.logger.error("register: Unresolved result " + result);
             return new ModelAndView("404");
