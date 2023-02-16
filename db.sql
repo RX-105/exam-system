@@ -81,7 +81,7 @@ create table admin(
 	name varchar(20) not null, # 名称
 	password varchar(128), # 密码
 	group_name varchar(20), # 所在组
-    school_id int, # 外键学校ID
+    school_id int not null, # 外键学校ID
     foreign key (school_id) references school(school_id)
 );
 
