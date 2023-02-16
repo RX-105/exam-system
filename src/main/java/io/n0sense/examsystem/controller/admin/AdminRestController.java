@@ -64,10 +64,10 @@ public class AdminRestController {
             // 检查判断为注册成功
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", groupName);
-            request.getSession().setAttribute("role", Identities.ROLE_ADMIN);
+            request.getSession().setAttribute("role", Identities.ROLE_ADMIN.getKey());
 
             Map<String, Object> data = new HashMap<>();
-            data.put("location", "/" + Identities.ROLE_ADMIN + "/home");
+            data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
             return R.builder()
                     .status(result)
                     .message("注册成功。")
@@ -129,12 +129,12 @@ public class AdminRestController {
             // 判断为信息正确
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("group", admin.getGroupName());
-            request.getSession().setAttribute("role", Identities.ROLE_ADMIN);
+            request.getSession().setAttribute("role", Identities.ROLE_ADMIN.getKey());
             if (remember) {
                 request.getSession().setAttribute("remember", true);
             }
 
-            data.put("location", "/" + Identities.ROLE_ADMIN + "/home");
+            data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
             return R.builder()
                     .status(result)
                     .message("登陆成功。")
@@ -162,16 +162,16 @@ public class AdminRestController {
         int result = this.adminService.addEnrollmentInfo(majorName, applicant, enrollment, admission, score, examName, start, end);
         if (result == Status.ERR_MAJOR_EXISTS) {
             model.addAttribute("msg", "已经有这个专业了。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
+                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
         } else if (result == Status.ERR_EXAM_EXISTS) {
             model.addAttribute("msg", "已经有这项考试了。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
+                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
         } else if (result == Status.OK) {
             model.addAttribute("msg", "添加完成。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS + "/recruit-maintain");
+            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
+                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
         } else {
             this.log.error("publishEnrollmentInfo: Unresolved result " + result);
             return new ModelAndView("404");
