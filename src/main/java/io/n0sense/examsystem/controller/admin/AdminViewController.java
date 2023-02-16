@@ -2,7 +2,6 @@ package io.n0sense.examsystem.controller.admin;
 
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
-import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.entity.Log;
@@ -36,16 +35,18 @@ public class AdminViewController {
     private final AdminService adminService;
     private final BackupService backupService;
     private final StageService stageService;
+    private final Map<String, String> groupMap;
     @Value("${spring.application.version}")
     private String version;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
         model.addAttribute("version", version);
+        model.addAttribute("identities", groupMap);
     }
 
     @GetMapping("/login")
-    public ModelAndView getAdminLoginView(HttpSession session){
+    public ModelAndView getLoginView(HttpSession session){
         boolean remember;
         try {
             remember = Boolean.parseBoolean((String) session.getAttribute("remember"));
@@ -57,17 +58,6 @@ public class AdminViewController {
         } else {
             return new ModelAndView("/admin/login");
         }
-    }
-
-    @GetMapping("/register")
-    public ModelAndView getAdminRegister(Model model) {
-        Map<String, String> identities = Map.of(
-                Identities.GROUP_SYSTEM_ADMIN, "系统管理员",
-                Identities.GROUP_ACADEMIC_AFFAIRS, "教务管理员",
-                Identities.GROUP_RECRUIT_AFFAIRS, "招生管理员"
-        );
-        model.addAttribute("identities", identities);
-        return new ModelAndView("/admin/register");
     }
 
     @GetMapping("/status")
