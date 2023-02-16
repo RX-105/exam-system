@@ -45,6 +45,15 @@ public class AdminRestController {
     private final StageService stageService;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
+    @ExceptionHandler(NullPointerException.class)
+    public R nullParameterHandler() {
+        return R.builder()
+                .status(Status.ERR_PARAMETER_NOT_PRESENT)
+                .message("参数不完整。")
+                .data(Map.of("location", "/404"))
+                .build();
+    }
+
     @PostMapping({"/register"})
     @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
     @NoNullArgs
