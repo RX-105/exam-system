@@ -41,9 +41,14 @@
             <div class="form-group has-feedback input-group">
                 <span class="input-group-addon">用户分组</span>
                 <select class="form-control" title="用户分组" id="groupName">
-                    <option th:each="identity : ${identities}"
-                            th:value="${identity.getKey()}"
-                            th:text="${identity.getValue()}"></option>
+                    <th:block th:each="identity : ${identities}">
+                        <option th:if="${identity.getKey() == 'sudoers' && allowAdmin}"
+                                th:value="${identity.getKey()}"
+                                th:text="${identity.getValue()}"></option>
+                        <option th:if="${identity.getKey() != 'sudoers'}"
+                                th:value="${identity.getKey()}"
+                                th:text="${identity.getValue()}"></option>
+                    </th:block>
                 </select>
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
@@ -55,6 +60,20 @@
             <div class="form-group has-feedback input-group">
                 <span class="input-group-addon">确认密码</span>
                 <input type="password" class="form-control" placeholder="确认密码" id="password2">
+                <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">归属学校</span>
+                <select class="form-control" title="用户分组" id="school">
+                    <th:block th:each="school : ${schools}">
+                        <option th:if="${school.getSchoolId() == 100000 && allowAdmin}"
+                                th:value="${school.getSchoolId()}"
+                                th:text="${school.getName()}"></option>
+                        <option th:if="${school.getSchoolId() != 100000}"
+                                th:value="${school.getSchoolId()}"
+                                th:text="${school.getName()}"></option>
+                    </th:block>
+                </select>
                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
             </div>
             <div id="msg"></div>
