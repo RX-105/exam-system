@@ -7,6 +7,7 @@ import io.n0sense.examsystem.entity.Backup;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.Stage;
 import io.n0sense.examsystem.service.impl.*;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +36,18 @@ public class AdminViewController {
     private final AdminService adminService;
     private final BackupService backupService;
     private final StageService stageService;
+    private final SchoolService schoolService;
     private final Map<String, String> groupMap;
     @Value("${application.version}")
     private String version;
+    @Value("${application.admin-token}")
+    private String adminToken;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
         model.addAttribute("version", version);
         model.addAttribute("identities", groupMap);
+        model.addAttribute("schools", schoolService.findAll());
     }
 
     @GetMapping("/login")
@@ -58,6 +63,16 @@ public class AdminViewController {
         } else {
             return new ModelAndView("/admin/login");
         }
+    }
+
+    @GetMapping("/register")
+    public ModelAndView getRegisterView(@Nullable String token, Model model) {
+        if (token != null && token.equals(adminToken)) {
+            model.addAttribute("allowAdmin", true);
+        } else {
+            model.addAttribute("allowAdmin", false);
+        }
+        return new ModelAndView("/admin/register");
     }
 
     @GetMapping("/status")

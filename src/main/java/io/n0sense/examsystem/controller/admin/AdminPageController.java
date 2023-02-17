@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.controller.admin;
 
+import io.n0sense.examsystem.service.impl.SchoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminPageController {
+    private final SchoolService schoolService;
     private final Map<String, String> groupMap;
     @Value("${application.version}")
     private String version;
@@ -25,14 +27,10 @@ public class AdminPageController {
     public void addCommonAttributes(Model model) {
         model.addAttribute("version", version);
         model.addAttribute("identities", groupMap);
+        model.addAttribute("schools", schoolService.findAll());
     }
     @GetMapping("/home")
     public String getHomeView(){
         return "/admin/home";
-    }
-
-    @GetMapping("/register")
-    public String getRegisterView() {
-        return "/admin/register";
     }
 }
