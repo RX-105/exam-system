@@ -8,11 +8,14 @@ package io.n0sense.examsystem.commons.constants;
 public interface Status {
     int ERR_UNSPECIFIED = -1;
     int OK = 0;
+
     // 通用错误状态
     int ERR_OPERATION_FAILED = 100;
     int ERR_PARAMETER_NOT_PRESENT = 101;
+    int ERR_PARAMETER_NOT_MATCH = 102;
     int ERR_NO_SUCH_ELEMENT = 102;
     int ERR_FILE_NOT_FOUND = 103;
+
     // 详细错误状态
     int ERR_USERNAME_IN_USE = 1001;
     int ERR_INCORRECT_PASSWORD = 1002;
