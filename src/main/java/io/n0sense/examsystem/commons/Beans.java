@@ -10,10 +10,10 @@ import java.util.Map;
 public class Beans {
     @Bean("groupMap")
     public Map<String, String> getGroupMap() {
-        return Map.of(
-                Identities.GROUP_SYSTEM_ADMIN.getKey(), "系统管理员",
-                Identities.GROUP_ACADEMIC_AFFAIRS.getKey(), "教务管理员",
-                Identities.GROUP_RECRUIT_AFFAIRS.getKey(), "招生管理员"
+        return Map.ofEntries(
+                Identities.GROUP_SYSTEM_ADMIN,
+                Identities.GROUP_ACADEMIC_AFFAIRS,
+                Identities.GROUP_RECRUIT_AFFAIRS
         );
     }
 }
