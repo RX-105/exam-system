@@ -36,7 +36,7 @@ public class AdminViewController {
     private final BackupService backupService;
     private final StageService stageService;
     private final Map<String, String> groupMap;
-    @Value("${spring.application.version}")
+    @Value("${application.version}")
     private String version;
 
     @ModelAttribute

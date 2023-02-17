@@ -18,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminPageController {
     private final Map<String, String> groupMap;
-    @Value("${spring.application.version}")
+    @Value("${application.version}")
     private String version;
 
     @ModelAttribute

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class TestStageRepository {
     @Autowired
     StageRepository stageRepository;
-    @Value("${spring.application.version}")
+    @Value("${application.version}")
     String version;
     @Test
     void testExists() {

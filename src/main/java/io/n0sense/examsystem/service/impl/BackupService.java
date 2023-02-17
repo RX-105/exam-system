@@ -31,13 +31,13 @@ public class BackupService implements IBackupService {
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
-    @Value("${spring.datasource.host}")
+    @Value("${application.datasource.host}")
     private String host;
-    @Value("${spring.datasource.table-name}")
+    @Value("${application.datasource.table-name}")
     private String tableName;
-    @Value("${spring.datasource.mysql-home}")
+    @Value("${application.datasource.mysql-home}")
     private String mysqlHome;
-    @Value("${spring.datasource.backup-location}")
+    @Value("${application.datasource.backup-location}")
     private String backupLocation;
 
     @Override
