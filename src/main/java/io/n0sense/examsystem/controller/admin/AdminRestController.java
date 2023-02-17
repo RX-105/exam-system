@@ -47,11 +47,11 @@ public class AdminRestController {
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
     @ExceptionHandler(NullPointerException.class)
-    public R nullParameterHandler() {
+    public R nullParameterHandler(NullPointerException e) {
         return R.builder()
                 .status(Status.ERR_PARAMETER_NOT_PRESENT)
                 .message("参数不完整。")
-                .data(Map.of("location", "/404"))
+                .data(Map.of("location", "/404", "exception", e.getMessage()))
                 .build();
     }
 
@@ -81,6 +81,11 @@ public class AdminRestController {
                     .status(result)
                     .message("用户名已占用。")
                     .build();
+        } else if (result == Status.ERR_PARAMETER_NOT_MATCH) {
+            return R.builder()
+                    .status(result)
+                    .message("用户组和归属学校不匹配。")
+                    .build();
         } else {
             // 其他错误
             this.log.error("register: 预期外的错误  " + result);
@@ -108,6 +113,11 @@ public class AdminRestController {
             return R.builder()
                     .status(result)
                     .message("用户名已占用。")
+                    .build();
+        } else if (result == Status.ERR_PARAMETER_NOT_MATCH) {
+            return R.builder()
+                    .status(result)
+                    .message("用户组和归属学校不匹配。")
                     .build();
         } else {
             // 其他错误
@@ -198,8 +208,8 @@ public class AdminRestController {
     }
 
     @PostMapping("/resetPassword")
-    public R resetPassword(@NonNull Long id) {
-        if (adminService.resetPassword(id)) {
+    public R resetPassword(@NonNull Long id, HttpServletRequest request) {
+        if (adminService.resetPassword(id, request)) {
             return R.builder()
                     .status(Status.OK)
                     .message("ID为" + id + "的用户的密码重置成功，新密码是1234。")
