@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.service.impl;
 
+import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.*;
@@ -38,7 +39,11 @@ public class AdminService implements IAdminService {
      */
     @Override
     public int register(String username, String password, String groupName, Long schoolId){
-        if (adminRepository.existsAdminByName(username)){
+        if ((username.equals(Identities.GROUP_SYSTEM_ADMIN.getKey()) && schoolId != 100000L) ||
+                (!username.equals(Identities.GROUP_SYSTEM_ADMIN.getKey()) && schoolId == 100000L)) {
+            return Status.ERR_PARAMETER_NOT_MATCH;
+        }
+        else if (adminRepository.existsAdminByName(username)){
             return Status.ERR_USERNAME_IN_USE;
         } else {
             Admin admin = adminRepository.save(
@@ -157,12 +162,23 @@ public class AdminService implements IAdminService {
     }
 
     @Override
-    public boolean resetPassword(Long id) {
+    public boolean resetPassword(Long id, HttpServletRequest request) {
         Optional<Admin> optionalAdmin = adminRepository.findById(id);
         if (optionalAdmin.isPresent()){
             Admin admin = optionalAdmin.get();
             admin.setPassword(PasswordEncoder.SHA256Encrypt("1234"));
             adminRepository.save(admin);
+            Registry adminRegistry = registryRepository.findById(admin.getAdminId()).orElse(
+                    Registry.builder()
+                            .userId(admin.getAdminId())
+                            .username(admin.getName())
+                            .password(admin.getPassword())
+                            .ip(IpUtil.getIpAddress(request))
+                            .time(LocalDateTime.now())
+                            .build()
+            );
+            adminRegistry.setPassword(admin.getPassword());
+            registryRepository.save(adminRegistry);
             return true;
         } else {
             return false;

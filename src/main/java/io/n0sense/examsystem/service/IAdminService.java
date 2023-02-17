@@ -2,6 +2,7 @@ package io.n0sense.examsystem.service;
 
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.ResponseEntity;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public interface IAdminService {
     Page<Admin> getAllAdmins(int page, int size);
 
     Page<Admin> getAllAdmins(String excludeGroupName, int page, int size);
-    boolean resetPassword(Long id);
+
+    boolean resetPassword(Long id, HttpServletRequest request);
+
     void dropUser(Long id);
 }
