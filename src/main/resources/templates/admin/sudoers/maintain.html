@@ -141,6 +141,15 @@
                             <input type="password" class="form-control" placeholder="留空则为1234" id="password">
                             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                         </div>
+                        <div class="form-group has-feedback input-group">
+                            <span class="input-group-addon">归属学校</span>
+                            <select class="form-control" title="用户分组" id="school">
+                                <option th:each="school : ${schools}"
+                                        th:value="${school.getSchoolId()}"
+                                        th:text="${school.getName()}"></option>
+                            </select>
+                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                        </div>
                     </form>
                     <div class="col-xs-4">
                         <button type="button" class="btn btn-primary btn-block btn-flat" onclick="manualRegister()">注册</button>
@@ -264,16 +273,23 @@
         let username = document.getElementById('username').value;
         let groupName = document.getElementById('groupName').value;
         let password = document.getElementById('password').value;
+        const school = document.getElementById('school').value;
+        if ((groupName === 'sudoers' && school !== '100000') ||
+            (groupName !== 'sudoers' && school === '100000')) {
+            makeModal("创建网站管理员用户组用户时，用户组和归属学校都应该指向网站管理员。", true);
+            return;
+        }
         if (password === "") {
             password = "1234";
         }
         if (username === "") {
-            alert("你应当填完所有的输入框。");
+            makeModal("你应当填完所有的输入框。", true);
         } else {
             doPost('/api/admin/register2', {
                     "username": username,
                     "groupName": groupName,
-                    "password": password
+                    "password": password,
+                    "schoolId": school
                 })
                 .then(response => {
                     alert(response.data.message);
