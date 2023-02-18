@@ -132,3 +132,14 @@
         $('#myModal').modal("show");
     }
 </script>
+<script>
+    function logout() {
+        doPost("/api/logout", {})
+            .then(response => {
+                window.location.href = response.data.data['location'];
+            })
+            .catch(exception => {
+                alert(exception);
+            })
+    }
+</script>
