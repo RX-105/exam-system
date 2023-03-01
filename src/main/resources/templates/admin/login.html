@@ -25,30 +25,30 @@
         <p class="login-box-msg">登录系统</p>
 
         <form>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" id="username-wrapper">
                 <input type="text" class="form-control" placeholder="用户名" id="username">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" id="password-wrapper" style="display: none">
                 <input type="password" class="form-control" placeholder="密码" id="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="row">
-                <div class="col-xs-8">
+                <div class="col-xs-8" id="remember-wrapper" style="visibility: hidden">
                     <div class="checkbox icheck">
                         <label><input type="checkbox" id="remember"> 记住 下次自动登录</label>
                     </div>
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="button" class="btn btn-primary btn-block btn-flat" onclick="login()">登录</button>
+                    <button type="button" class="btn btn-primary btn-block btn-flat" id="login-btn">下一步</button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
         <!-- /.social-auth-links -->
 
-        <a href="#">忘记密码</a><br>
+        <a href="#" onclick="alert('欸嘿')">忘记密码</a><br>
         <a href="/admin/register" class="text-center">新用户注册</a>
         <div><b id="message" style="color: red"></b></div>
 
@@ -56,6 +56,8 @@
 
 </div>
 
+<!-- modal -->
+<div th:replace="~{commons/modal}"></div>
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
 <script>
@@ -66,11 +68,32 @@
             increaseArea: '20%' // optional
         });
     });
+    $('#login-btn').on('click', () => {
+        const username = $('#username').val()
+        if (username === "") {
+            $('#username').css('border-color', 'red')
+            makeModal("请填写所有输入框。", true)
+            return
+        }
+        doPost("/api/admin/checkAdmin/"+username, {})
+            .then((response) => {
+                if (response.data.status === 0) {
+                    $('#username').prop('disabled', true)
+                    $('#password-wrapper').css('display', 'block')
+                    $('#remember-wrapper').css('visibility', 'unset')
+                    $('#login-btn').on('click', login).text('登录')
+                } else {
+                    makeModal("请检查用户名。这个用户不存在。", true)
+                }
+            })
+            .catch((exception) => {
+                alert(exception)
+            })
+    })
     function login() {
         let username = document.getElementById('username').value;
         let password = document.getElementById('password').value;
         const remember = document.getElementById('remember').value === 'on'
-        console.log(username+" "+password);
         if (
             username === ""
             || password === ""
