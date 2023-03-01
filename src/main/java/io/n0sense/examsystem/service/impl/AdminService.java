@@ -130,10 +130,8 @@ public class AdminService implements IAdminService {
         if (majorList.size() == 0) {
             response.setStatus(Status.ERR_MAJOR_NOT_FOUND);
         } else {
-            Iterator<Major> var5 = majorList.iterator();
 
-            while(var5.hasNext()) {
-                Major major = var5.next();
+            for (Major major : majorList) {
                 List<Exam> examList = this.examRepository.findAll();
                 enrollmentInfoList.add(new EnrollmentInfo(major, examList));
             }
@@ -188,5 +186,10 @@ public class AdminService implements IAdminService {
     @Override
     public void dropUser(Long id) {
         adminRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean checkExistence(String username) {
+        return adminRepository.existsAdminByName(username);
     }
 }

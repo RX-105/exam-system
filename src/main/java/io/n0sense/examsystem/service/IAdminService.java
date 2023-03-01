@@ -25,4 +25,6 @@ public interface IAdminService {
     boolean resetPassword(Long id, HttpServletRequest request);
 
     void dropUser(Long id);
+
+    boolean checkExistence(String username);
 }
