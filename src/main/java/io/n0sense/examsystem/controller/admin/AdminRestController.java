@@ -55,6 +55,19 @@ public class AdminRestController {
                 .build();
     }
 
+    @PostMapping("/checkAdmin/{username}")
+    public R checkExistence(@PathVariable("username") String username) {
+        if (adminService.checkExistence(username)) {
+            return R.builder()
+                    .status(Status.OK)
+                    .build();
+        } else {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .build();
+        }
+    }
+
     @PostMapping({"/register"})
     @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
     public R register(@NonNull String username, @NonNull String password,
