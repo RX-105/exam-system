@@ -1,59 +1,107 @@
 package io.n0sense.examsystem.controller.user;
 
-import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.annotation.RecordLog;
+import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
+import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.service.impl.UserService;
-import io.n0sense.examsystem.util.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
-@Controller()
+@RestController()
 @RequestMapping("/api/student")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Log
 public class UserRestController {
-    private final Logger logger = LoggerFactory.getLogger(UserRestController.class);
     private final UserService userService;
+    private final HttpServletRequest request;
+
+    @ExceptionHandler(NullPointerException.class)
+    public R nullParameterHandler(NullPointerException e) {
+        return R.builder()
+                .status(Status.ERR_PARAMETER_NOT_PRESENT)
+                .message("参数不完整。")
+                .data(Map.of("location", "/student/404", "exception", e.getMessage()))
+                .build();
+    }
 
     @PostMapping("/login")
-    public ModelAndView login(String username, String password, Model model, HttpServletRequest request) {
+    @RecordLog(action = Actions.LOGIN, message = "主动登录")
+    public R login(@NonNull String username, @NonNull String password,
+                   Boolean remember) {
         int result = userService.login(username, password);
-        if (result == Status.OK) {
+        if (result == 0) {
+            // 判断为信息正确
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getKey());
-            return new ModelAndView("/" + Identities.ROLE_STUDENT.getKey() + "/home");
-        } else if (result == Status.ERR_INCORRECT_PASSWORD) {
-            model.addAttribute("msg", "密码错误。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT.getKey() + "/home");
-        } else if (result == Status.ERR_USER_NOT_FOUND) {
-            model.addAttribute("msg", "没有这个用户。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT.getKey() + "/home");
+            if (remember != null && remember) {
+                request.getSession().setAttribute("remember", true);
+            }
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("location", "/" + Identities.ROLE_STUDENT.getKey() + "/home");
+            return R.builder()
+                    .status(result)
+                    .message("登陆成功。")
+                    .data(data)
+                    .build();
+        } else if (result == Status.ERR_INCORRECT_PASSWORD
+                || result == Status.ERR_USER_NOT_FOUND) {
+            // 判断为密码错误或用户不存在，但是只能提示密码错误
+            return R.builder()
+                    .status(Status.ERR_INCORRECT_PASSWORD)
+                    .message("密码错误。")
+                    .build();
         } else {
-            this.logger.error("login: Unresolved result " + result);
-            return new ModelAndView("404");
+            // 其他错误
+            log.warning("login: 预期外的错误  " + result);
+            return R.builder()
+                    .status(Status.ERR_UNSPECIFIED)
+                    .message("发生未知错误。")
+                    .build();
         }
     }
 
     @PostMapping("/register")
-    public ModelAndView register(String username, String password, Model model, HttpServletRequest request){
-        int result = userService.register(username, password, IpUtil.getIpAddress(request));
+    @RecordLog(action = Actions.REGISTER, message = "主动注册")
+    public R register(@NonNull String username, @NonNull String password){
+        int result = userService.register(username, password);
         if (result == Status.OK) {
+            // 检查判断为注册成功
             request.getSession().setAttribute("username", username);
             request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getKey());
-            return new ModelAndView("/" + Identities.ROLE_STUDENT.getKey() + "/home");
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
+            return R.builder()
+                    .status(result)
+                    .message("注册成功。")
+                    .data(data)
+                    .build();
         } else if (result == Status.ERR_USERNAME_IN_USE) {
-            model.addAttribute("msg", "用户名已占用。");
-            return new ModelAndView("/" + Identities.ROLE_STUDENT.getKey() + "/home");
+            // 用户密码已经存在
+            return R.builder()
+                    .status(result)
+                    .message("用户名已占用。")
+                    .build();
         } else {
-            this.logger.error("register: Unresolved result " + result);
-            return new ModelAndView("404");
+            // 其他错误
+            log.warning("register: 预期外的错误  " + result);
+            return R.builder()
+                    .status(Status.ERR_UNSPECIFIED)
+                    .message("发生未知错误。")
+                    .build();
         }
     }
 }
