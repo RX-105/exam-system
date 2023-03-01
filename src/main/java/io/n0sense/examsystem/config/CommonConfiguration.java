@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.config;
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
+@ConfigurationPropertiesScan("io.n0sense.examsystem.config")
 public class CommonConfiguration {
     @Bean
     public SimpleUrlHandlerMapping customFaviconHandlerMapping() {
