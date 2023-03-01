@@ -27,13 +27,13 @@
     <div class="login-box-body">
         <p class="login-box-msg">登录系统</p>
 
-        <form action="/api/student/login" method="post">
+        <form>
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="用户名" name="username">
+                <input type="text" class="form-control" placeholder="用户名" id="username">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="密码" name="password">
+                <input type="password" class="form-control" placeholder="密码" id="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <th:block th:if="${msg}">
@@ -42,12 +42,12 @@
             <div class="row">
                 <div class="col-xs-8">
                     <div class="checkbox icheck">
-                        <label><input type="checkbox"> 记住 下次自动登录</label>
+                        <label><input type="checkbox" id="remember"> 记住 下次自动登录</label>
                     </div>
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+                    <button type="button" class="btn btn-primary btn-block btn-flat" id="login-btn">登录</button>
                 </div>
                 <!-- /.col -->
             </div>
@@ -60,9 +60,8 @@
     </div>
 
 </div>
-<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
-<script th:src="@{/static/plugins/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/static/plugins/iCheck/icheck.min.js}"></script>
+<!-- js -->
+<div th:replace="~{commons/js}"></div>
 <script>
     $(function () {
         $('input').iCheck({
@@ -71,6 +70,23 @@
             increaseArea: '20%' // optional
         });
     });
+    $("#login-btn").on("click", () => {
+        doPost("/api/student/login", {
+            "username": $('#username').val(),
+            "password": $('#password').val(),
+            "remember": $('#remember').val() === 'on'
+        })
+            .then(response => {
+                if (response.data.status === 0) {
+                    window.location.href = response.data.data['location'];
+                } else {
+                    makeModal(response.data.message, true);
+                }
+            })
+            .catch(exception => {
+                alert(exception);
+            })
+    })
 </script>
 </body>
 
