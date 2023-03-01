@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,21 @@ public class BackupService implements IBackupService {
     private String mysqlHome;
     @Value("${application.datasource.backup-location}")
     private String backupLocation;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void validateConfiguration() {
+        if (!new File(mysqlHome).exists()) {
+            log.warning("MySQL安装路径不存在，请检查配置文件。");
+        }
+        File backupPath = new File(backupLocation);
+        if (!backupPath.exists()) {
+            if (backupPath.mkdirs()) {
+                log.warning("无法访问备份文件保存路径，已创建该目录。");
+            } else {
+                log.warning("无法访问备份文件保存路径，且无法创建该目录。");
+            }
+        }
+    }
 
     @Override
     @RecordLog(action = Actions.CREATE_BACKUP)
