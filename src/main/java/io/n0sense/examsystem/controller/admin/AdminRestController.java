@@ -60,7 +60,6 @@ public class AdminRestController {
     public R register(@NonNull String username, @NonNull String password,
                       @NonNull String groupName, @NonNull Long schoolId,
                       HttpServletRequest request) {
-        // TODO: 2023/2/15 注册新增一个参数，前端要改
         int result = this.adminService.register(username, password, groupName, schoolId);
         if (result == Status.OK) {
             // 检查判断为注册成功
@@ -133,7 +132,6 @@ public class AdminRestController {
     @RecordLog(action = Actions.LOGIN)
     @NoNullArgs
     public R login(String username, String password, Boolean remember, HttpServletRequest request) {
-        Map<String, Object> data = new HashMap<>();
         int result = this.adminService.login(username, password);
         // 通过login方法的话，admin一定不是null，不用担心这里的isPresent()检查
         Admin admin = this.adminService.findByName(username).orElse(new Admin());
@@ -146,6 +144,7 @@ public class AdminRestController {
                 request.getSession().setAttribute("remember", true);
             }
 
+            Map<String, Object> data = new HashMap<>();
             data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
             return R.builder()
                     .status(result)
