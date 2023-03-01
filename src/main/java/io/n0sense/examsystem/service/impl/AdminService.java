@@ -105,30 +105,30 @@ public class AdminService implements IAdminService {
     }
 
     @Override
-    public ResponseEntity getEnrollmentInfo(String majorName) {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public R getEnrollmentInfo(String majorName) {
+        R response = new R();
         Optional<Major> optionalMajor = this.majorRepository.findByName(majorName);
         Map<String, Object> data = new HashMap<>();
         if (optionalMajor.isPresent()) {
-            responseEntity.setCode(0);
+            response.setStatus(0);
             List<Exam> examList = this.examRepository.findAll();
             data.put("exam", examList);
-            responseEntity.setData(data);
+            response.setData(data);
         } else {
-            responseEntity.setCode(1005);
+            response.setStatus(1005);
         }
 
-        return responseEntity;
+        return response;
     }
 
     @Override
-    public ResponseEntity getEnrollmentInfo() {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public R getEnrollmentInfo() {
+        R response = new R();
         Map<String, Object> data = new HashMap<>();
         List<Major> majorList = this.majorRepository.findAll();
         List<EnrollmentInfo> enrollmentInfoList = new ArrayList<>();
         if (majorList.size() == 0) {
-            responseEntity.setCode(Status.ERR_MAJOR_NOT_FOUND);
+            response.setStatus(Status.ERR_MAJOR_NOT_FOUND);
         } else {
             Iterator<Major> var5 = majorList.iterator();
 
@@ -139,11 +139,11 @@ public class AdminService implements IAdminService {
             }
 
             data.put("info", enrollmentInfoList);
-            responseEntity.setCode(Status.OK);
-            responseEntity.setData(data);
+            response.setStatus(Status.OK);
+            response.setData(data);
         }
 
-        return responseEntity;
+        return response;
     }
 
     @Override
