@@ -1,7 +1,7 @@
 package io.n0sense.examsystem.service;
 
 import io.n0sense.examsystem.entity.Admin;
-import io.n0sense.examsystem.entity.ResponseEntity;
+import io.n0sense.examsystem.entity.R;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 
@@ -15,8 +15,8 @@ public interface IAdminService {
     int login(String username, String password);
     int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
                           double score, String examName, LocalDateTime start, LocalDateTime end);
-    ResponseEntity getEnrollmentInfo(String majorName);
-    ResponseEntity getEnrollmentInfo();
+    R getEnrollmentInfo(String majorName);
+    R getEnrollmentInfo();
     Optional<Admin> findByName(String name);
     Page<Admin> getAllAdmins(int page, int size);
 
