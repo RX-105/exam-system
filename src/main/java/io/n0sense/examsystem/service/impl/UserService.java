@@ -6,9 +6,11 @@ import io.n0sense.examsystem.entity.User;
 import io.n0sense.examsystem.repository.RegistryRepository;
 import io.n0sense.examsystem.repository.UserRepository;
 import io.n0sense.examsystem.service.IUserService;
+import io.n0sense.examsystem.util.IpUtil;
 import io.n0sense.examsystem.util.PasswordEncoder;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,15 +21,15 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final RegistryRepository registryRepository;
+    private final HttpServletRequest request;
     /**
      * 添加一个新用户(学生)，并添加注册表项。
      * @param username 用户名
      * @param password 用户密码
-     * @param ip IP地址
      * @return <code>CommonStatus</code>下定义的状态值，可能取值有<code>OK, ERR_USERNAME_IN_USE</code>。
      */
     @Override
-    public int register(@NonNull String username, @NonNull String password, String ip) {
+    public int register(@NonNull String username, @NonNull String password) {
         // 注册表中记录的用户名可能包含管理员侧的用户名，需要同时检查。
         // 这tm什么鬼设计啊！
         if (userRepository.existsByName(username) ||
@@ -41,7 +43,7 @@ public class UserService implements IUserService {
                     user.getUserId(),
                     user.getName(),
                     PasswordEncoder.SHA256Encrypt(password),
-                    ip,
+                    IpUtil.getIpAddress(request),
                     LocalDateTime.now()
             );
             registryRepository.save(registry);
@@ -58,7 +60,7 @@ public class UserService implements IUserService {
     @Override
     public int login(@NonNull String username, @NonNull String password) {
         if (registryRepository.existsByUsername(username)){
-            Registry registry = registryRepository.findByUsername(username).get();
+            Registry registry = registryRepository.findByUsername(username).orElseThrow();
             String encryptedPassword = PasswordEncoder.SHA256Encrypt(password);
             if (encryptedPassword.equals(registry.getPassword())){
                 return Status.OK;
