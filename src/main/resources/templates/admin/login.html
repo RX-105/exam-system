@@ -68,6 +68,12 @@
             increaseArea: '20%' // optional
         });
     });
+    $('#username').on('focus', () => {
+        $('#username').css("border-color", "#3c8d6c")
+    }).on('focusout', () => {
+        $('#username').css("border-color", "#d2d6de")
+    })
+
     $('#login-btn').on('click', () => {
         const username = $('#username').val()
         if (username === "") {
