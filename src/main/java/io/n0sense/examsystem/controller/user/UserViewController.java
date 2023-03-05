@@ -89,4 +89,9 @@ public class UserViewController {
                 userService.findById((Long) session.getAttribute("uid")).orElseThrow());
         return new ModelAndView("/student/exam-register");
     }
+
+    @GetMapping("/upload-avatar")
+    public ModelAndView getStudentUploadAvatarView() {
+        return new ModelAndView("/student/upload-avatar");
+    }
 }
