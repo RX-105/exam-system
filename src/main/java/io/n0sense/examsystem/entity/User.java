@@ -1,11 +1,11 @@
 package io.n0sense.examsystem.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -24,24 +24,23 @@ public class User {
     @Column(nullable = false)
     private String name;
     private String realname;
-    private Long identityId;
+    private String identityId;
     private String gender;
     private String politicalStatus;
     private Long phone;
     private String source;
     private String graduateSchool;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime graduateTime;
-    private Boolean isCurrent;
-    private Boolean isScience;
-    private String major;
-    private String targetMajor;
-    private Integer cet4;
-    private Integer cet6;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate graduateTime;
+    private Boolean isCurrent; // 以true表示应届，false往届
+    private Boolean isScience; // 以true表示理科，false文科
+    private Long schoolId;
+    private Long major;
+    private String englishLevel;
     private String homeAddress;
     private String nationality;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime birthday;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
     private String avatarName;
     private Long roomId;
     private Long seatId;
