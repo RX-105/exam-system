@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -96,7 +97,7 @@ public class AdminService implements IAdminService {
         } else if (this.examRepository.existsByName(examName)) {
             return Status.ERR_EXAM_EXISTS;
         } else {
-            Major major = new Major(0L, majorName, applicant, enrollment, score, admission);
+            Major major = new Major(0L, majorName, 100001L, applicant, enrollment, new BigDecimal(score), admission);
             major = this.majorRepository.save(major);
             Exam exam = new Exam(0L, examName, major.getId(), start, end);
             this.examRepository.save(exam);
