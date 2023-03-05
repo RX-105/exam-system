@@ -25,6 +25,7 @@ public class LogService implements ILogService {
      * @param message 日志记录的额外信息
      * @param request 即HttpServletRequest对象，用于获取用户名、用户组和IP
      */
+    @Override
     public void record(String action, String message, HttpServletRequest request){
         HttpSession session = request.getSession();
         Log login = Log.builder()
