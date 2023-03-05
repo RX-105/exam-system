@@ -76,4 +76,24 @@ public class UserService implements IUserService {
     public Optional<User> findByName(String username) {
         return userRepository.findByName(username);
     }
+
+    @Override
+    public Optional<User> findById(Long id){
+        return userRepository.findById(id);
+    }
+
+    /**
+     * 检查给定用户名的用户是否存在。
+     * @param username 需要检查的用户名
+     * @return 如果存在，则返回true，否则返回false
+     */
+    @Override
+    public boolean checkExistence(String username) {
+        return userRepository.existsByName(username);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }
