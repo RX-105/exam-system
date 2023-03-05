@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,12 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <div th:replace="~{commons/css}"></div>
+
+    <style>
+        .required-opt {
+            color: red;
+        }
+    </style>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -36,77 +42,202 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>日PV</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
+            <div class="callout callout-info">
+                <button type="button" class="close callout-close">×</button>
+                <h4>
+                    <i class="icon fa fa-info" style="margin-right: 10px"></i>
+                    提交了，还能修改！
+                </h4>
+                <p>请注意目标报考学校的报名截止时间。只要在这个时间之前，你可以随意修改下列信息。</p>
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是考试报名页面。
-            </p>
+            <div class="callout callout-warning">
+                <button type="button" class="close callout-close">×</button>
+                <h4>
+                    <i class="icon fa fa-info" style="margin-right: 10px"></i>
+                    一次只填写一个表单
+                </h4>
+                <p>一次只填写一个表单。当你点击提交时，其他表单里的未提交数据均会被清空。</p>
+            </div>
+            <!-- 所有表单 -->
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- 左1表单 -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">学校和专业</h3>
+                        </div>
+                        <form>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>报考学校<b class="required-opt">*</b> </label>
+                                    <select class="form-control" title="学校列表" id="school">
+                                        <option value="-1">...</option>
+                                        <th:block th:each="school : ${schools}">
+                                            <option th:if="${school.getSchoolId() != 100000}"
+                                                    th:value="${school.getSchoolId()}"
+                                                    th:text="${school.getName()}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>报考专业<b class="required-opt">*</b> </label>
+                                    <select class="form-control" title="专业列表" id="major">
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-primary" id="school-submit-btn">提交</button>
+                        </div>
+                    </div>
+                    <!-- 左1表单 -->
+                    <!-- 左2表单 -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">教育背景</h3>
+                        </div>
+                        <form>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="grad-school">毕业学校<b class="required-opt">*</b> </label>
+                                    <input class="form-control" type="text" id="grad-school">
+                                </div>
+                                <div class="form-group">
+                                    <label for="grad-date">毕业年月<b class="required-opt">*</b> </label>
+                                    <input type="month" class="form-control" id="grad-date">
+                                </div>
+                                <div class="form-group">
+                                    <label for="is-current">应届状态<b class="required-opt">*</b> </label>
+                                    <select class="form-control" id="is-current">
+                                        <option value="true">应届</option>
+                                        <option value="false">往届</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="art-sci">分科<b class="required-opt">*</b> </label>
+                                    <select class="form-control" id="art-sci">
+                                        <option value="false">文科</option>
+                                        <option value="true">理科</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="english-level">英语水平</label>
+                                    <select class="form-control" id="english-level">
+                                        <option value="无">无</option>
+                                        <option value="CET-4">CET-4 425+</option>
+                                        <option value="CET-6">CET-6 425+</option>
+                                        <option value="TEM-6">TEM-6 60+</option>
+                                        <option value="TEM-8">TEM-8 60+</option>
+                                        <option value="IELTS">IELTS 6.0+</option>
+                                        <option value="TOEFL">TOEFL 80+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-primary" id="eduinfo-submit-btn">提交</button>
+                        </div>
+                    </div>
+                    <!-- 左2表单 -->
+
+                </div>
+
+                <div class="col-md-6">
+                    <!-- 右1表单 -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">基本信息</h3>
+                        </div>
+                        <form>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="realname">考生姓名<b class="required-opt">*</b> </label>
+                                    <input class="form-control" id="realname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="identity-id">证件号码<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" placeholder="身份证号、永久居留证号、护照编号..." id="identity-id">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">性别<b class="required-opt">*</b> </label>
+                                    <select class="form-control" id="gender">
+                                        <option value="男">男</option>
+                                        <option value="女">女</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nationality">民族<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="nationality">
+                                </div>
+                                <div class="form-group">
+                                    <label>政治面貌<b class="required-opt">*</b> </label>
+                                    <select class="form-control" id="politics">
+                                        <option value="中共党员">中共党员</option>
+                                        <option value="中共预备党员">中共预备党员</option>
+                                        <option value="共青团员">共青团员</option>
+                                        <option value="少先队员">少先队员</option>
+                                        <option value="民主党派">民主党派</option>
+                                        <option value="群众">群众</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nationality">生源地<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="source">
+                                </div>
+                                <div class="form-group">
+                                    <label for="nationality">家庭住址<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="home-location">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-primary" id="info-submit-btn">提交</button>
+                        </div>
+                    </div>
+                    <!-- 右1表单 -->
+                    <!-- 右2表单 -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">通讯信息</h3>
+                        </div>
+                        <form>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="mail-name">通讯人<b class="required-opt">*</b> </label>
+                                    <input class="form-control" id="mail-name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="mail-addr">通讯地址<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="mail-addr">
+                                </div>
+                                <div class="form-group">
+                                    <label for="zip">邮政编码<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="zip">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tel">联系电话<b class="required-opt">*</b> </label>
+                                    <input type="text" class="form-control" id="tel">
+                                </div>
+                                <div class="form-group">
+                                    <label for="mobile">移动电话</label>
+                                    <input type="text" class="form-control" id="mobile">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-primary" id="contact-submit-btn">提交</button>
+                        </div>
+                    </div>
+                    <!-- 右2表单 -->
+
+                </div>
+            </div>
+            <!-- 所有表单 -->
+
+            <div class="callout callout-info">
+                <p>当你填写完毕信息之后，就可以上传个人照片了。</p>
+                <button type="button" class="btn btn-default" onclick="window.location.href='/student/upload-avatar'">上传照片</button>
+            </div>
 
         </section>
         <!-- 正文区域 /-->
@@ -121,6 +252,7 @@
 
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
+<div th:replace="~{commons/modal}"></div>
 
 <script>
     $(document).ready(function () {
@@ -142,12 +274,139 @@
             liObj.addClass("active");
         }
     }
-
-
     $(document).ready(function () {
         // 激活导航位置
         setSidebarActive("exam-register");
+        doPost("/api/student/user/this", {})
+            .then(resp => {
+                const code = resp.data.status
+                if ([102, 1010].includes(code)) {
+                    makeModal(resp.data.message, true)
+                } else if (code === 0) {
+                    let user = resp.data.data['user-info']
+                    if (user.schoolId != null) $('#school').val(user.schoolId).change()
+                    if (user.major != null) $('#major').val(user.major)
+                    if (user.graduateSchool != null) $('#grad-school').val(user.graduateSchool)
+                    if (user.graduateTime != null) {
+                        let date = user.graduateTime
+                        $('#grad-date').val(date.slice(0, date.lastIndexOf("-")))
+                    }
+                    if (user.isCurrent != null) {
+                        if (user.isCurrent) $('#is-current').val("true")
+                        else $('#is-current').val("false")
+                    }
+                    if (user.isScience != null) {
+                        if (user.isScience) $('#art-sci').val("true")
+                        else $('#art-sci').val("false")
+                    }
+                    if (user.englishLevel != null) $('#english-level').val(user.englishLevel)
+                    if (user.realname != null) $('#realname').val(user.realname)
+                    if (user.identityId != null) $('#identity-id').val(user.identityId)
+                    if (user.gender != null) $('#gender').val(user.gender)
+                    if (user.nationality != null) $('#nationality').val(user.nationality)
+                    if (user.politicalStatus != null) $('#politics').val(user.politicalStatus)
+                    if (user.source != null) $('#source').val(user.source)
+                    if (user.homeAddress != null) $('#home-location').val(user.homeAddress)
+                    if (user.receiver != null) $('#mail-name').val(user.receiver)
+                    if (user.contactAddress != null) $('#mail-addr').val(user.contactAddress)
+                    if (user.zipcode != null) $('#zip').val(user.zipcode)
+                    if (user.contactNumber != null) $('#tel').val(user.contactNumber)
+                    if (user.phone != null) $('#mobile').val(user.phone)
+                } else {
+                    alert(resp.data)
+                }
+            })
     });
+
+    $('#school').change(() => {
+        const schoolId = $('#school').val(),
+            schoolName = $('#school option:selected').text()
+        let major;
+        $('#major').empty()
+        if (schoolId === '-1') {
+            return
+        }
+        doPost("/api/student/school2major/"+schoolId, {})
+            .then(resp => {
+                if (resp.data.status === 0) {
+                    major = resp.data.data['majors']
+                    if (major.length === 0) {
+                        makeModal(schoolName+"目前没有设置招生专业，请联系该学校招生办。")
+                    } else {
+                        $.each(major, (i, item) => {
+                            $('#major').append($('<option>', {
+                                value: item.id,
+                                text : item.name
+                            }))
+                        })
+                    }
+                } else {
+                    alert(resp.data.message)
+                }
+            })
+    })
+
+    $('#school-submit-btn').click(() => {
+        if ($('#school').val() === "-1") {
+            makeModal("不可以选择这个学校。")
+            return
+        }
+        doPost("/api/student/registerExam", {
+            "schoolId": $('#school').val(),
+            "majorId": $('#major').val()
+        })
+            .then(handleRegister)
+            .catch(err => {alert(err)})
+    })
+
+    $('#eduinfo-submit-btn').click(() => {
+        doPost("/api/student/registerExam", {
+            "gradSchool": $('#grad-school').val(),
+            "gradTime": $('#grad-date').val(),
+            "isCurrent": $('#is-current').val(),
+            "isScience": $('#art-sci').val(),
+            "english": $('#english-level').val()
+        })
+            .then(handleRegister)
+            .catch(err => {alert(err)})
+    })
+
+    $('#contact-submit-btn').click(() => {
+        doPost("/api/student/registerExam", {
+            "mailName": $('#mail-name').val(),
+            "mailAddr": $('#mail-addr').val(),
+            "zip": $('#zip').val(),
+            "contact": $('#tel').val(),
+            "phone": $('#mobile').val()
+        })
+            .then(handleRegister)
+            .catch(err => {alert(err)})
+    })
+
+    $('#info-submit-btn').click(() => {
+        doPost("/api/student/registerExam", {
+            "realName": $('#realname').val(),
+            "identity": $('#identity-id').val(),
+            "gender": $('#gender').val(),
+            "nationality": $('#nationality').val(),
+            "politics": $('#politics').val(),
+            "source": $('#source').val(),
+            "home": $('#home-location').val(),
+        })
+            .then(handleRegister)
+            .catch(err => {alert(err)})
+    })
+
+    const handleRegister = resp => {
+        if ([101, 102, 1008, 1009].includes(resp.data.status)) {
+            makeModal(resp.data.message)
+        } else if ([0].includes(resp.data.status)) {
+            alert(resp.data.message)
+            window.location.reload()
+        } else {
+            alert(resp.data)
+        }
+    }
 </script>
 </body>
 </html>
