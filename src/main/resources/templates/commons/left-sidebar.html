@@ -95,12 +95,6 @@
                                     <i class="fa fa-circle-o"></i> 数据库维护
                                 </a>
                             </li>
-
-                            <li id="admin-stage-def">
-                                <a th:href="@{/{role}/{group}/stage-def(role=${session.role}, group=${session.group})}">
-                                    <i class="fa fa-circle-o"></i> 系统阶段定义
-                                </a>
-                            </li>
                         </ul>
                     </li>
                 </th:block>
@@ -147,6 +141,12 @@
                         </span>
                         </a>
                         <ul class="treeview-menu">
+
+                            <li id="admin-stage-def">
+                                <a th:href="@{/{role}/{group}/stage-def(role=${session.role}, group=${session.group})}">
+                                    <i class="fa fa-circle-o"></i> 系统阶段定义
+                                </a>
+                            </li>
 
                             <li id="stage-set">
                                 <a th:href="@{/{role}/{group}/stage-set(role=${session.role}, group=${session.group})}">

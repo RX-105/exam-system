@@ -29,7 +29,7 @@
                 <small>首页</small>
             </h1>
             <ol class="breadcrumb">
-                <li><a href="maintain.html"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li><a href="../sudoers/maintain.html"><i class="fa fa-dashboard"></i> 首页</a></li>
             </ol>
         </section>
         <!-- 内容头部 /-->
@@ -37,12 +37,21 @@
         <!-- 正文区域 -->
         <section class="content">
             <!-- 阶段修改提示 /-->
-            <div class="callout callout-info">
+            <div class="callout callout-warning">
+                <button type="button" class="close callout-close">×</button>
                 <h4>
                     <i class="icon fa fa-info" style="margin-right: 10px"></i>
-                    阶段也有时间限制...
+                    阶段也有时间限制！
                 </h4>
                 <p>同一个名称的阶段可以存在多个，但是时间段不允许存在交集。你在定义新的阶段或者修改现有阶段时，这条规则将会生效。</p>
+            </div>
+            <div class="callout callout-info">
+                <button type="button" class="close callout-close">×</button>
+                <h4>
+                    <i class="icon fa fa-info" style="margin-right: 10px"></i>
+                    别忘了添加阶段...
+                </h4>
+                <p>考生在学校信息公告上将会查看到这些信息。如果你不设置，考生将无法及时获取考试信息！</p>
             </div>
             <!-- 阶段修改提示 /-->
             <!-- 阶段列表 -->
@@ -74,7 +83,7 @@
 
                                 <tbody>
                                 <tr th:each="stage : ${stages}" th:id="|stage-${stage.getStageId()}|">
-                                    <td name="name" th:text="${stage.getName()}"></td>
+                                    <td name="name" th:text="${stageMap.get(stage.getName())}"></td>
                                     <td name="start" th:text="${stage.getStartTime()}"></td>
                                     <td name="end" th:text="${stage.getEndTime()}"></td>
                                     <td name="remark" th:text="${stage.getRemark()}"></td>
@@ -124,7 +133,12 @@
                     <form>
                         <div class="form-group has-feedback input-group">
                             <span class="input-group-addon">阶段名称</span>
-                            <input type="text" class="form-control" placeholder="阶段名称" id="stage-name">
+                            <select class="form-control" id="stage-name">
+                                <th:block th:each="stage : ${stageMap}">
+                                    <option th:value="${stage.getKey()}"
+                                            th:text="${stage.getValue()}"></option>
+                                </th:block>
+                            </select>
                             <span class="glyphicon glyphicon-user form-control-feedback"></span>
                         </div>
                         <div class="form-group has-feedback input-group">
