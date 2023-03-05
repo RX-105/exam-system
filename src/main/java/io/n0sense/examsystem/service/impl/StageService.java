@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +26,8 @@ public class StageService implements IStageService {
 
     @Override
     public int defineStage(Stage stage) {
-        if (stageRepository.existsByNameAndEndTimeAfterAndStartTimeBeforeAndStageIdNot(
-                stage.getName(), stage.getStartTime(), stage.getEndTime(), 0L)
+        if (stageRepository.existsByNameAndSchoolIdAndEndTimeAfterAndStartTimeBeforeAndStageIdNot(
+                stage.getName(), stage.getSchoolId(), stage.getStartTime(), stage.getEndTime(), 0L)
                 || stage.getStartTime().isAfter(stage.getEndTime())) {
             return Status.ERR_TIME_NOT_ALLOWED;
         } else {
@@ -38,8 +39,8 @@ public class StageService implements IStageService {
     @Override
     public int updateTime(Long id, LocalDateTime start, LocalDateTime end) {
         Stage stage = stageRepository.findById(id).orElseThrow();
-        if (stageRepository.existsByNameAndEndTimeAfterAndStartTimeBeforeAndStageIdNot(
-                stage.getName(), start, end, id)
+        if (stageRepository.existsByNameAndSchoolIdAndEndTimeAfterAndStartTimeBeforeAndStageIdNot(
+                stage.getName(), stage.getSchoolId(), start, end, id)
                 || stage.getStartTime().isAfter(stage.getEndTime())) {
             return Status.ERR_TIME_NOT_ALLOWED;
         } else {
@@ -53,5 +54,15 @@ public class StageService implements IStageService {
     @Override
     public void removeStage(Long id) {
         stageRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Stage> findAllStageBySchoolId(Long schoolId) {
+        return stageRepository.findStagesBySchoolId(schoolId);
+    }
+
+    @Override
+    public List<Stage> findAllStageBySchoolIdAndName(Long schoolId, String name) {
+        return stageRepository.findAllByNameAndSchoolId(name, schoolId);
     }
 }
