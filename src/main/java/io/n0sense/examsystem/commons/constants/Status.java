@@ -25,4 +25,6 @@ public interface Status {
     int ERR_EXAM_EXISTS = 1006;
     int ERR_EXAM_NOT_FOUND = 1007;
     int ERR_TIME_NOT_ALLOWED = 1008;
+    int ERR_TIME_NOT_FOUND = 1009;
+    int ERR_LOGIN_REQUIRED = 1010;
 }
