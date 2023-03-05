@@ -13,10 +13,12 @@ create table exam(
 create table major(
 	id int primary key auto_increment, # 专业ID
 	name varchar(50) not null, # 专业名称
+	school_id int, # 外键 学校ID
 	applicant_count int, # 报考人数
 	enrollment_count int, # 计划招生数
 	accept_score double, # 录取分数线
-	admission_count int # 录取人数
+	admission_count int, # 录取人数
+	foreign key (school_id) references school(school_id)
 );
 
 create table score(
@@ -42,8 +44,8 @@ create table user(
 	graduate_time datetime, # 毕业时间
 	is_current tinyint, # 是否应届
 	is_science tinyint, # 是否理科
-	major varchar(20), # 原专业
-	target_major varchar(20), # 报考专业
+	school_id int, # 报考学校
+	major int, # 报考专业
 	cet4 int, # 四级成绩
 	cet6 int, # 六级成绩
 	home_address varchar(100), # 家庭住址
@@ -57,7 +59,9 @@ create table user(
 	receiver varchar(10), # 接收人
 	contact_address varchar(100), # 通讯地址
 	zipcode int, # 邮编
-	contact_number varchar(20) # 通讯电话
+	contact_number varchar(20), # 通讯电话
+    foreign key (school_id) references school(school_id),
+    foreign key (major) references major(id)
 );
 
 create table config(
@@ -70,10 +74,12 @@ create table config(
 create table stage(
 	stage_id int primary key auto_increment, # 阶段ID
 	name varchar(20) not null, # 阶段名称
+	school_id int, # 学校ID
 	start_time datetime, # 开始时间
 	end_time datetime, # 结束时间
 	remark varchar(200), # 描述
-	definer varchar(20) # 定义者
+	definer varchar(20), # 定义者
+	foreign key (school_id) references school(school_id)
 );
 
 create table admin(
@@ -132,4 +138,3 @@ alter table school AUTO_INCREMENT=100000;
 -- alter table registry AUTO_INCREMENT=100000;
 alter table log AUTO_INCREMENT=100000;
 alter table backup AUTO_INCREMENT=100000;
-	
