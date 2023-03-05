@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -12,6 +14,7 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "major")
 public class Major {
     @Id
@@ -20,9 +23,10 @@ public class Major {
     private Long id;
     @Column(nullable = false)
     private String name;
+    private Long schoolId;
     private Integer applicantCount;
     private Integer enrollmentCount;
-    private Double acceptScore;
+    private BigDecimal acceptScore;
     private Integer admissionCount;
 
     @Override
