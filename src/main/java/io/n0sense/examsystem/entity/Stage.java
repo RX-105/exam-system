@@ -23,6 +23,7 @@ public class Stage {
     private Long stageId;
     @Column(nullable = false)
     private String name;
+    private Long schoolId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
