@@ -2,10 +2,8 @@ package io.n0sense.examsystem.controller.admin;
 
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
-import io.n0sense.examsystem.entity.Admin;
-import io.n0sense.examsystem.entity.Backup;
-import io.n0sense.examsystem.entity.Log;
-import io.n0sense.examsystem.entity.Stage;
+import io.n0sense.examsystem.commons.constants.Stages;
+import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +35,7 @@ public class AdminViewController {
     private final BackupService backupService;
     private final StageService stageService;
     private final SchoolService schoolService;
+    private final MajorService majorService;
     private final Map<String, String> groupMap;
     @Value("${application.version}")
     private String version;
@@ -152,8 +151,8 @@ public class AdminViewController {
         return new ModelAndView("/admin/sudoers/db");
     }
 
-    @GetMapping("/sudoers/stage-def")
-    public ModelAndView getSudoersStageDefView(Integer page, Model model) {
+    @GetMapping("/recruit/stage-def")
+    public ModelAndView getRecruitStageDefView(Integer page, Model model) {
         Page<Stage> stagePage =  stageService.findAll(
                 (null == page ? 0 : page),
                 10
@@ -164,8 +163,26 @@ public class AdminViewController {
         } else {
             model.addAttribute("stages", stages);
             model.addAttribute("stagePage", stagePage);
+            model.addAttribute("stageMap", Stages.stages);
         }
 
-        return new ModelAndView("/admin/sudoers/stage-def");
+        return new ModelAndView("/admin/recruit/stage-def");
+    }
+
+    @GetMapping("/recruit/recruit-maintain")
+    public ModelAndView getRecruitMaintainView(Integer page, Model model) {
+        Page<Major> majorPage =  majorService.findAll(
+                (null == page ? 0 : page),
+                10
+        );
+        List<Major> majors = majorPage.toList();
+        if (page != null && majorPage.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("majors", majors);
+            model.addAttribute("majorPage", majorPage);
+        }
+
+        return new ModelAndView("/admin/recruit/recruit-maintain");
     }
 }
