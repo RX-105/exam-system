@@ -5,14 +5,8 @@ import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Status;
-import io.n0sense.examsystem.entity.Admin;
-import io.n0sense.examsystem.entity.Log;
-import io.n0sense.examsystem.entity.R;
-import io.n0sense.examsystem.entity.Stage;
-import io.n0sense.examsystem.service.impl.AdminService;
-import io.n0sense.examsystem.service.impl.BackupService;
-import io.n0sense.examsystem.service.impl.LogService;
-import io.n0sense.examsystem.service.impl.StageService;
+import io.n0sense.examsystem.entity.*;
+import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
@@ -26,12 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * 管理员页面中的REST API控制器。
@@ -44,6 +36,7 @@ public class AdminRestController {
     private final LogService logService;
     private final BackupService backupService;
     private final StageService stageService;
+    private final MajorService majorService;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
     @ExceptionHandler(NullPointerException.class)
@@ -310,8 +303,18 @@ public class AdminRestController {
     public R defineStage(@NonNull String name, @NonNull LocalDateTime start,
                          @NonNull LocalDateTime end, @NonNull String remarks,
                          HttpSession session) {
+        Optional<Admin> admin = adminService.findByName((String) session.getAttribute("username"));
+        Long schoolId;
+        if (admin.isPresent()) {
+            schoolId = admin.get().getSchoolId();
+        } else {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .build();
+        }
         Stage stage = Stage.builder()
                 .name(name)
+                .schoolId(schoolId)
                 .startTime(start)
                 .endTime(end)
                 .remark(remarks)
@@ -374,6 +377,38 @@ public class AdminRestController {
         return R.builder()
                 .status(Status.OK)
                 .message("已移除这个阶段。")
+                .build();
+    }
+
+    @PostMapping("/major")
+    public R addMajor(String name, Integer enroll, HttpSession session) {
+        Optional<Admin> admin = adminService.findByName((String) session.getAttribute("username"));
+        Long schoolId;
+        if (admin.isPresent()) {
+            schoolId = admin.get().getSchoolId();
+        } else {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .build();
+        }
+        if (majorService.isDuplicate(name, schoolId)) {
+            return R.builder()
+                    .status(Status.ERR_MAJOR_EXISTS)
+                    .message("专业名称重复，请换一个名称。")
+                    .build();
+        }
+        Major major = Major.builder()
+                .name(name)
+                .schoolId(schoolId)
+                .applicantCount(0)
+                .enrollmentCount(enroll)
+                .acceptScore(new BigDecimal("0"))
+                .admissionCount(0)
+                .build();
+        majorService.addMajor(major);
+        return R.builder()
+                .status(Status.OK)
+                .message("添加完成。")
                 .build();
     }
 }
