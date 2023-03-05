@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>管理员 | 注册</title>
+    <title>学生 | 注册</title>
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <script th:src="@{/static/plugins/html5shiv/html5shiv.min.js}"></script>
@@ -14,6 +14,11 @@
     <link rel="stylesheet" th:href="@{/static/plugins/ionicons/css/ionicons.min.css}">
     <link rel="stylesheet" th:href="@{/static/plugins/adminLTE/css/AdminLTE.css}">
     <link rel="stylesheet" th:href="@{/static/plugins/iCheck/square/blue.css}">
+    <style>
+        .input-group-addon{
+            min-width: 80px;
+        }
+    </style>
 </head>
 
 <body class="hold-transition register-page">
@@ -27,22 +32,22 @@
     <div class="register-box-body">
         <p class="login-box-msg">新用户注册</p>
 
-        <form action="/api/admin/register" method="post">
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="你的名字" name="username">
+        <form>
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">用户名</span>
+                <input type="text" class="form-control" placeholder="你的名字" id="username">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="密码" name="password">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">密码</span>
+                <input type="password" class="form-control" placeholder="密码" id="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
-            <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="确认密码">
+            <div class="form-group has-feedback input-group">
+                <span class="input-group-addon">确认密码</span>
+                <input type="password" class="form-control" placeholder="确认密码" id="password-confirm">
                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
             </div>
-            <th:block th:if="${msg}">
-                <span th:text="${msg}"></span>
-            </th:block>
             <div class="row">
                 <div class="col-xs-8">
                     <div class="checkbox icheck">
@@ -53,20 +58,21 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+                    <button type="button" class="btn btn-primary btn-block btn-flat" id="register-btn">注册</button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
 
         <a href="login.html" class="text-center">我有账号，现在就去登录</a>
+        <div><b id="message" style="color: red"></b></div>
     </div>
     <!-- /.forms-box -->
 </div>
 
-<script th:src="@{/static/plugins/jQuery/jquery-2.2.3.min.js}"></script>
-<script th:src="@{/static/plugins/bootstrap/js/bootstrap.min.js}"></script>
-<script th:src="@{/static/plugins/iCheck/icheck.min.js}"></script>
+<div th:replace="~{commons/js}"></div>
+<div th:replace="~{commons/modal}"></div>
+
 <script>
     $(function () {
         $('input').iCheck({
@@ -75,6 +81,63 @@
             increaseArea: '20%' // optional
         });
     });
+    $('#register-btn').on('click', () => {
+        const username = $('#username').val(),
+            password = $('#password').val(),
+            passwordConfirm = $('#password-confirm').val()
+        if (username === "" || password === "" || passwordConfirm === "") {
+            makeModal("请填写所有输入框。", true)
+            return
+        }
+        if (password !== passwordConfirm) {
+            makeModal("两次输入的密码不一致。", true)
+            return
+        }
+        doPost("/api/student/register", {
+            "username": username,
+            "password": password
+        })
+            .then(response => {
+                if (response.data.status === 0){
+                    window.location = response.data.data['location']
+                } else if (response.data.status === 1001){
+                    $('#message').text(response.data.message)
+                    $("#username").css('border-color', 'red')
+                } else {
+                    alert(response.data.message);
+                    window.location = response.data.data['location']
+                }
+            })
+    })
+    function register() {
+        let username = document.getElementById('username').value;
+        let groupName = document.getElementById('groupName').value;
+        let password = document.getElementById('password').value;
+        let password2 = document.getElementById('password2').value;
+        if (
+            username === ""
+            || groupName === ""
+            || password === ""
+            || password2 === ""
+        ){
+            alert("你应当填完所有的输入框。");
+        } else {
+            if (password === password2) {
+                doPost('/api/admin/register', {
+                    "username": username,
+                    "groupName": groupName,
+                    "password": password
+                })
+                    .then()
+                    .catch(exception => {
+                        alert(exception.data);
+                    });
+            } else {
+                document.getElementById("message").innerText = "两次输入的密码不匹配。";
+                document.querySelector("#password2").style['border-color'] = 'red';
+            }
+        }
+    }
 </script>
 </body>
 
