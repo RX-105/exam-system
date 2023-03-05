@@ -4,6 +4,7 @@ import io.n0sense.examsystem.entity.Stage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface StageRepository extends JpaRepository<Stage, Long> {
     /**
@@ -20,6 +21,9 @@ public interface StageRepository extends JpaRepository<Stage, Long> {
 //            and s.endTime > ?2
 //            and s.startTime < ?3
 //            """)
-    boolean existsByNameAndEndTimeAfterAndStartTimeBeforeAndStageIdNot
-    (String name, LocalDateTime start, LocalDateTime end, Long stageId);
+    boolean existsByNameAndSchoolIdAndEndTimeAfterAndStartTimeBeforeAndStageIdNot
+    (String name, Long schoolId, LocalDateTime start, LocalDateTime end, Long stageId);
+
+    List<Stage> findStagesBySchoolId(Long schoolId);
+    List<Stage> findAllByNameAndSchoolId(String name, Long schoolId);
 }
