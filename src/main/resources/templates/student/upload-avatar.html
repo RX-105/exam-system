@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,16 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <div th:replace="~{commons/css}"></div>
+
+    <style>
+        .input-file {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 250px;
+            padding: 0;
+            height: auto;
+        }
+    </style>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -36,78 +46,31 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">上传个人照片</h3>
+                </div>
+                <div class="box-body">
+                    <h3 class="text-center" style="margin-top: 0">图片要求</h3>
+                    <hr>
+                    <p>1、考生上传电子版照片必须为近期免冠正面证件照并且能够清晰的反映本人特征，
+                        红底、蓝底均可，jpg格式，照片尺寸宽高比例大约为1.3:1.6，大小为130×160像素左右，
+                        50kb以下，最终效果以输出后的大小为准。</p>
+                    <p>2、考生上传的电子照片如果不符合要求，可通过PHOTOSHOP等图像处理软件改变图像格式及大小。</p>
+                    <p>3、考生一定不要直接修改其它格式照片的扩展名为 .jpg，要使用PHOTOSHOP等图像处理软件
+                        改变图像格式，否则上传不成功。</p>
+                    <p>4、操作说明：考生在下面的照片框下，点击“浏览”按钮，按上述要求选择处理好的照片，
+                        然后点击“点击上传”按钮，如果上传成功但是未看到上传的照片出现在上面的照片框内，
+                        则点击“照片预览”按钮，将会显示您上传的照片，如果不符合要求，请重新上传您的照片。
+                    </p>
+                    <div style="display: flex; justify-content: center; flex-direction: column; align-items: center" >
+                        <img src="/static/img/user.jpg" width="145px" height="175px" style="border: 3px solid grey">
+                        <input type="file" id="avatar" class="form-control input-file">
+                        <button type="button" id="upload-btn" class="btn btn-primary">上传</button>
                     </div>
                 </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>日PV</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是头像上传页面。
-            </p>
-
         </section>
         <!-- 正文区域 /-->
 
