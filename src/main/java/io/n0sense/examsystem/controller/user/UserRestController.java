@@ -233,11 +233,10 @@ public class UserRestController {
         if (StringUtils.hasLength(contact)) user.setContactNumber(contact);
         if (phone != null) user.setPhone(phone);
 
-        userService.save(user);
-
         return R.builder()
                 .status(Status.OK)
                 .message("修改完成。")
+                .data(Map.of("user-info", userService.save(user)))
                 .build();
     }
 
