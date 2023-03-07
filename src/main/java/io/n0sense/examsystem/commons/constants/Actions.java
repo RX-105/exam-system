@@ -7,4 +7,5 @@ public interface Actions {
     String RESTORE_BACKUP = "restore-backup";
     String REMOVE_BACKUP = "remove-backup";
     String UPDATE_AVATAR = "update-avatar";
+    String ADD_EXAM = "add-exam";
 }
