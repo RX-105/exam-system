@@ -59,7 +59,7 @@
                 <p>一次只填写一个表单。当你点击提交时，其他表单里的未提交数据均会被清空。</p>
             </div>
             <!-- 所有表单 -->
-            <div class="row">
+            <div class="row" id="data-form">
                 <div class="col-md-6">
                     <!-- 左1表单 -->
                     <div class="box box-primary">
@@ -70,7 +70,8 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>报考学校<b class="required-opt">*</b> </label>
-                                    <select class="form-control" title="学校列表" id="school">
+                                    <select class="form-control" title="学校列表" id="school"
+                                            v-model="user.schoolId" v-on:change="schoolChange">
                                         <option value="-1">...</option>
                                         <th:block th:each="school : ${schools}">
                                             <option th:if="${school.getSchoolId() != 100000}"
@@ -81,13 +82,17 @@
                                 </div>
                                 <div class="form-group">
                                     <label>报考专业<b class="required-opt">*</b> </label>
-                                    <select class="form-control" title="专业列表" id="major">
+                                    <select class="form-control" title="专业列表" id="major"
+                                            v-model="user.major">
+                                        <option v-for="major in majorList" :value="major.id">
+                                            {{major.name}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                         </form>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary" id="school-submit-btn">提交</button>
+                            <button type="button" class="btn btn-primary" @click="submitSchoolInfo">提交</button>
                         </div>
                     </div>
                     <!-- 左1表单 -->
@@ -100,29 +105,33 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="grad-school">毕业学校<b class="required-opt">*</b> </label>
-                                    <input class="form-control" type="text" id="grad-school">
+                                    <input class="form-control" type="text" id="grad-school"
+                                           v-model="user.graduateSchool">
                                 </div>
                                 <div class="form-group">
                                     <label for="grad-date">毕业年月<b class="required-opt">*</b> </label>
-                                    <input type="month" class="form-control" id="grad-date">
+                                    <input type="month" class="form-control" id="grad-date"
+                                           v-model="user.graduateTime">
                                 </div>
                                 <div class="form-group">
                                     <label for="is-current">应届状态<b class="required-opt">*</b> </label>
-                                    <select class="form-control" id="is-current">
+                                    <select class="form-control" id="is-current"
+                                            v-model="user.isCurrent">
                                         <option value="true">应届</option>
                                         <option value="false">往届</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="art-sci">分科<b class="required-opt">*</b> </label>
-                                    <select class="form-control" id="art-sci">
+                                    <select class="form-control" id="art-sci" v-model="user.isScience">
                                         <option value="false">文科</option>
                                         <option value="true">理科</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="english-level">英语水平</label>
-                                    <select class="form-control" id="english-level">
+                                    <select class="form-control" id="english-level"
+                                            v-model="user.englishLevel">
                                         <option value="无">无</option>
                                         <option value="CET-4">CET-4 425+</option>
                                         <option value="CET-6">CET-6 425+</option>
@@ -135,7 +144,7 @@
                             </div>
                         </form>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary" id="eduinfo-submit-btn">提交</button>
+                            <button type="button" class="btn btn-primary" @click="submitEduInfo">提交</button>
                         </div>
                     </div>
                     <!-- 左2表单 -->
@@ -152,26 +161,30 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="realname">考生姓名<b class="required-opt">*</b> </label>
-                                    <input class="form-control" id="realname">
+                                    <input class="form-control" id="realname"
+                                           v-model="user.realname">
                                 </div>
                                 <div class="form-group">
                                     <label for="identity-id">证件号码<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" placeholder="身份证号、永久居留证号、护照编号..." id="identity-id">
+                                    <input type="text" class="form-control" placeholder="身份证号、永久居留证号、护照编号..."
+                                           id="identity-id" v-model="user.identityId">
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">性别<b class="required-opt">*</b> </label>
-                                    <select class="form-control" id="gender">
+                                    <select class="form-control" id="gender" v-model="user.gender">
                                         <option value="男">男</option>
                                         <option value="女">女</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="nationality">民族<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="nationality">
+                                    <input type="text" class="form-control" id="nationality"
+                                           v-model="user.nationality">
                                 </div>
                                 <div class="form-group">
                                     <label>政治面貌<b class="required-opt">*</b> </label>
-                                    <select class="form-control" id="politics">
+                                    <select class="form-control" id="politics"
+                                            v-model="user.politicalStatus">
                                         <option value="中共党员">中共党员</option>
                                         <option value="中共预备党员">中共预备党员</option>
                                         <option value="共青团员">共青团员</option>
@@ -182,16 +195,18 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="nationality">生源地<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="source">
+                                    <input type="text" class="form-control" id="source"
+                                           v-model="user.source">
                                 </div>
                                 <div class="form-group">
                                     <label for="nationality">家庭住址<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="home-location">
+                                    <input type="text" class="form-control" id="home-location"
+                                           v-model="user.homeAddress">
                                 </div>
                             </div>
                         </form>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary" id="info-submit-btn">提交</button>
+                            <button type="button" class="btn btn-primary" @click="submitBasicInfo">提交</button>
                         </div>
                     </div>
                     <!-- 右1表单 -->
@@ -204,28 +219,32 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="mail-name">通讯人<b class="required-opt">*</b> </label>
-                                    <input class="form-control" id="mail-name">
+                                    <input class="form-control" id="mail-name" v-model="user.receiver">
                                 </div>
                                 <div class="form-group">
                                     <label for="mail-addr">通讯地址<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="mail-addr">
+                                    <input type="text" class="form-control" id="mail-addr"
+                                           v-model="user.contactAddress">
                                 </div>
                                 <div class="form-group">
                                     <label for="zip">邮政编码<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="zip">
+                                    <input type="text" class="form-control" id="zip"
+                                           v-model="user.zipcode">
                                 </div>
                                 <div class="form-group">
                                     <label for="tel">联系电话<b class="required-opt">*</b> </label>
-                                    <input type="text" class="form-control" id="tel">
+                                    <input type="text" class="form-control" id="tel"
+                                           v-model="user.contactNumber">
                                 </div>
                                 <div class="form-group">
                                     <label for="mobile">移动电话</label>
-                                    <input type="text" class="form-control" id="mobile">
+                                    <input type="text" class="form-control" id="mobile"
+                                           v-model="user.phone">
                                 </div>
                             </div>
                         </form>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary" id="contact-submit-btn">提交</button>
+                            <button type="button" class="btn btn-primary" @click="submitContactInfo">提交</button>
                         </div>
                     </div>
                     <!-- 右2表单 -->
@@ -253,6 +272,7 @@
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
 <div th:replace="~{commons/modal}"></div>
+<script data-th-src="@{/static/plugins/vue/vue.global.min.js}"></script>
 
 <script>
     $(document).ready(function () {
@@ -277,136 +297,121 @@
     $(document).ready(function () {
         // 激活导航位置
         setSidebarActive("exam-register");
-        doPost("/api/student/user/this", {})
-            .then(resp => {
-                const code = resp.data.status
-                if ([102, 1010].includes(code)) {
-                    makeModal(resp.data.message, true)
-                } else if (code === 0) {
-                    let user = resp.data.data['user-info']
-                    if (user.schoolId != null) $('#school').val(user.schoolId).change()
-                    if (user.major != null) $('#major').val(user.major)
-                    if (user.graduateSchool != null) $('#grad-school').val(user.graduateSchool)
-                    if (user.graduateTime != null) {
-                        let date = user.graduateTime
-                        $('#grad-date').val(date.slice(0, date.lastIndexOf("-")))
+
+    });
+
+    const form = Vue.createApp({
+        data() {
+            return {
+                user: {},
+                majorList: [],
+            }
+        },
+        created() {
+            doPost("/api/student/user/this", {})
+                .then(resp => {
+                    const code = resp.data.status
+                    if ([102, 1010].includes(code)) {
+                        makeModal(resp.data.message, true)
+                    } else if (code === 0) {
+                        this.user = resp.data.data['user-info']
+                        this.user.graduateTime =
+                            this.user.graduateTime.slice(0, this.user.graduateTime.lastIndexOf("-"))
+                        this.schoolChange()
+                    } else {
+                        alert(resp.data)
                     }
-                    if (user.isCurrent != null) {
-                        if (user.isCurrent) $('#is-current').val("true")
-                        else $('#is-current').val("false")
-                    }
-                    if (user.isScience != null) {
-                        if (user.isScience) $('#art-sci').val("true")
-                        else $('#art-sci').val("false")
-                    }
-                    if (user.englishLevel != null) $('#english-level').val(user.englishLevel)
-                    if (user.realname != null) $('#realname').val(user.realname)
-                    if (user.identityId != null) $('#identity-id').val(user.identityId)
-                    if (user.gender != null) $('#gender').val(user.gender)
-                    if (user.nationality != null) $('#nationality').val(user.nationality)
-                    if (user.politicalStatus != null) $('#politics').val(user.politicalStatus)
-                    if (user.source != null) $('#source').val(user.source)
-                    if (user.homeAddress != null) $('#home-location').val(user.homeAddress)
-                    if (user.receiver != null) $('#mail-name').val(user.receiver)
-                    if (user.contactAddress != null) $('#mail-addr').val(user.contactAddress)
-                    if (user.zipcode != null) $('#zip').val(user.zipcode)
-                    if (user.contactNumber != null) $('#tel').val(user.contactNumber)
-                    if (user.phone != null) $('#mobile').val(user.phone)
+                })
+        },
+        methods: {
+            schoolChange: function (e) {
+                let schoolId, schoolName, major
+                schoolId = this.user.schoolId
+                if (e != null) {
+                    schoolName = e.target.selectedOptions[0].text
+                } else {
+                    schoolName = ""
+                }
+                if (schoolId === '-1') {
+                    return
+                }
+                doPost("/api/student/school2major/"+schoolId, {})
+                    .then(resp => {
+                        if (resp.data.status === 0) {
+                            major = resp.data.data['majors']
+                            if (major.length === 0) {
+                                makeModal(schoolName+"目前没有设置招生专业，请联系该学校招生办。")
+                            } else {
+                                this.majorList = major
+                            }
+                        } else {
+                            alert(resp.data.message)
+                        }
+                    })
+            },
+            handleRegister: function (resp) {
+                if ([101, 102, 1008, 1009].includes(resp.data.status)) {
+                    makeModal(resp.data.message)
+                } else if ([0].includes(resp.data.status)) {
+                    this.user = resp.data.data['user-info']
+                    this.user.graduateTime =
+                        this.user.graduateTime.slice(0, this.user.graduateTime.lastIndexOf("-"))
+                    this.schoolChange()
+                    $.bootstrapGrowl(resp.data.message)
                 } else {
                     alert(resp.data)
                 }
-            })
-    });
-
-    $('#school').change(() => {
-        const schoolId = $('#school').val(),
-            schoolName = $('#school option:selected').text()
-        let major;
-        $('#major').empty()
-        if (schoolId === '-1') {
-            return
-        }
-        doPost("/api/student/school2major/"+schoolId, {})
-            .then(resp => {
-                if (resp.data.status === 0) {
-                    major = resp.data.data['majors']
-                    if (major.length === 0) {
-                        makeModal(schoolName+"目前没有设置招生专业，请联系该学校招生办。")
-                    } else {
-                        $.each(major, (i, item) => {
-                            $('#major').append($('<option>', {
-                                value: item.id,
-                                text : item.name
-                            }))
-                        })
-                    }
-                } else {
-                    alert(resp.data.message)
+            },
+            submitSchoolInfo: function () {
+                if (this.user.schoolId === "-1") {
+                    makeModal("不可以选择这个学校。")
+                    return
                 }
-            })
-    })
-
-    $('#school-submit-btn').click(() => {
-        if ($('#school').val() === "-1") {
-            makeModal("不可以选择这个学校。")
-            return
+                doPost("/api/student/registerExam", {
+                    "schoolId": this.user.schoolId,
+                    "majorId": this.user.major
+                })
+                    .then(this.handleRegister)
+                    .catch(err => {alert(err)})
+            },
+            submitEduInfo: function () {
+                doPost("/api/student/registerExam", {
+                    "gradSchool": this.user.graduateSchool,
+                    "gradTime": this.user.graduateTime,
+                    "isCurrent": this.user.isCurrent,
+                    "isScience": this.user.isScience,
+                    "english": this.user.englishLevel
+                })
+                    .then(this.handleRegister)
+                    .catch(err => {alert(err)})
+            },
+            submitContactInfo: function () {
+                doPost("/api/student/registerExam", {
+                    "mailName": this.user.receiver,
+                    "mailAddr": this.user.contactAddress,
+                    "zip": this.user.zipcode,
+                    "contact": this.user.contactNumber,
+                    "phone": this.user.phone
+                })
+                    .then(this.handleRegister)
+                    .catch(err => {alert(err)})
+            },
+            submitBasicInfo: function () {
+                doPost("/api/student/registerExam", {
+                    "realName": this.user.realname,
+                    "identity": this.user.identityId,
+                    "gender": this.user.gender,
+                    "nationality": this.user.nationality,
+                    "politics": this.user.politicalStatus,
+                    "source": this.user.source,
+                    "home": this.user.homeAddress,
+                })
+                    .then(this.handleRegister)
+                    .catch(err => {alert(err)})
+            }
         }
-        doPost("/api/student/registerExam", {
-            "schoolId": $('#school').val(),
-            "majorId": $('#major').val()
-        })
-            .then(handleRegister)
-            .catch(err => {alert(err)})
     })
-
-    $('#eduinfo-submit-btn').click(() => {
-        doPost("/api/student/registerExam", {
-            "gradSchool": $('#grad-school').val(),
-            "gradTime": $('#grad-date').val(),
-            "isCurrent": $('#is-current').val(),
-            "isScience": $('#art-sci').val(),
-            "english": $('#english-level').val()
-        })
-            .then(handleRegister)
-            .catch(err => {alert(err)})
-    })
-
-    $('#contact-submit-btn').click(() => {
-        doPost("/api/student/registerExam", {
-            "mailName": $('#mail-name').val(),
-            "mailAddr": $('#mail-addr').val(),
-            "zip": $('#zip').val(),
-            "contact": $('#tel').val(),
-            "phone": $('#mobile').val()
-        })
-            .then(handleRegister)
-            .catch(err => {alert(err)})
-    })
-
-    $('#info-submit-btn').click(() => {
-        doPost("/api/student/registerExam", {
-            "realName": $('#realname').val(),
-            "identity": $('#identity-id').val(),
-            "gender": $('#gender').val(),
-            "nationality": $('#nationality').val(),
-            "politics": $('#politics').val(),
-            "source": $('#source').val(),
-            "home": $('#home-location').val(),
-        })
-            .then(handleRegister)
-            .catch(err => {alert(err)})
-    })
-
-    const handleRegister = resp => {
-        if ([101, 102, 1008, 1009].includes(resp.data.status)) {
-            makeModal(resp.data.message)
-        } else if ([0].includes(resp.data.status)) {
-            alert(resp.data.message)
-            window.location.reload()
-        } else {
-            alert(resp.data)
-        }
-    }
+    form.mount("#data-form")
 </script>
 </body>
 </html>
