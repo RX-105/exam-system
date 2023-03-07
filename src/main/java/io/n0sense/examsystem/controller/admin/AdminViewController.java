@@ -36,6 +36,7 @@ public class AdminViewController {
     private final StageService stageService;
     private final SchoolService schoolService;
     private final MajorService majorService;
+    private final ExamService examService;
     private final Map<String, String> groupMap;
     @Value("${application.version}")
     private String version;
@@ -170,17 +171,24 @@ public class AdminViewController {
     }
 
     @GetMapping("/recruit/recruit-maintain")
-    public ModelAndView getRecruitMaintainView(Integer page, Model model) {
-        Page<Major> majorPage =  majorService.findAll(
-                (null == page ? 0 : page),
-                10
-        );
+    public ModelAndView getRecruitMaintainView(Integer mpage, Integer epage, Long majorId, Model model) {
+        Page<Major> majorPage =  majorService.findAll((null == mpage ? 0 : mpage), 10);
         List<Major> majors = majorPage.toList();
-        if (page != null && majorPage.getTotalPages() < page){
+        if (mpage != null && majorPage.getTotalPages() < mpage){
             model.addAttribute("msg", "请勿玩弄页面参数哦。");
         } else {
             model.addAttribute("majors", majors);
             model.addAttribute("majorPage", majorPage);
+        }
+
+        if (majorId != null) {
+            Page<Exam> examPage = examService.findAllByMajorId(majorId, (null == epage ? 0 : epage), Integer.MAX_VALUE);
+            List<Exam> exams = examPage.toList();
+            if (epage != null && examPage.getTotalPages() < epage) {
+                model.addAttribute("msg", "请勿玩弄页面参数哦。");
+            } else {
+                model.addAttribute("exams", exams);
+            }
         }
 
         return new ModelAndView("/admin/recruit/recruit-maintain");
