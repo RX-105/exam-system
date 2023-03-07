@@ -37,6 +37,7 @@ public class AdminRestController {
     private final BackupService backupService;
     private final StageService stageService;
     private final MajorService majorService;
+    private final ExamService examService;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
 
     @ExceptionHandler(NullPointerException.class)
@@ -409,6 +410,23 @@ public class AdminRestController {
         return R.builder()
                 .status(Status.OK)
                 .message("添加完成。")
+                .build();
+    }
+
+    @PostMapping("/exam")
+    public R addExam(@NonNull Long majorId, @NonNull String name, @NonNull LocalDateTime start,
+                     @NonNull LocalDateTime end, HttpServletRequest request) {
+        Exam exam = Exam.builder()
+                .majorId(majorId)
+                .name(name)
+                .startTime(start)
+                .endTime(end)
+                .build();
+        examService.addExam(exam);
+        logService.record(Actions.ADD_EXAM, exam.getName() + "@" + exam.getMajorId(), request);
+        return R.builder()
+                .status(Status.OK)
+                .message("考试添加成功。")
                 .build();
     }
 }
