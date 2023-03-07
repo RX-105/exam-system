@@ -86,7 +86,7 @@
                         <!-- 分页 -->
                         <div>
                     <span th:if="${majorPage.hasPrevious()} == true">
-                        <a th:href="@{/admin/recruit/recruit-maintain?page={prev}(prev=${majorPage.getNumber()-1})}">上一页</a>
+                        <a th:href="@{/admin/recruit/recruit-maintain?mpage={prev}(prev=${majorPage.getNumber()-1})}">上一页</a>
                     </span>
                             <span>
                         当前第
@@ -96,7 +96,7 @@
                         页。
                     </span>
                             <span th:if="${majorPage.hasNext()} == true">
-                        <a th:href="@{/admin/recruit/recruit-maintain?page={prev}(prev=${majorPage.getNumber()+1})}">下一页</a>
+                        <a th:href="@{/admin/recruit/recruit-maintain?mpage={prev}(prev=${majorPage.getNumber()+1})}">下一页</a>
                     </span>
                         </div>
                         <!-- 分页 -->
@@ -131,6 +131,112 @@
                 </div>
             </div>
             <!-- 添加专业 /-->
+            <!-- 选择专业 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">选择学校并查看考试列表</h3>
+                </div>
+
+                <div class="form-group" style="padding-bottom: 20px">
+                    <label class="control-label col-sm-offset-2 col-sm-2" for="groupName" style="line-height: 35px">学校列表</label>
+                    <div class="col-sm-6 col-md-4">
+                        <select title="专业" id="major-exam-select" class="form-control">
+                            <th:block th:each="major : ${majors}">
+                                <option th:value="${major.getId()}"
+                                        th:text="${major.getName()}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <button type="button" id="major-select-btn" class="btn btn-primary">查看</button>
+                </div>
+
+            </div>
+            <!-- 选择专业 /-->
+            <!-- 考试情况 -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">专业情况</h3>
+                </div>
+
+                <div class="form-group" style="padding-bottom: 20px">
+                    <!-- 表格本体 -->
+                    <div th:if="${exams}">
+
+                        <div class="box-body">
+
+                            <!-- 数据表格 -->
+                            <div class="table-box">
+
+                                <!--数据列表-->
+                                <table id="" class="table table-bordered table-striped table-hover dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th class="">考试名称</th>
+                                        <th class="">开考时间</th>
+                                        <th class="">结束时间</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr th:each="exam : ${exams}">
+                                        <td th:text="${exam.getName()}"></td>
+                                        <td th:text="${exam.getStartTime()}"></td>
+                                        <td th:text="${exam.getEndTime()}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <!-- 数据列表/-->
+                                <!-- 特么的我不做分页了！thymeleaf的标签库语法是个什么狗屎啊！谁爱做谁做！-->
+                            </div>
+                            <!-- 数据表格 /-->
+
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- 表格本体 -->
+                </div>
+            </div>
+            <!-- 考试情况 -->
+            <!-- 添加专业考试 /-->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <i class="fa fa-chevron-circle-right"></i>
+                    <h3 class="box-title">添加专业考试</h3>
+                </div>
+
+                <div style="padding: 20px 20px 50px;">
+                    <form>
+                        <div class="form-group has-feedback input-group col-xs-4">
+                            <span class="input-group-addon">专业</span>
+                            <select id="major-select" class="form-control" th:each="major : ${majors}">
+                                <option th:value="${major.getId()}" th:text="${major.getName()}"></option>
+                            </select>
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group col-xs-4">
+                            <span class="input-group-addon">考试名称</span>
+                            <input type="text" class="form-control" placeholder="考试名称" id="exam-name">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group col-xs-4">
+                            <span class="input-group-addon">开始时间</span>
+                            <input type="datetime-local" class="form-control" id="start-time">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback input-group col-xs-4">
+                            <span class="input-group-addon">结束时间</span>
+                            <input type="datetime-local" class="form-control" id="end-time">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-primary btn-block btn-flat" id="add-exam-btn">添加考试</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- 添加专业考试 /-->
         </section>
         <!-- 正文区域 /-->
 
@@ -194,6 +300,31 @@
             .catch(err => {
                 alert(err)
             })
+    })
+
+    $('#add-exam-btn').click(() => {
+        doPost('/api/admin/exam', {
+            majorId: $('#major-select').val(),
+            name: $('#exam-name').val(),
+            start: $('#start-time').val(),
+            end: $('#end-time').val(),
+        })
+            .then(resp => {
+                const code = resp.data.status
+                if ([0].includes(code)) {
+                    alert(resp.data.message)
+                    window.location.reload()
+                } else {
+                    makeModal(resp.data.message)
+                }
+            })
+            .catch(err => {
+                alert(err)
+            })
+    })
+
+    $('#major-select-btn').click(() => {
+        window.location.href = '/admin/recruit/recruit-maintain?majorId='+$('#major-exam-select').val()
     })
 </script>
 </body>
