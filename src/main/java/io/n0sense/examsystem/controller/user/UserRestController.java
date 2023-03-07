@@ -16,6 +16,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -318,24 +319,45 @@ public class UserRestController {
         }
     }
 
-    @PostMapping("/avatar/{filename}")
+    @GetMapping("/avatar/{filename}")
     public ResponseEntity<Object> getAvatar(@PathVariable("filename") String filename) {
-        Resource fileResource;
         try {
-            fileResource = fileService.getAvatar(filename);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", String.format("attachment;filename=\"%s", filename));
-            headers.add("Cache-Control", "no-cache,no-store,must-revalidate");
-            headers.add("Pragma", "no-cache");
-            headers.add("Expires", "0");
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentLength(fileResource.contentLength())
-                    .contentType(MediaType.IMAGE_PNG)
-                    .body(fileResource);
+            return getFile(fileService.getAvatar(filename), MediaType.IMAGE_PNG);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @GetMapping("/avatar")
+    public ResponseEntity<Object> getMyAvatar() {
+        try {
+            Resource defaultAvatar = new ClassPathResource("/static/img/user.jpg");
+            Long uid = (Long) session.getAttribute("uid");
+            if (uid == null) {
+                return getFile(defaultAvatar, MediaType.IMAGE_JPEG);
+            }
+            User user = userService.findById(uid).orElseThrow();
+            if (!StringUtils.hasLength(user.getAvatarName())) {
+                return getFile(defaultAvatar, MediaType.IMAGE_JPEG);
+            }
+            return getFile(fileService.getAvatar(user.getAvatarName()), MediaType.IMAGE_PNG);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ResponseEntity<Object> getFile(Resource file, MediaType mediaType) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", String.format("attachment;filename=\"%s", file.getFilename()));
+        headers.add("Cache-Control", "no-cache,no-store,must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.contentLength())
+                .contentType(mediaType)
+                .body(file);
     }
 }
