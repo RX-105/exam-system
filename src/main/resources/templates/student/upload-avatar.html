@@ -84,8 +84,6 @@
 
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
-<script data-th-src="@{/static/plugins/vue/vue.global.min.js}"></script>
-<script data-th-src="@{/static/plugins/bootstrap-growl/jquery.bootstrap-growl.min.js}"></script>
 
 <script>
     $(document).ready(function () {
@@ -122,7 +120,7 @@
                 this.avatar_file = event.target.files || event.dataTransfer.files
             },
             upload: function () {
-                if (!this.set_avatar_file.length) {
+                if (!this.avatar_file.length) {
                     makeModal("请先选择文件。")
                 }
                 doPost("/api/student/avatar", {
