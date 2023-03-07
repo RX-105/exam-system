@@ -45,7 +45,7 @@
         <!-- 内容头部 /-->
 
         <!-- 正文区域 -->
-        <section class="content">
+        <section class="content" id="app">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <i class="fa fa-chevron-circle-right"></i>
@@ -65,9 +65,9 @@
                         则点击“照片预览”按钮，将会显示您上传的照片，如果不符合要求，请重新上传您的照片。
                     </p>
                     <div style="display: flex; justify-content: center; flex-direction: column; align-items: center" >
-                        <img src="/static/img/user.jpg" width="145px" height="175px" style="border: 3px solid grey">
-                        <input type="file" id="avatar" class="form-control input-file">
-                        <button type="button" id="upload-btn" class="btn btn-primary">上传</button>
+                        <img :src="avatar_src" style="border: 3px solid grey; width: 130px; height: 150px">
+                        <input type="file" id="avatar" class="form-control input-file" v-on:change="set_avatar_file">
+                        <button type="button" class="btn btn-primary" @click="upload">上传</button>
                     </div>
                 </div>
             </div>
@@ -84,6 +84,8 @@
 
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
+<script data-th-src="@{/static/plugins/vue/vue.global.min.js}"></script>
+<script data-th-src="@{/static/plugins/bootstrap-growl/jquery.bootstrap-growl.min.js}"></script>
 
 <script>
     $(document).ready(function () {
@@ -95,8 +97,6 @@
             locale: 'zh-CN'
         });
     });
-
-
     // 设置激活菜单
     function setSidebarActive(tagUri) {
         var liObj = $("#" + tagUri);
@@ -105,12 +105,40 @@
             liObj.addClass("active");
         }
     }
-
-
     $(document).ready(function () {
         // 激活导航位置
         setSidebarActive("upload-avatar");
     });
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                avatar_src: "/api/student/avatar?refresh=false",
+                avatar_file: null,
+            }
+        },
+        methods: {
+            set_avatar_file: function (event) {
+                this.avatar_file = event.target.files || event.dataTransfer.files
+            },
+            upload: function () {
+                if (!this.set_avatar_file.length) {
+                    makeModal("请先选择文件。")
+                }
+                doPost("/api/student/avatar", {
+                    file: this.avatar_file[0]
+                })
+                    .then(() => {
+                        this.avatar_src = '/api/student/avatar?refresh=true'
+                        $.bootstrapGrowl("个人照片修改成功。")
+                    })
+                    .catch(err => {
+                        alert(err)
+                    })
+            }
+        }
+    })
+    app.mount('#app')
 </script>
 </body>
 </html>
