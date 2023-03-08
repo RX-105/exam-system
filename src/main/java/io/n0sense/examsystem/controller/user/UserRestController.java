@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
@@ -160,7 +161,7 @@ public class UserRestController {
                           String gender, String nationality, String politics, String source,
                           String home, String gradSchool, YearMonth gradTime, Boolean isCurrent,
                           Boolean isScience, String english, String mailName, String mailAddr,
-                          Long zip, String contact, Long phone) {
+                          Long zip, String contact, Long phone, LocalDate birthday) {
         List<Stage> stages;
         Long uid = (Long) request.getSession().getAttribute("uid");
         if (uid == null) {
@@ -232,6 +233,7 @@ public class UserRestController {
         if (zip != null) user.setZipcode(zip);
         if (StringUtils.hasLength(contact)) user.setContactNumber(contact);
         if (phone != null) user.setPhone(phone);
+        if (birthday != null) user.setBirthday(birthday);
 
         return R.builder()
                 .status(Status.OK)
