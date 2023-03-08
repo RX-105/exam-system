@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,34 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <div th:replace="~{commons/css}"></div>
+
+    <style>
+        .printing {
+            font-family: 宋体,fangsong;
+        }
+        .printing-bold {
+            font-weight: bold;
+        }
+        table {
+            border-collapse: collapse;
+            border: 2px solid black;
+            margin-left: auto;
+            margin-right: auto;
+            width: 700px;
+            table-layout: fixed;
+        }
+        th, td {
+            padding-left: 15px;
+            padding-right: 15px;
+            border: 1px solid black;
+            font-family: fangsong;
+            text-align: center;
+            height: 40px;
+        }
+        .table-title > td {
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -36,78 +64,120 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>日PV</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
+            <div class="callout callout-info" th:unless="${msg}">
+                <p>这个页面仅限于预览信息，请勿直接打印。你可以点击下方按钮下载可打印的报名表文档。</p>
+                <button type="button" class="btn btn-default" id="page-print-btn">打印</button>
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是报名表打印页面。
-            </p>
-
+            <p class="lead" th:text="${msg}"></p>
+            <div id="print-area">
+                <h3 class="text-center printing printing-bold" th:text="|${school.getName()}考试报名信息表|"></h3>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody>
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1">姓名</td>
+                        <td colspan="1" rowspan="1">性别</td>
+                        <td colspan="1" rowspan="1">民族</td>
+                        <td colspan="1" rowspan="1">籍贯</td>
+                        <td colspan="1" rowspan="4" style="padding: 0">
+                            <img src="/api/student/avatar?refresh=false" style="width: 138px;height: 160px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" th:text="${user.getRealname()}" id="realname"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getGender()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getNationality()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getHomeAddress()}"></td>
+                    </tr>
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1">出生年月</td>
+                        <td colspan="1" rowspan="1">政治面貌</td>
+                        <td colspan="1" rowspan="1">应届状态</td>
+                        <td colspan="1" rowspan="1">文理分科</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" th:text="${user.getBirthday()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getPoliticalStatus()}"></td>
+                        <td colspan="1" rowspan="1" th:if="${user.getIsCurrent()}">应届</td>
+                        <td colspan="1" rowspan="1" th:unless="${user.getIsCurrent()}">往届</td>
+                        <td colspan="1" rowspan="1" th:if="${user.getIsScience()}">理科</td>
+                        <td colspan="1" rowspan="1" th:unless="${user.getIsScience()}">文科</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-top: 1px solid black;border-bottom: 1px solid black">
+                    <tbody>
+                    <tr class="table-title">
+                        <td colspan="5" rowspan="1">报考信息</td>
+                    </tr>
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1">报考学校</td>
+                        <td colspan="1" rowspan="1">报考专业</td>
+                        <td colspan="1" rowspan="1">毕业学校</td>
+                        <td colspan="2" rowspan="1">毕业时间</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" th:text="${school.getName()}" id="schoolName"></td>
+                        <td colspan="1" rowspan="1" th:text="${major.getName()}">报考专业</td>
+                        <td colspan="1" rowspan="1" th:text="${user.getGraduateSchool()}"></td>
+                        <td colspan="2" rowspan="1" th:text="${user.getGraduateTime().toString().substring(0, user.getGraduateTime().toString().lastIndexOf('-'))}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-top: 1px solid black;border-bottom: 1px solid black">
+                    <tbody>
+                    <tr class="table-title">
+                        <td colspan="4" rowspan="1">个人信息</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" style="font-weight: bold">证件号码</td>
+                        <td colspan="3" rowspan="1" th:text="${user.getIdentityId()}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-top: 1px solid black;border-bottom: 2px solid black">
+                    <tbody>
+                    <tr class="table-title">
+                        <td colspan="4" rowspan="1">通讯信息</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" style="font-weight: bold">家庭住址</td>
+                        <td colspan="3" rowspan="1" th:text="${user.getHomeAddress()}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" style="font-weight: bold">邮寄地址</td>
+                        <td colspan="3" rowspan="1" th:text="${user.getContactAddress()}"></td>
+                    </tr>
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1">收件人</td>
+                        <td colspan="1" rowspan="1">邮政编码</td>
+                        <td colspan="1" rowspan="1">联系电话</td>
+                        <td colspan="1" rowspan="1">移动电话</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" th:text="${user.getReceiver()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getZipcode()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getContactNumber()}"></td>
+                        <td colspan="1" rowspan="1" th:text="${user.getPhone()}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-top: 0;display: none" id="print-hidden">
+                    <tbody>
+                    <tr>
+                        <td colspan="1" rowspan="2" style="font-weight: bold;border: 0">考生<br>承诺</td>
+                        <td colspan="3" rowspan="1" style="text-align: left;height: 60px;border-bottom: 0;border-top: 0;border-right: 0;">
+                            我承诺上述填写的信息准确无误，照片为本人照片。如果存在虚假信息，一切后果均由我本人承担。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" rowspan="1" style="border-top: 0;text-align: right;border-right: 0;border-bottom: 0">
+                            考生签字：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                            年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
         <!-- 正文区域 /-->
 
@@ -121,6 +191,7 @@
 
 <!-- js -->
 <div th:replace="~{commons/js}"></div>
+<div th:replace="~{commons/modal}"></div>
 
 <script>
     $(document).ready(function () {
@@ -148,6 +219,14 @@
         // 激活导航位置
         setSidebarActive("register-form-print");
     });
+
+    $('#page-print-btn').click(() => {
+        const printArea = document.getElementById('print-area').cloneNode(true)
+        const filename = new Date().getFullYear() + '年' + $('#schoolName').text()
+            + '报名信息表（' + $('#realname').text() + '）.pdf'
+        printArea.children['print-hidden'].style['display'] = 'block'
+        html2pdf().from(printArea).toPdf().save(filename)
+    })
 </script>
 </body>
 </html>
