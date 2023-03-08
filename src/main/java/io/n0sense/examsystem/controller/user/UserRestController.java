@@ -5,6 +5,7 @@ import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Stages;
 import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.config.properties.DebugProperties;
 import io.n0sense.examsystem.entity.Major;
 import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.entity.Stage;
@@ -38,11 +39,13 @@ import java.util.*;
 public class UserRestController {
     private final HttpServletRequest request;
     private final HttpSession session;
+    private final DebugProperties debugProperties;
     private final UserService userService;
     private final MajorService majorService;
     private final StageService stageService;
     private final FileService fileService;
     private final LogService logService;
+    private final ThreadLocal<User> localUser = ThreadLocal.withInitial(() -> null);
 
     @ExceptionHandler(NullPointerException.class)
     public R nullParameterHandler(NullPointerException e) {
@@ -59,6 +62,76 @@ public class UserRestController {
                 .status(Status.ERR_NO_SUCH_ELEMENT)
                 .message("请求查询的资源不存在。")
                 .build();
+    }
+
+    /**
+     * 检查当前时间是否在用户报名学校的指定阶段时间内，如果在时间范围内，则返回null，否则返回一个{@link R}对象，
+     * 包含错误原因和错误代码，可以用于直接返回。<br>
+     * 此外，配置文件中的配置也会导致本方法的返回结果发生变化，比如application.debug.validate-stage-time
+     * 置为false时，本方法将不会检查阶段时间，而是直接返回null。<br>
+     * 如果返回值是null，该方法将会设置线程局部对象localUser。
+     * @param stage 指定检查时间的阶段，在{@link Stages}里有定义。
+     * @param schoolId 如果已知学校ID，可以传入，如果没有，将会尝试从登录用户信息中读取，否则返回包含错误信息的{@link R}对象。
+     * @return 一个R对象，包含检查时的错误信息，如果没有错误，将会返回null。
+     */
+    public R checkStageValidity(Map.Entry<String, String> stage, Long schoolId) {
+        List<Stage> stages;
+        Long uid = (Long) request.getSession().getAttribute("uid");
+
+        if (uid == null) {
+            return R.builder()
+                    .status(Status.ERR_LOGIN_REQUIRED)
+                    .message("需要登陆。")
+                    .build();
+        }
+        Optional<User> opUser = userService.findById(uid);
+        if (opUser.isEmpty()) {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .build();
+        }
+        localUser.set(opUser.get());
+        // 确认是否检查阶段时间合法性
+        if (!debugProperties.getValidateStageTime()) {
+            return null;
+        }
+        // 获取学校ID，判断是否在报名期间内
+        if (schoolId != null) {
+            stages = stageService.findAllStageBySchoolIdAndName(
+                    schoolId, stage.getKey());
+        } else if (localUser.get().getSchoolId() != null) {
+            stages = stageService.findAllStageBySchoolIdAndName(
+                    localUser.get().getSchoolId(), stage.getKey());
+        } else {
+            return R.builder()
+                    .status(Status.ERR_PARAMETER_NOT_PRESENT)
+                    .message("请先填写报考学校。")
+                    .data(Map.of("param", "schoolId"))
+                    .build();
+        }
+        if (stages.size() == 0) {
+            return R.builder()
+                    .status(Status.ERR_TIME_NOT_FOUND)
+                    .message("目标报考学校没有设置阶段[" + stage.getValue() + "]的时间，不能修改信息。请联系报考学校。")
+                    .build();
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+            boolean timeExceeded = true;
+            for (Stage s : stages) {
+                if (now.isAfter(s.getStartTime()) && now.isBefore(s.getEndTime())) {
+                    timeExceeded = false;
+                    break;
+                }
+            }
+            if (timeExceeded) {
+                return R.builder()
+                        .status(Status.ERR_TIME_NOT_ALLOWED)
+                        .message("当前时间不在该学校[" + stage.getValue() + "]阶段的时间范围内，不能报名。")
+                        .build();
+            } else {
+                return null;
+            }
+        }
     }
 
     @PostMapping("/checkUser/{username}")
@@ -162,58 +235,12 @@ public class UserRestController {
                           String home, String gradSchool, YearMonth gradTime, Boolean isCurrent,
                           Boolean isScience, String english, String mailName, String mailAddr,
                           Long zip, String contact, Long phone, LocalDate birthday) {
-        List<Stage> stages;
-        Long uid = (Long) request.getSession().getAttribute("uid");
-        if (uid == null) {
-            return R.builder()
-                    .status(Status.ERR_LOGIN_REQUIRED)
-                    .message("需要登陆。")
-                    .build();
-        }
-        Optional<User> opUser = userService.findById(uid);
-        if (opUser.isEmpty()) {
-            return R.builder()
-                    .status(Status.ERR_NO_SUCH_ELEMENT)
-                    .build();
-        }
-        User user = opUser.get();
-        // 获取学校ID，判断是否在报名期间内
-        // 先从参数获取，如果为null说明不更新id，然后再从用户信息中获取
-        if (schoolId != null) {
-            stages = stageService.findAllStageBySchoolIdAndName(
-                    schoolId, Stages.REGISTER.getKey());
-        } else if (user.getSchoolId() != null) {
-            stages = stageService.findAllStageBySchoolIdAndName(
-                    user.getSchoolId(), Stages.REGISTER.getKey());
-        } else {
-            return R.builder()
-                    .status(Status.ERR_PARAMETER_NOT_PRESENT)
-                    .message("没有设置学校参数。")
-                    .data(Map.of("param", "schoolId"))
-                    .build();
-        }
-        if (stages.size() == 0) {
-            return R.builder()
-                    .status(Status.ERR_TIME_NOT_FOUND)
-                    .message("目标报考学校没有设置在线报名时间，报名失败。请联系报考学校。")
-                    .build();
-        } else {
-            LocalDateTime now = LocalDateTime.now();
-            boolean timeExceeded = true;
-            for (Stage stage : stages) {
-                if (now.isAfter(stage.getStartTime()) && now.isBefore(stage.getEndTime())) {
-                    timeExceeded = false;
-                    break;
-                }
-            }
-            if (timeExceeded) {
-                return R.builder()
-                        .status(Status.ERR_TIME_NOT_ALLOWED)
-                        .message("当前时间不在该学校在线报名时间范围内，不能报名。")
-                        .build();
-            }
+        R r = checkStageValidity(Stages.REGISTER, schoolId);
+        if (r != null) {
+            return r;
         }
 
+        User user = localUser.get();
         if (schoolId != null) user.setSchoolId(schoolId);
         if (majorId != null) user.setMajor(majorId);
         if (StringUtils.hasLength(realName)) user.setRealname(realName);
@@ -234,11 +261,13 @@ public class UserRestController {
         if (StringUtils.hasLength(contact)) user.setContactNumber(contact);
         if (phone != null) user.setPhone(phone);
         if (birthday != null) user.setBirthday(birthday);
+        user = userService.save(user);
+        localUser.set(user);
 
         return R.builder()
                 .status(Status.OK)
                 .message("修改完成。")
-                .data(Map.of("user-info", userService.save(user)))
+                .data(Map.of("user-info", user))
                 .build();
     }
 
@@ -268,49 +297,21 @@ public class UserRestController {
 
     @PostMapping("/avatar")
     public R setAvatar(MultipartFile file) {
-        String filename;
-        try {
-            filename = fileService.saveAvatar(file);
-        } catch (IOException e) {
-            return R.builder()
-                    .status(Status.ERR_OPERATION_FAILED)
-                    .message("文件保存失败。")
-                    .build();
-        }
-        List<Stage> stages;
-        Long uid = (Long) request.getSession().getAttribute("uid");
-        if (uid == null) {
-            return R.builder()
-                    .status(Status.ERR_LOGIN_REQUIRED)
-                    .message("需要登陆。")
-                    .build();
-        }
-        Optional<User> opUser = userService.findById(uid);
-        if (opUser.isEmpty()) {
-            return R.builder()
-                    .status(Status.ERR_NO_SUCH_ELEMENT)
-                    .build();
-        }
-        User user = opUser.get();
-        // 获取学校ID，判断是否在报名期间内
-        if (user.getSchoolId() != null) {
-            stages = stageService.findAllStageBySchoolIdAndName(
-                    user.getSchoolId(), Stages.REGISTER.getKey());
+        R r = checkStageValidity(Stages.REGISTER, null);
+        if (r != null) {
+            return r;
         } else {
-            return R.builder()
-                    .status(Status.ERR_PARAMETER_NOT_PRESENT)
-                    .message("请先填写报考学校。")
-                    .data(Map.of("param", "schoolId"))
-                    .build();
-        }
-        if (stages.size() == 0) {
-            return R.builder()
-                    .status(Status.ERR_TIME_NOT_FOUND)
-                    .message("目标报考学校没有设置在线报名时间，不能修改信息。请联系报考学校。")
-                    .build();
-        } else {
-            user.setAvatarName(filename);
-            userService.save(user);
+            String filename;
+            try {
+                filename = fileService.saveAvatar(file);
+            } catch (IOException e) {
+                return R.builder()
+                        .status(Status.ERR_OPERATION_FAILED)
+                        .message("文件保存失败。")
+                        .build();
+            }
+            localUser.get().setAvatarName(filename);
+            userService.save(localUser.get());
             logService.record(Actions.UPDATE_AVATAR, filename, request);
             return R.builder()
                     .status(Status.OK)
