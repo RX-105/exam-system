@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@ConfigurationPropertiesScan("io.n0sense.examsystem.config")
+@ConfigurationPropertiesScan("io.n0sense.examsystem.config.properties")
 public class CommonConfiguration {
     @Bean
     public SimpleUrlHandlerMapping customFaviconHandlerMapping() {
