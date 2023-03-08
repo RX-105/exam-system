@@ -1,11 +1,11 @@
 package io.n0sense.examsystem.controller.user;
 
 import io.n0sense.examsystem.commons.constants.Stages;
+import io.n0sense.examsystem.config.properties.DebugProperties;
 import io.n0sense.examsystem.entity.Log;
-import io.n0sense.examsystem.service.impl.LogService;
-import io.n0sense.examsystem.service.impl.SchoolService;
-import io.n0sense.examsystem.service.impl.StageService;
-import io.n0sense.examsystem.service.impl.UserService;
+import io.n0sense.examsystem.entity.Stage;
+import io.n0sense.examsystem.entity.User;
+import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,25 +17,70 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/student")
 @RequiredArgsConstructor
 public class UserViewController {
+    private final ThreadLocal<User> localUser = ThreadLocal.withInitial(() -> null);
     @Value("${application.version}")
     private String version;
     private final HttpServletRequest request;
     private final HttpSession session;
+    private final DebugProperties debugProperties;
     private final LogService logService;
     private final SchoolService schoolService;
     private final StageService stageService;
     private final UserService userService;
+    private final MajorService majorService;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
         model.addAttribute("version", version);
         model.addAttribute("schools", schoolService.findAll());
+    }
+
+    public boolean checkStageValidity(Model model, Map.Entry<String, String> stage) {
+        Long uid = (Long) session.getAttribute("uid");
+        if (uid == null) {
+            model.addAttribute("msg", "请尝试重新登陆。");
+            return false;
+        }
+
+        localUser.set(userService.findById(uid).orElseThrow());
+        if (!debugProperties.getValidateStageTime()) {
+            return true;
+        }
+        if (localUser.get().getSchoolId() == null) {
+            model.addAttribute("msg", "请先登记报考学校。");
+            return false;
+        }
+
+        List<Stage> stagesList = stageService.findAllStageBySchoolIdAndName(
+                localUser.get().getSchoolId(), stage.getKey());
+        if (stagesList.size() == 0) {
+            model.addAttribute("msg",
+                    "学校没有设置["+stage.getValue()+"]阶段时间，请联系报考学校。");
+            return false;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        boolean timeExceeded = true;
+        for (Stage s : stagesList) {
+            if (now.isAfter(s.getStartTime()) && now.isBefore(s.getEndTime())) {
+                timeExceeded = false;
+                break;
+            }
+        }
+        if (timeExceeded) {
+            model.addAttribute("msg", "当前时间段不在["+stage.getValue()+"]阶段时间段内。");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @GetMapping("/login")
@@ -75,7 +120,7 @@ public class UserViewController {
     @GetMapping("/registration-notice")
     public ModelAndView getStudentRegistrationNoticeView(Long schoolId, Model model) {
         if (schoolId != null) {
-            String schoolName = schoolService.findSchool(schoolId).getName();
+            String schoolName = schoolService.findSchool(schoolId).orElseThrow().getName();
             model.addAttribute("stages", stageService.findAllStageBySchoolId(schoolId));
             model.addAttribute("schoolName", schoolName);
             model.addAttribute("stageMap", Stages.stages);
@@ -93,5 +138,17 @@ public class UserViewController {
     @GetMapping("/upload-avatar")
     public ModelAndView getStudentUploadAvatarView() {
         return new ModelAndView("/student/upload-avatar");
+    }
+
+    @GetMapping("/register-form-print")
+    public ModelAndView getStudentRegisterFormPrintVIew(Model model) {
+        if (checkStageValidity(model, Stages.PREPARE_EXAM)) {
+            model.addAttribute("user", localUser.get());
+            model.addAttribute("school",
+                    schoolService.findSchool(localUser.get().getSchoolId()).orElseThrow());
+            model.addAttribute("major",
+                    majorService.findById(localUser.get().getMajor()).orElseThrow());
+        }
+        return new ModelAndView("/student/register-form-print");
     }
 }
