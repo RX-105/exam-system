@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +33,10 @@ public class MajorService implements IMajorService {
     @Override
     public List<Major> findAllBySchoolId(Long schoolId) {
         return majorRepository.findAllBySchoolId(schoolId);
+    }
+
+    @Override
+    public Optional<Major> findById(Long id) {
+        return majorRepository.findById(id);
     }
 }
