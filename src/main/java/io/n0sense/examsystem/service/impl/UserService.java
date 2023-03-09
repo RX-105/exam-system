@@ -14,6 +14,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -80,6 +81,11 @@ public class UserService implements IUserService {
     @Override
     public Optional<User> findById(Long id){
         return userRepository.findById(id);
+    }
+
+    @Override
+    public List<User> findAllBySchoolId(Long schoolId) {
+        return userRepository.findAllBySchoolId(schoolId);
     }
 
     /**

@@ -3,6 +3,7 @@ package io.n0sense.examsystem.service;
 import io.n0sense.examsystem.entity.User;
 import lombok.NonNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
@@ -11,6 +12,7 @@ public interface IUserService {
     Optional<User> findByName(String username);
 
     Optional<User> findById(Long id);
+    List<User> findAllBySchoolId(Long schoolId);
 
     boolean checkExistence(String username);
 
