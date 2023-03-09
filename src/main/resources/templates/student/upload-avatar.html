@@ -46,7 +46,8 @@
 
         <!-- 正文区域 -->
         <section class="content" id="app">
-            <div class="box box-primary">
+            <p class="lead" th:text="${msg}"></p>
+            <div class="box box-primary" th:unless="${msg}">
                 <div class="box-header with-border">
                     <i class="fa fa-chevron-circle-right"></i>
                     <h3 class="box-title">上传个人照片</h3>
