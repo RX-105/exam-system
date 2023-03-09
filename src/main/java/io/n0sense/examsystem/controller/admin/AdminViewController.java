@@ -193,4 +193,9 @@ public class AdminViewController {
 
         return new ModelAndView("/admin/recruit/recruit-maintain");
     }
+
+    @GetMapping("/recruit/confirm")
+    public ModelAndView getRecruitConfirmView() {
+        return new ModelAndView("/admin/recruit/confirm");
+    }
 }
