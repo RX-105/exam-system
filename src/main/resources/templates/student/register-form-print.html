@@ -22,6 +22,7 @@
             margin-right: auto;
             width: 700px;
             table-layout: fixed;
+            user-select: none;
         }
         th, td {
             padding-left: 15px;
@@ -69,7 +70,7 @@
                 <button type="button" class="btn btn-default" id="page-print-btn">打印</button>
             </div>
             <p class="lead" th:text="${msg}"></p>
-            <div id="print-area">
+            <div id="print-area" th:unless="${msg}">
                 <h3 class="text-center printing printing-bold" th:text="|${school.getName()}考试报名信息表|"></h3>
                 <table style="border-bottom: 1px solid black;">
                     <tbody>
@@ -161,7 +162,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <table style="border-top: 0;display: none" id="print-hidden">
+                <table style="border-top: 0" id="print-hidden">
                     <tbody>
                     <tr>
                         <td colspan="1" rowspan="2" style="font-weight: bold;border: 0">考生<br>承诺</td>
@@ -224,7 +225,6 @@
         const printArea = document.getElementById('print-area').cloneNode(true)
         const filename = new Date().getFullYear() + '年' + $('#schoolName').text()
             + '报名信息表（' + $('#realname').text() + '）.pdf'
-        printArea.children['print-hidden'].style['display'] = 'block'
         html2pdf().from(printArea).toPdf().save(filename)
     })
 </script>
