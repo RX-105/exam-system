@@ -5,6 +5,7 @@ import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.dto.BasicUserDTO;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +39,10 @@ public class AdminRestController {
     private final StageService stageService;
     private final MajorService majorService;
     private final ExamService examService;
+    private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
+    private final ThreadLocal<Admin> localAdmin = ThreadLocal.withInitial(() -> null);
+    private final HttpSession session;
 
     @ExceptionHandler(NullPointerException.class)
     public R nullParameterHandler(NullPointerException e) {
@@ -47,6 +51,34 @@ public class AdminRestController {
                 .message("参数不完整。")
                 .data(Map.of("location", "/404", "exception", e.getMessage()))
                 .build();
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public R noElementFoundHandler() {
+        return R.builder()
+                .status(Status.ERR_NO_SUCH_ELEMENT)
+                .message("请求查询的资源不存在。")
+                .build();
+    }
+
+    public R loadUserInfo() {
+        Long uid = (Long) session.getAttribute("uid");
+        if (uid == null) {
+            return R.builder()
+                    .status(Status.ERR_USER_NOT_FOUND)
+                    .message("请尝试重新登陆。")
+                    .build();
+        }
+        Optional<Admin> admin = adminService.findById(uid);
+        if (admin.isEmpty()) {
+            return R.builder()
+                    .status(Status.ERR_USER_NOT_FOUND)
+                    .message("请尝试重新登陆。")
+                    .build();
+        } else {
+            localAdmin.set(admin.get());
+            return null;
+        }
     }
 
     @PostMapping("/checkAdmin/{username}")
@@ -65,14 +97,15 @@ public class AdminRestController {
     @PostMapping({"/register"})
     @RecordLog(action = {Actions.REGISTER, Actions.LOGIN}, message = {"主动注册"})
     public R register(@NonNull String username, @NonNull String password,
-                      @NonNull String groupName, @NonNull Long schoolId,
-                      HttpServletRequest request) {
+                      @NonNull String groupName, @NonNull Long schoolId) {
         int result = this.adminService.register(username, password, groupName, schoolId);
+        Admin admin = adminService.findByName(username).orElseThrow();
         if (result == Status.OK) {
             // 检查判断为注册成功
-            request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("group", groupName);
-            request.getSession().setAttribute("role", Identities.ROLE_ADMIN.getKey());
+            session.setAttribute("username", username);
+            session.setAttribute("group", groupName);
+            session.setAttribute("uid", admin.getAdminId());
+            session.setAttribute("role", Identities.ROLE_ADMIN.getKey());
 
             Map<String, Object> data = new HashMap<>();
             data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
@@ -144,9 +177,11 @@ public class AdminRestController {
         Admin admin = this.adminService.findByName(username).orElse(new Admin());
         if (result == 0) {
             // 判断为信息正确
-            request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("group", admin.getGroupName());
-            request.getSession().setAttribute("role", Identities.ROLE_ADMIN.getKey());
+            session.setAttribute("username", username);
+            session.setAttribute("group", admin.getGroupName());
+            session.setAttribute("uid", admin.getAdminId());
+            log.warn(String.valueOf(session.getAttribute("uid")));
+            session.setAttribute("role", Identities.ROLE_ADMIN.getKey());
             if (remember) {
                 request.getSession().setAttribute("remember", true);
             }
@@ -173,6 +208,25 @@ public class AdminRestController {
                     .message("发生未知错误。")
                     .build();
         }
+    }
+
+    @GetMapping("/user/all")
+    public R getStudentList() {
+        log.warn(String.valueOf(session.getAttribute("uid")));
+        R r = loadUserInfo();
+        if (r != null) {
+            return r;
+        }
+        Long schoolId = localAdmin.get().getSchoolId();
+        localAdmin.remove();
+        List<BasicUserDTO> studentList = userService.findAllBySchoolId(schoolId)
+                .stream()
+                .map(BasicUserDTO::new)
+                .toList();
+        return R.builder()
+                .status(Status.OK)
+                .data(Map.of("student-list", studentList))
+                .build();
     }
 
     @PostMapping({"/publish"})
@@ -427,6 +481,15 @@ public class AdminRestController {
         return R.builder()
                 .status(Status.OK)
                 .message("考试添加成功。")
+                .build();
+    }
+
+    @PostMapping("/confirm/{uid}")
+    public R confirm(@PathVariable("uid") Long uid) {
+        adminService.studentConfirm(uid);
+        return R.builder()
+                .status(Status.OK)
+                .message("已确认。")
                 .build();
     }
 }
