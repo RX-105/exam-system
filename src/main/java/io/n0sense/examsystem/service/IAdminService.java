@@ -18,6 +18,9 @@ public interface IAdminService {
     R getEnrollmentInfo(String majorName);
     R getEnrollmentInfo();
     Optional<Admin> findByName(String name);
+
+    Optional<Admin> findById(Long id);
+
     Page<Admin> getAllAdmins(int page, int size);
 
     Page<Admin> getAllAdmins(String excludeGroupName, int page, int size);
@@ -27,4 +30,5 @@ public interface IAdminService {
     void dropUser(Long id);
 
     boolean checkExistence(String username);
+    void studentConfirm(Long uid);
 }

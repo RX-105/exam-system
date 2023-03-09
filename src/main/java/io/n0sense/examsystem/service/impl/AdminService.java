@@ -30,6 +30,7 @@ public class AdminService implements IAdminService {
     private final MajorRepository majorRepository;
     private final ExamRepository examRepository;
     private final HttpServletRequest request;
+    private final UserRepository userRepository;
 
     /**
      * 添加一个新用户，并添加注册表项。
@@ -151,6 +152,11 @@ public class AdminService implements IAdminService {
     }
 
     @Override
+    public Optional<Admin> findById(Long id) {
+        return adminRepository.findById(id);
+    }
+
+    @Override
     public Page<Admin> getAllAdmins(int page, int size) {
         return adminRepository.findAll(PageRequest.of(page, size));
     }
@@ -192,5 +198,15 @@ public class AdminService implements IAdminService {
     @Override
     public boolean checkExistence(String username) {
         return adminRepository.existsAdminByName(username);
+    }
+
+    @Override
+    public void studentConfirm(Long uid) {
+        Optional<User> user = userRepository.findById(uid);
+        if (user.isPresent()) {
+            User u = user.get();
+            u.setIsConfirmed(true);
+            userRepository.save(u);
+        }
     }
 }
