@@ -1,7 +1,7 @@
 package io.n0sense.examsystem.controller.user;
 
 import io.n0sense.examsystem.commons.constants.Stages;
-import io.n0sense.examsystem.config.properties.DebugProperties;
+import io.n0sense.examsystem.config.properties.DevProperties;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.entity.Stage;
 import io.n0sense.examsystem.entity.User;
@@ -30,7 +30,7 @@ public class UserViewController {
     private String version;
     private final HttpServletRequest request;
     private final HttpSession session;
-    private final DebugProperties debugProperties;
+    private final DevProperties devProperties;
     private final LogService logService;
     private final SchoolService schoolService;
     private final StageService stageService;
@@ -43,6 +43,16 @@ public class UserViewController {
         model.addAttribute("schools", schoolService.findAll());
     }
 
+    /**
+     * 检查当前时间是否在当前学校对于给定阶段定义的时间之内。返回内容是一个布尔值，为true时表示满足时间段要求，为
+     * false表示不满足时间段要求，并在model对象中写入msg信息对象（字符串）。<br>
+     * 此外，配置文件中的配置也会导致本方法的返回结果发生变化，比如application.debug.validate-stage-time
+     * 置为false时，本方法将不会检查阶段时间，而是直接返回null。<br>
+     * 如果返回值是true，该方法将会设置线程局部对象localUser。
+     * @param model SpringMVC的{@link org.springframework.ui.Model Model}对象，可以通过Spring框架注入获取。
+     * @param stage 指定检查时间的阶段，在{@link Stages}里有定义。
+     * @return 一个布尔值，以true表示时间符合要求，反之亦然。
+     */
     public boolean checkStageValidity(Model model, Map.Entry<String, String> stage) {
         Long uid = (Long) session.getAttribute("uid");
         if (uid == null) {
@@ -51,7 +61,7 @@ public class UserViewController {
         }
 
         localUser.set(userService.findById(uid).orElseThrow());
-        if (!debugProperties.getValidateStageTime()) {
+        if (!devProperties.getValidateStageTime()) {
             return true;
         }
         if (localUser.get().getSchoolId() == null) {
@@ -136,7 +146,8 @@ public class UserViewController {
     }
 
     @GetMapping("/upload-avatar")
-    public ModelAndView getStudentUploadAvatarView() {
+    public ModelAndView getStudentUploadAvatarView(Model model) {
+        checkStageValidity(model, Stages.REGISTER);
         return new ModelAndView("/student/upload-avatar");
     }
 
