@@ -5,7 +5,7 @@ import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Stages;
 import io.n0sense.examsystem.commons.constants.Status;
-import io.n0sense.examsystem.config.properties.DebugProperties;
+import io.n0sense.examsystem.config.properties.DevProperties;
 import io.n0sense.examsystem.entity.Major;
 import io.n0sense.examsystem.entity.R;
 import io.n0sense.examsystem.entity.Stage;
@@ -39,7 +39,7 @@ import java.util.*;
 public class UserRestController {
     private final HttpServletRequest request;
     private final HttpSession session;
-    private final DebugProperties debugProperties;
+    private final DevProperties devProperties;
     private final UserService userService;
     private final MajorService majorService;
     private final StageService stageService;
@@ -92,7 +92,7 @@ public class UserRestController {
         }
         localUser.set(opUser.get());
         // 确认是否检查阶段时间合法性
-        if (!debugProperties.getValidateStageTime()) {
+        if (!devProperties.getValidateStageTime()) {
             return null;
         }
         // 获取学校ID，判断是否在报名期间内
@@ -112,7 +112,7 @@ public class UserRestController {
         if (stages.size() == 0) {
             return R.builder()
                     .status(Status.ERR_TIME_NOT_FOUND)
-                    .message("目标报考学校没有设置阶段[" + stage.getValue() + "]的时间，不能修改信息。请联系报考学校。")
+                    .message("目标报考学校没有设置阶段[" + stage.getValue() + "]的时间，无法进行该操作。请联系报考学校。")
                     .build();
         } else {
             LocalDateTime now = LocalDateTime.now();
@@ -126,7 +126,7 @@ public class UserRestController {
             if (timeExceeded) {
                 return R.builder()
                         .status(Status.ERR_TIME_NOT_ALLOWED)
-                        .message("当前时间不在该学校[" + stage.getValue() + "]阶段的时间范围内，不能报名。")
+                        .message("当前时间不在该学校[" + stage.getValue() + "]阶段的时间范围内，不能进行该操作。")
                         .build();
             } else {
                 return null;
@@ -262,7 +262,7 @@ public class UserRestController {
         if (phone != null) user.setPhone(phone);
         if (birthday != null) user.setBirthday(birthday);
         user = userService.save(user);
-        localUser.set(user);
+        localUser.remove();
 
         return R.builder()
                 .status(Status.OK)
@@ -312,6 +312,8 @@ public class UserRestController {
             }
             localUser.get().setAvatarName(filename);
             userService.save(localUser.get());
+            localUser.remove();
+
             logService.record(Actions.UPDATE_AVATAR, filename, request);
             return R.builder()
                     .status(Status.OK)
