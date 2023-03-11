@@ -153,7 +153,7 @@ public class UserViewController {
 
     @GetMapping("/register-form-print")
     public ModelAndView getStudentRegisterFormPrintVIew(Model model) {
-        if (checkStageValidity(model, Stages.PREPARE_EXAM)) {
+        if (checkStageValidity(model, Stages.REGISTER)) {
             model.addAttribute("user", localUser.get());
             model.addAttribute("school",
                     schoolService.findSchool(localUser.get().getSchoolId()).orElseThrow());
