@@ -31,4 +31,6 @@ public interface IAdminService {
 
     boolean checkExistence(String username);
     void studentConfirm(Long uid);
+    long[] getConfirmData(Long schoolId);
+    void assignTickets(Long schoolId);
 }

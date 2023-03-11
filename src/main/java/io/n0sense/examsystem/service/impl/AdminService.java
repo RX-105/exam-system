@@ -2,6 +2,8 @@ package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.dto.BasicUserDTO;
+import io.n0sense.examsystem.dto.ExamUserDTO;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.repository.*;
 import io.n0sense.examsystem.service.IAdminService;
@@ -98,10 +100,10 @@ public class AdminService implements IAdminService {
         } else if (this.examRepository.existsByName(examName)) {
             return Status.ERR_EXAM_EXISTS;
         } else {
-            Major major = new Major(0L, majorName, 100001L, applicant, enrollment, new BigDecimal(score), admission);
-            major = this.majorRepository.save(major);
-            Exam exam = new Exam(0L, examName, major.getId(), start, end);
-            this.examRepository.save(exam);
+//            Major major = new Major(0L, majorName, 100001L, applicant, enrollment, new BigDecimal(score), admission);
+//            major = this.majorRepository.save(major);
+//            Exam exam = new Exam(0L, examName, major.getId(), start, end);
+//            this.examRepository.save(exam);
             return Status.OK;
         }
     }
@@ -208,5 +210,36 @@ public class AdminService implements IAdminService {
             u.setIsConfirmed(true);
             userRepository.save(u);
         }
+    }
+
+    /**
+     * 获取指定学校中现场确认和没有现场确认的人数。
+     * @param schoolId 指定学校的ID
+     * @return long数组，包含两个元素，下标为0的元素是已现场确认的人数，下标为1的元素是未确认的人数。
+     */
+    @Override
+    public long[] getConfirmData(Long schoolId) {
+        long[] data = new long[2];
+        long confirmed = userRepository.countBySchoolAndIsConfirmedTrue(School.builder().schoolId(schoolId).build());
+        long total = userRepository.countBySchool(School.builder().schoolId(schoolId).build());
+        data[0] = confirmed;
+        data[1] = total - confirmed;
+        return data;
+    }
+
+    @Override
+    public void assignTickets(Long schoolId) {
+        List<BasicUserDTO> userList = userRepository.findBySchoolAndIsConfirmedTrue(School.builder().schoolId(schoolId).build());
+        Random random = new Random();
+        for (BasicUserDTO user : userList) {
+            Long room = random.longs(0,100).findFirst().getAsLong();
+            Long seat = random.longs(0,60).findFirst().getAsLong();
+            userRepository.updateSeatAndRoom(seat, room, user.getUserId());
+        }
+    }
+
+    public Page<ExamUserDTO> getExamUserInfo(Long schoolId, int page, int size) {
+        return userRepository.findAllBySchoolIs(School.builder().schoolId(schoolId).build(),
+                PageRequest.of(page, size));
     }
 }
