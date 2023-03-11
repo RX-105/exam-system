@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,6 +15,8 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@DynamicUpdate
 @Table(name = "user")
 public class User {
     @Id
@@ -34,8 +37,14 @@ public class User {
     private LocalDate graduateTime;
     private Boolean isCurrent; // 以true表示应届，false往届
     private Boolean isScience; // 以true表示理科，false文科
-    private Long schoolId;
-    private Long major;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id", nullable = false)
+    @ToString.Exclude
+    private School school;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major", nullable = false)
+    @ToString.Exclude
+    private Major major;
     private String englishLevel;
     private String homeAddress;
     private String nationality;

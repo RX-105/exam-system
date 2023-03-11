@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -28,6 +29,9 @@ public class Major {
     private Integer enrollmentCount;
     private BigDecimal acceptScore;
     private Integer admissionCount;
+    @OneToMany(mappedBy = "major")
+    @ToString.Exclude
+    private Set<User> users;
 
     @Override
     public boolean equals(Object o) {

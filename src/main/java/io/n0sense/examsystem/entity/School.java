@@ -1,10 +1,11 @@
 package io.n0sense.examsystem.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import jakarta.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -12,11 +13,12 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "school")
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "school_id")
     private Long schoolId;
     @Column(nullable = false)
     private String code;
@@ -27,6 +29,9 @@ public class School {
     private String contactNumber;
     private String examName;
     private String recruitYears;
+    @OneToMany(mappedBy = "school")
+    @ToString.Exclude
+    private Set<User> userList;
 
     @Override
     public boolean equals(Object o) {
