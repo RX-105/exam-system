@@ -3,6 +3,7 @@ package io.n0sense.examsystem.controller.admin;
 import com.sun.management.OperatingSystemMXBean;
 import io.n0sense.examsystem.commons.SystemStatistics;
 import io.n0sense.examsystem.commons.constants.Stages;
+import io.n0sense.examsystem.dto.ExamUserDTO;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.annotation.Nullable;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 实现管理员页面功能的控制器。
@@ -38,6 +40,8 @@ public class AdminViewController {
     private final MajorService majorService;
     private final ExamService examService;
     private final Map<String, String> groupMap;
+    private final HttpSession session;
+    private final ThreadLocal<Admin> localAdmin = ThreadLocal.withInitial(() -> null);
     @Value("${application.version}")
     private String version;
     @Value("${application.admin-token}")
@@ -48,6 +52,29 @@ public class AdminViewController {
         model.addAttribute("version", version);
         model.addAttribute("identities", groupMap);
         model.addAttribute("schools", schoolService.findAll());
+    }
+
+    /**
+     * 检从session中获取用户信息，并保存到线程局部对象中，返回一个布尔值，用于表示检查结果。<br>
+     * 如果无法获取用户信息，将会在model对象中写入错误信息，属性名为msg，且不设置localAdmin。
+     * @param model Spring MVC的Model对象
+     * @return 如果返回值是true，该方法将会设置线程局部对象localUser，否则在model中写入错误信息。
+     * @apiNote 使用该方法并使用localAdmin对象后必须使用remove方法清除对象，否则将导致内存泄漏！
+     */
+    public boolean loadUserInfo(Model model) {
+        Long uid = (Long) session.getAttribute("uid");
+        if (uid == null) {
+            model.addAttribute("msg", "请尝试重新登陆。");
+            return false;
+        }
+        Optional<Admin> admin = adminService.findById(uid);
+        if (admin.isEmpty()) {
+            model.addAttribute("msg", "请尝试重新登陆。");
+            return false;
+        } else {
+            localAdmin.set(admin.get());
+            return true;
+        }
     }
 
     @GetMapping("/login")
@@ -197,5 +224,29 @@ public class AdminViewController {
     @GetMapping("/recruit/confirm")
     public ModelAndView getRecruitConfirmView() {
         return new ModelAndView("/admin/recruit/confirm");
+    }
+
+    @GetMapping("/aca-aff/ticket-assign")
+    public ModelAndView getAcaAffTicketAssignView(Model model) {
+        loadUserInfo(model);
+        return new ModelAndView("/admin/aca-aff/ticket-assign");
+    }
+
+    @GetMapping("/aca-aff/room-assign")
+    public ModelAndView getAcaAffRoomAssignView(Integer page, Model model) {
+        if (!loadUserInfo(model)) {
+            return new ModelAndView("/admin/aca-aff/room-assign");
+        }
+        Page<ExamUserDTO> examUsers =  adminService.getExamUserInfo(
+                localAdmin.get().getSchoolId(), (null == page ? 0 : page), 10
+        );
+        List<ExamUserDTO> examUserList = examUsers.toList();
+        if (page != null && examUsers.getTotalPages() < page){
+            model.addAttribute("msg", "请勿玩弄页面参数哦。");
+        } else {
+            model.addAttribute("students", examUserList);
+            model.addAttribute("studentPage", examUsers);
+        }
+        return new ModelAndView("/admin/aca-aff/room-assign");
     }
 }
