@@ -61,23 +61,23 @@ public class AdminRestController {
                 .build();
     }
 
-    public R loadUserInfo() {
+    public Optional<R> loadUserInfo() {
         Long uid = (Long) session.getAttribute("uid");
         if (uid == null) {
-            return R.builder()
+            return Optional.of(R.builder()
                     .status(Status.ERR_USER_NOT_FOUND)
                     .message("请尝试重新登陆。")
-                    .build();
+                    .build());
         }
         Optional<Admin> admin = adminService.findById(uid);
         if (admin.isEmpty()) {
-            return R.builder()
+            return Optional.of(R.builder()
                     .status(Status.ERR_USER_NOT_FOUND)
                     .message("请尝试重新登陆。")
-                    .build();
+                    .build());
         } else {
             localAdmin.set(admin.get());
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -213,16 +213,13 @@ public class AdminRestController {
     @GetMapping("/user/all")
     public R getStudentList() {
         log.warn(String.valueOf(session.getAttribute("uid")));
-        R r = loadUserInfo();
-        if (r != null) {
-            return r;
+        Optional<R> r = loadUserInfo();
+        if (r.isPresent()) {
+            return r.get();
         }
         Long schoolId = localAdmin.get().getSchoolId();
         localAdmin.remove();
-        List<BasicUserDTO> studentList = userService.findAllBySchoolId(schoolId)
-                .stream()
-                .map(BasicUserDTO::new)
-                .toList();
+        List<BasicUserDTO> studentList = userService.findAllBySchoolId(schoolId);
         return R.builder()
                 .status(Status.OK)
                 .data(Map.of("student-list", studentList))
@@ -490,6 +487,34 @@ public class AdminRestController {
         return R.builder()
                 .status(Status.OK)
                 .message("已确认。")
+                .build();
+    }
+
+    @PostMapping("/assignTicket")
+    public R assignTicket() {
+        Optional<R> r = loadUserInfo();
+        if (r.isPresent()) {
+            return r.get();
+        }
+        adminService.assignTickets(localAdmin.get().getSchoolId());
+        localAdmin.remove();
+        return R.builder()
+                .status(Status.OK)
+                .message("分配完成。")
+                .build();
+    }
+
+    @PostMapping("/getConfirms")
+    public R getConfirms() {
+        Optional<R> r = loadUserInfo();
+        if (r.isPresent()) {
+            return r.get();
+        }
+        long[] data = adminService.getConfirmData(localAdmin.get().getSchoolId());
+        localAdmin.remove();
+        return R.builder()
+                .status(Status.OK)
+                .data(Map.of("confirmed", data[0], "pending", data[1]))
                 .build();
     }
 }
