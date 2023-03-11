@@ -1,7 +1,9 @@
 package io.n0sense.examsystem.service.impl;
 
 import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.dto.BasicUserDTO;
 import io.n0sense.examsystem.entity.Registry;
+import io.n0sense.examsystem.entity.School;
 import io.n0sense.examsystem.entity.User;
 import io.n0sense.examsystem.repository.RegistryRepository;
 import io.n0sense.examsystem.repository.UserRepository;
@@ -84,8 +86,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> findAllBySchoolId(Long schoolId) {
-        return userRepository.findAllBySchoolId(schoolId);
+    public List<BasicUserDTO> findAllBySchoolId(Long schoolId) {
+        return userRepository.findAllBySchool(School.builder().schoolId(schoolId).build());
     }
 
     /**

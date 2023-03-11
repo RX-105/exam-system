@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.service;
 
+import io.n0sense.examsystem.dto.BasicUserDTO;
 import io.n0sense.examsystem.entity.User;
 import lombok.NonNull;
 
@@ -12,7 +13,7 @@ public interface IUserService {
     Optional<User> findByName(String username);
 
     Optional<User> findById(Long id);
-    List<User> findAllBySchoolId(Long schoolId);
+    List<BasicUserDTO> findAllBySchoolId(Long schoolId);
 
     boolean checkExistence(String username);
 
