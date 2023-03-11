@@ -64,13 +64,13 @@ public class UserViewController {
         if (!devProperties.getValidateStageTime()) {
             return true;
         }
-        if (localUser.get().getSchoolId() == null) {
+        if (localUser.get().getSchool() == null) {
             model.addAttribute("msg", "请先登记报考学校。");
             return false;
         }
 
         List<Stage> stagesList = stageService.findAllStageBySchoolIdAndName(
-                localUser.get().getSchoolId(), stage.getKey());
+                localUser.get().getSchool().getSchoolId(), stage.getKey());
         if (stagesList.size() == 0) {
             model.addAttribute("msg",
                     "学校没有设置["+stage.getValue()+"]阶段时间，请联系报考学校。");
@@ -156,9 +156,9 @@ public class UserViewController {
         if (checkStageValidity(model, Stages.REGISTER)) {
             model.addAttribute("user", localUser.get());
             model.addAttribute("school",
-                    schoolService.findSchool(localUser.get().getSchoolId()).orElseThrow());
+                    schoolService.findSchool(localUser.get().getSchool().getSchoolId()).orElseThrow());
             model.addAttribute("major",
-                    majorService.findById(localUser.get().getMajor()).orElseThrow());
+                    majorService.findById(localUser.get().getMajor().getId()).orElseThrow());
         }
         return new ModelAndView("/student/register-form-print");
     }

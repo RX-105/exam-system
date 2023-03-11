@@ -6,10 +6,7 @@ import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Stages;
 import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.config.properties.DevProperties;
-import io.n0sense.examsystem.entity.Major;
-import io.n0sense.examsystem.entity.R;
-import io.n0sense.examsystem.entity.Stage;
-import io.n0sense.examsystem.entity.User;
+import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -99,9 +96,9 @@ public class UserRestController {
         if (schoolId != null) {
             stages = stageService.findAllStageBySchoolIdAndName(
                     schoolId, stage.getKey());
-        } else if (localUser.get().getSchoolId() != null) {
+        } else if (localUser.get().getSchool() != null) {
             stages = stageService.findAllStageBySchoolIdAndName(
-                    localUser.get().getSchoolId(), stage.getKey());
+                    localUser.get().getSchool().getSchoolId(), stage.getKey());
         } else {
             return R.builder()
                     .status(Status.ERR_PARAMETER_NOT_PRESENT)
@@ -241,8 +238,8 @@ public class UserRestController {
         }
 
         User user = localUser.get();
-        if (schoolId != null) user.setSchoolId(schoolId);
-        if (majorId != null) user.setMajor(majorId);
+        if (schoolId != null) user.setSchool(School.builder().schoolId(schoolId).build());
+        if (majorId != null) user.setMajor(Major.builder().id(majorId).build());
         if (StringUtils.hasLength(realName)) user.setRealname(realName);
         if (StringUtils.hasLength(identity)) user.setIdentityId(identity);
         if (StringUtils.hasLength(gender)) user.setGender(gender);
