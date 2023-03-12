@@ -11,11 +11,21 @@ import io.n0sense.examsystem.util.IpUtil;
 import io.n0sense.examsystem.util.PasswordEncoder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -31,8 +41,9 @@ public class AdminService implements IAdminService {
     private final RegistryRepository registryRepository;
     private final MajorRepository majorRepository;
     private final ExamRepository examRepository;
-    private final HttpServletRequest request;
     private final UserRepository userRepository;
+    private final FileService fileService;
+    private final HttpServletRequest request;
 
     /**
      * 添加一个新用户，并添加注册表项。
@@ -238,8 +249,85 @@ public class AdminService implements IAdminService {
         }
     }
 
+    @Override
     public Page<ExamUserDTO> getExamUserInfo(Long schoolId, int page, int size) {
-        return userRepository.findAllBySchoolIs(School.builder().schoolId(schoolId).build(),
-                PageRequest.of(page, size));
+        return userRepository.findAllBySchoolAndIsConfirmedTrue(new School(schoolId), PageRequest.of(page, size));
+    }
+
+    /**
+     * 将学校ID指定的学校报考学生考场座位信息导出为Excel表格。
+     * @param schoolId 学校ID
+     * @return 使用Optional包裹的Resource对象。如果正常获得文件，则Optional内的对象不为空。
+     * 为空的情况有：当前学校没有已确认的考生；无法创建临时文件；发生IO异常。
+     * @throws IOException 如果无法处理IO操作，则会抛出这个异常。
+     */
+    @Override
+    public Optional<Resource> exportExamUserInfo(Long schoolId) throws IOException {
+        List<ExamUserDTO> userDTOList = userRepository.findAllBySchoolAndIsConfirmedTrue(
+                new School(schoolId), Pageable.unpaged()).toList();
+        if (userDTOList.isEmpty()) {
+            return Optional.empty();
+        }
+        String schoolName = userDTOList.get(0).getSchool().getName();
+        String fileName = "";
+        Optional<FileInputStream> optional = Optional.empty();
+        int counter = 0;
+        while (optional.isEmpty()) {
+            // 创建文件尝试次数不能超过100次，否则直接返回empty
+            counter++;
+            if (counter > 100) {
+                return Optional.empty();
+            }
+            LocalDate seed = LocalDate.now().plusDays(counter);
+            String suffix = PasswordEncoder.MD5Encrypt(seed.toString()).substring(0, 6);
+            fileName = seed.getYear() + "年" + schoolName + "考试座位安排表-" + suffix + ".xlsx";
+            optional = fileService.createTempFile(fileName);
+        }
+
+        // 创建工作簿和工作表
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("座位安排表");
+
+        // 添加表头
+        Row head = sheet.createRow(0);
+        head.createCell(0).setCellValue("准考证编号");
+        head.createCell(1).setCellValue("姓名");
+        head.createCell(2).setCellValue("证件号码");
+        head.createCell(3).setCellValue("报考学校");
+        head.createCell(4).setCellValue("报考专业");
+        head.createCell(5).setCellValue("考场号");
+        head.createCell(6).setCellValue("座位号");
+
+        // 添加表体数据
+        for (int i = 0; i < userDTOList.size(); i++) {
+            Row row = sheet.createRow(i+1);
+            row.createCell(0).setCellValue(userDTOList.get(i).getUserId());
+            row.createCell(1).setCellValue(userDTOList.get(i).getRealname());
+            row.createCell(2).setCellValue(userDTOList.get(i).getIdentityId());
+            row.createCell(3).setCellValue(userDTOList.get(i).getSchool().getName());
+            row.createCell(4).setCellValue(userDTOList.get(i).getMajor().getName());
+            row.createCell(5).setCellValue(userDTOList.get(i).getRoomId());
+            row.createCell(6).setCellValue(userDTOList.get(i).getSeatId());
+        }
+
+        // 根据之前的文件名拉取FileOutputStream，并保存工作簿
+        FileOutputStream os;
+        try {
+            Optional<FileOutputStream> opOs = fileService.saveTempFile(fileName);
+            if (opOs.isEmpty()){
+                return Optional.empty();
+            }
+            os = opOs.get();
+        } catch (FileNotFoundException e) {
+            return Optional.empty();
+        }
+        workbook.write(os);
+        workbook.close();
+
+        try {
+            return Optional.of(fileService.getTempFile(fileName));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

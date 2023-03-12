@@ -1,10 +1,13 @@
 package io.n0sense.examsystem.service;
 
+import io.n0sense.examsystem.dto.ExamUserDTO;
 import io.n0sense.examsystem.entity.Admin;
 import io.n0sense.examsystem.entity.R;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,4 +36,8 @@ public interface IAdminService {
     void studentConfirm(Long uid);
     long[] getConfirmData(Long schoolId);
     void assignTickets(Long schoolId);
+
+    Page<ExamUserDTO> getExamUserInfo(Long schoolId, int page, int size);
+
+    Optional<Resource> exportExamUserInfo(Long schoolId) throws IOException;
 }
