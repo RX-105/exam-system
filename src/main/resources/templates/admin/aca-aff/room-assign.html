@@ -36,7 +36,11 @@
 
         <!-- 正文区域 -->
         <section class="content">
-            <!-- 登陆历史 -->
+            <div class="callout callout-info" th:unless="${msg}">
+                <p>点击下面的按钮下载完整的表格文件。</p>
+                <button type="button" class="btn btn-default" id="page-print-btn">下载</button>
+            </div>
+            <!-- 考场信息 -->
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <i class="fa fa-chevron-circle-right"></i>
@@ -102,7 +106,7 @@
                 <div class="text-center" style="color: red" th:if="${msg}" th:text="${msg}"></div>
 
             </div>
-            <!-- 登陆历史 /-->
+            <!-- 考场信息 /-->
 
         </section>
         <!-- 正文区域 /-->
@@ -119,6 +123,7 @@
 <div th:replace="~{commons/js}"></div>
 
 <script>
+
     $(document).ready(function () {
         // 选择框
         $(".select2").select2();
@@ -144,6 +149,10 @@
         // 激活导航位置
         setSidebarActive("room-assign");
     });
+
+    $('#page-print-btn').click(() => {
+        window.location.href = '/api/admin/seatData'
+    })
 </script>
 </body>
 </html>
