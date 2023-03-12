@@ -7,6 +7,7 @@ public interface ExamUserDTO {
     Long getUserId();
     String getName();
     String getRealname();
+    String getIdentityId();
     School getSchool();
     Major getMajor();
     Long getRoomId();
