@@ -36,7 +36,7 @@ public class TestUserRepository {
 
     @Test
     void testGetExamDTO() {
-        Page<ExamUserDTO> examUserDTOS = userRepository.findAllBySchoolIs(School.builder().schoolId(100001L).build(), Pageable.unpaged());
+        Page<ExamUserDTO> examUserDTOS = userRepository.findAllBySchoolAndIsConfirmedTrue(School.builder().schoolId(100001L).build(), Pageable.unpaged());
         System.out.println(examUserDTOS.toList().size());
     }
 }
