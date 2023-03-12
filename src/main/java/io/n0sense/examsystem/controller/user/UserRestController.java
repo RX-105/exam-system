@@ -8,6 +8,7 @@ import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.config.properties.DevProperties;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
+import io.n0sense.examsystem.util.BarcodeUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
@@ -23,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -348,6 +350,40 @@ public class UserRestController {
         }
     }
 
+    @GetMapping("/idBarcode")
+    public ResponseEntity<BufferedImage> getIdBarcode() {
+        R r = checkStageValidity(Stages.PREPARE_EXAM, null);
+        if (r != null) {
+            return null;
+        }
+        String id = "00" + localUser.get().getUserId().toString();
+        BufferedImage barcode;
+        try {
+            barcode = BarcodeUtil.renderBarcode(id);
+            return getBufferedImage(barcode, "barcode.png", MediaType.IMAGE_PNG);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/idQRCode")
+    public ResponseEntity<BufferedImage> getIdQRCode() {
+        R r = checkStageValidity(Stages.PREPARE_EXAM, null);
+        if (r != null) {
+            return null;
+        }
+        String id = "00" + localUser.get().getUserId().toString();
+        BufferedImage barcode;
+        try {
+            barcode = BarcodeUtil.renderQRCode(id);
+            return getBufferedImage(barcode, "qrcode.png", MediaType.IMAGE_PNG);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public ResponseEntity<Object> getFile(Resource file, MediaType mediaType) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", String.format("attachment;filename=\"%s", file.getFilename()));
@@ -360,5 +396,18 @@ public class UserRestController {
                 .contentLength(file.contentLength())
                 .contentType(mediaType)
                 .body(file);
+    }
+
+    public ResponseEntity<BufferedImage> getBufferedImage(BufferedImage image, String fileName, MediaType mediaType) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", String.format("attachment;filename=\"%s", fileName));
+        headers.add("Cache-Control", "no-cache,no-store,must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(mediaType)
+                .body(image);
     }
 }
