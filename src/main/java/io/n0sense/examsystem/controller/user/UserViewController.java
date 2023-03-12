@@ -159,7 +159,17 @@ public class UserViewController {
                     schoolService.findSchool(localUser.get().getSchool().getSchoolId()).orElseThrow());
             model.addAttribute("major",
                     majorService.findById(localUser.get().getMajor().getId()).orElseThrow());
+            localUser.remove();
         }
         return new ModelAndView("/student/register-form-print");
+    }
+
+    @GetMapping("/ticket-print")
+    public ModelAndView getStudentTicketPrintView(Model model) {
+        if (checkStageValidity(model, Stages.PREPARE_EXAM)) {
+            model.addAttribute("user", localUser.get());
+            localUser.remove();
+        }
+        return new ModelAndView("/student/ticket-print");
     }
 }
