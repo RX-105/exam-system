@@ -5,6 +5,7 @@ import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
 import io.n0sense.examsystem.commons.constants.Status;
+import io.n0sense.examsystem.config.properties.ApplicationProperties;
 import io.n0sense.examsystem.dto.BasicUserDTO;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
@@ -14,7 +15,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,6 +47,7 @@ public class AdminRestController {
     private final MajorService majorService;
     private final ExamService examService;
     private final UserService userService;
+    private final ApplicationProperties applicationProperties;
     private final Logger log = LoggerFactory.getLogger(AdminRestController.class);
     private final ThreadLocal<Admin> localAdmin = ThreadLocal.withInitial(() -> null);
     private final HttpSession session;
@@ -516,5 +524,40 @@ public class AdminRestController {
                 .status(Status.OK)
                 .data(Map.of("confirmed", data[0], "pending", data[1]))
                 .build();
+    }
+
+    @GetMapping("/seatData")
+    public ResponseEntity<Object> exportSeatsData() {
+        Optional<R> r = loadUserInfo();
+        if (r.isPresent()) {
+            return null;
+        }
+        Optional<Resource> exports;
+        try {
+            exports = adminService.exportExamUserInfo(localAdmin.get().getSchoolId());
+            if (exports.isPresent()) {
+                return getFile(exports.get(), MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public ResponseEntity<Object> getFile(Resource file, MediaType mediaType) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        String filename = ContentDisposition.attachment().filename(file.getFilename(), StandardCharsets.UTF_8).build().toString();
+        headers.add("Content-Disposition", filename);
+        headers.add("Cache-Control", "no-cache,no-store,must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.contentLength())
+                .contentType(mediaType)
+                .body(file);
     }
 }
