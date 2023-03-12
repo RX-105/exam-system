@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long>, BaseRepositor
     List<BasicUserDTO> findAllBySchool(School school);
 
     List<BasicUserDTO> findBySchoolAndIsConfirmedTrue(School school);
-    Page<ExamUserDTO> findAllBySchoolIs(School school, Pageable pageable);
+    Page<ExamUserDTO> findAllBySchoolAndIsConfirmedTrue(School school, Pageable pageable);
 
     long countBySchool(School school);
 
