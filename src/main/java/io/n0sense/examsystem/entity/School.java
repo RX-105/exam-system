@@ -13,12 +13,14 @@ import java.util.Set;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Builder
 @Table(name = "school")
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "school_id")
+    @NonNull
     private Long schoolId;
     @Column(nullable = false)
     private String code;
