@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -33,6 +34,7 @@ public class School {
     private String recruitYears;
     @OneToMany(mappedBy = "school")
     @ToString.Exclude
+    @JsonIgnore
     private Set<User> userList;
 
     @Override

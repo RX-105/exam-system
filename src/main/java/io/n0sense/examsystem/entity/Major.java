@@ -1,5 +1,6 @@
 package io.n0sense.examsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -31,6 +32,7 @@ public class Major {
     private Integer admissionCount;
     @OneToMany(mappedBy = "major")
     @ToString.Exclude
+    @JsonIgnore
     private Set<User> users;
 
     @Override
