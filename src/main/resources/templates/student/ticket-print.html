@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="zh-Hans" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,31 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
     <div th:replace="~{commons/css}"></div>
+    <style>
+    .printing {
+        font-family: 宋体,fangsong;
+    }
+    .printing-bold {
+        font-weight: bold;
+    }
+    table {
+        border-collapse: collapse;
+        border: 2px solid black;
+        width: 700px;
+        table-layout: fixed;
+        user-select: none;
+        margin: 5px auto;
+    }
+    th, td {
+        padding-left: 15px;
+        padding-right: 15px;
+        font-family: fangsong;
+        /*height: 40px;*/
+    }
+    .table-title > td {
+        font-weight: bold;
+    }
+</style>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -35,78 +60,156 @@
         <!-- 内容头部 /-->
 
         <!-- 正文区域 -->
-        <section class="content">
-            <!-- 统计数值 -->
-            <div class="row">
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>150</h3>
-
-                            <p>新订单</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>转化率</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>新注册用户</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-red">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>日PV</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">详细 <i
-                                class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
+        <section class="content" id="app">
+            <div class="callout callout-info" th:unless="${msg}">
+                <p>这个页面仅限于预览信息，请勿直接打印。你可以点击下方按钮下载可打印的准考证文档。</p>
+                <button type="button" class="btn btn-default" @click="printTable">打印</button>
             </div>
-            <!-- /.row -->
-            <p class="lead" style="height: 200px; line-height: 200px;text-align: center">
-                <b>欢迎回来。</b>这里是准考证打印页面。
-            </p>
+            <p class="lead" th:text="${msg}"></p>
+            <div id="print-area" th:unless="${msg}">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <h3 class="text-center printing printing-bold" id="title">
+                            {{user.school.recruitYears}}年{{user.school.name}}{{user.school.examName}}考试
+                        </h3>
+                        <h3 class="text-center printing printing-bold">
+                            准&nbsp;考&nbsp;证
+                        </h3>
+                    </div>
+                    <div class="col-md-2">
+                        <img src="/api/student/idQRCode" alt="barcode" style="height: 100px;width: 100px">
+                    </div>
+                </div>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody class="data">
+                    <tr class="table-title">
+                        <td colspan="5" rowspan="1" style="border-bottom: 1px solid black">身份信息</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">准考证号：00{{user.userId}}</td>
+                        <td colspan="1" rowspan="6" style="padding: 0">
+                            <img src="/api/student/avatar?refresh=false" style="width: 138px;height: 160px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">姓名：{{user.realname}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">性别：{{user.gender}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">证件类型：中华人民共和国居民身份证</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">证件号码：{{user.identityId}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">报考学校：{{user.school.name}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">报考专业：{{user.major.name}}</td>
+                        <td colspan="1" rowspan="2" style="padding: 0;">
+                            <img src="/api/student/idBarcode" style="width: 138px;height: 30px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" rowspan="1">备注：无</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody class="data">
+                    <tr class="table-title">
+                        <td colspan="5" rowspan="1" style="border-bottom: 1px solid black">时间安排</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1">考试</td>
+                        <td colspan="1" rowspan="1">场次</td>
+                        <td colspan="1" rowspan="1">考试日期</td>
+                        <td colspan="1" rowspan="1">报到时间</td>
+                        <td colspan="1" rowspan="1">考试时间</td>
+                    </tr>
+                    <tr v-for="exam in exams">
+                        <td colspan="1" rowspan="1">{{exam.name}}</td>
+                        <td colspan="1" rowspan="1">--</td>
+                        <td colspan="1" rowspan="1">{{exam.startTime.substring(0, exam.startTime.indexOf(' '))}}</td>
+                        <td colspan="1" rowspan="1">考试前半小时</td>
+                        <td colspan="1" rowspan="1">
+                            {{exam.startTime.substring(exam.startTime.lastIndexOf(' ')+1)}}-{{exam.endTime.substring(exam.endTime.lastIndexOf(' ')+1)}}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody class="data">
+                    <tr class="table-title">
+                        <td colspan="3" rowspan="1" style="border-bottom: 1px solid black">考场安排</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1">考场名称</td>
+                        <td colspan="1" rowspan="1">考场号</td>
+                        <td colspan="1" rowspan="1">座位号</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1">{{user.school.name}}</td>
+                        <td colspan="1" rowspan="1">{{user.roomId}}</td>
+                        <td colspan="1" rowspan="1">{{user.seatId}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody class="data">
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1" style="border-bottom: 1px solid black">考试须知</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1">
+                            1.考试当日考生须携带相应科目准考证、报考时使用身份证件及学校规定其他证件按规定时间到达准考证上指定的考场，配合监考员完
+                            成健康检测、身份核对，考场签到表上签字，并按考点要求将与考试无关物品放置在指定位置。证件携带不齐全或不配合监考员完成健康
+                            检测、身份核对、签到及拒绝将与考试无关物品放置在指定位置的考生将不得进入考场，情节严重的将按违规处理。<br>
+                            2.考生进入考场后须按准考证上的位置入座，否则按违规处理。<br>
+                            3.考生须听从监考员指令，在规定时间打开试卷、作答和停止作答，否则按违规处理。<br>
+                            4.考生在答题前，请认真完成以下内容:(1)请检查试题册背面条形码粘贴条、答题卡的印刷质量，如有问题及时向监考员反映，确认
+                            无误后完成以下两点要求;(2)请将试题册背面条形码粘贴条揭下后粘贴在答题卡1的条形码粘贴框内，并将姓名和准考证号填写在试题册
+                            背面相应位置;(3)请在答题卡1和答题卡2指定位置用黑色签字笔填写准考证号、姓名和学校名称，并用HB-2B铅笔将对应准考证号的信息
+                            点涂黑。<br>
+                            5.考生在考试过程中，请注意以下内容:(1)所有题目必须在答题卡上规定位置作答，在试题册上或答题卡上非规定位置的作答一律无
+                            效;(2)请在规定时间内在答题卡指定位置依次完成作文、听力、阅读、翻译各部分考试，作答作文期间不得翻阅该试题册。听力录音播放
+                            完毕后，请立即停止作答，监考员将立即回收答题卡1，得到监考员指令后方可继续作答;(3)作文题内容印在试题册背面，作文题及其他
+                            主观题必须用黑色签字笔在答题卡指定区域内作答。<br>
+                            6.考生在考试过程中出现以下情况按违规处理;(1)不正确填写（涂）个人信息，错贴、不贴、毁损条形码粘贴条;(2)未按规定翻阅试
+                            题册、提前阅读试题、提前或在收答题卡期间作答;(3)未用所规定的笔作答、折叠或毁损答题卡导致无法评卷;(4)考试期间在非听力考试
+                            时间佩戴耳机;(5)CET相关规定中规定的违规行为。<br>
+                            7.在考试过程中出现突发事件导致考试无法正常进行时，考生须听从监考员安排，相关情况未解决之前，不得离开考场.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table style="border-bottom: 1px solid black;">
+                    <tbody class="data">
+                    <tr class="table-title">
+                        <td colspan="1" rowspan="1" style="border-bottom: 1px solid black">考点提示</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1">
+                            一、所有考生<br>
+                            1.进入考场须出示本人健康码、通信大数据行程卡(绿码)；现场测量体温正常(＜37.3℃)且无咳嗽等呼吸道异常症状者方可入场参加考
+                            试。<br>
+                            2.考前14天已在属地已完成自我健康监测，出示健康承诺书（签名）。<br>
+                            3.考生除身份核验外须全程佩戴口罩。<br>
+                            4.考前21天内有境外旅居史的考生，须提供考前72小时内2次重庆本地核酸检测阴性证明，最后一次须为考前24小时核酸检测阴性证明，
+                            2次核酸检测间隔须24小时以上。<br>
+                            5.所有考生对提供的健康相关信息的真实性负责，如因信息不实引起疫情传播和扩散，承担由此带来的全部法律责任。<br>
+                            二、有下列任一情形的考生不得参加本次考试<br>
+                            (1)渝康码异常考生（显示无码、红码和黄码）；<br>
+                            (2)通信行程卡有除重庆市以外地区的考生（在校闭环管理考生除外）；<br>
+                            (3)经现场确认有体温异常(≥37.3℃)的考生。<br>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
         </section>
         <!-- 正文区域 /-->
@@ -148,6 +251,35 @@
         // 激活导航位置
         setSidebarActive("ticket-print");
     });
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                user: null,
+                exams: null,
+            }
+        },
+        created() {
+            doPost('/api/student/user/this')
+                .then(resp => {
+                    const code = resp.data.status
+                    if ([0].includes(code)) {
+                        this.user = resp.data.data['user-info']
+                        this.exams = resp.data.data['exam-info']
+                    } else {
+                        makeModal(resp.data.message, true)
+                    }
+                })
+        },
+        methods: {
+            printTable: function () {
+                const printArea = document.getElementById('print-area')
+                const filename = document.getElementById('title').innerText + '（' + this.user.realname + '）.pdf'
+                html2pdf().from(printArea).toPdf().save(filename)
+            }
+        }
+    })
+    app.mount('#app')
 </script>
 </body>
 </html>
