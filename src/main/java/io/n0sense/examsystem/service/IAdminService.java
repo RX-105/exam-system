@@ -16,10 +16,6 @@ public interface IAdminService {
     int register(String username, String password, String groupName, Long schoolId);
 
     int login(String username, String password);
-    int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
-                          double score, String examName, LocalDateTime start, LocalDateTime end);
-    R getEnrollmentInfo(String majorName);
-    R getEnrollmentInfo();
     Optional<Admin> findByName(String name);
 
     Optional<Admin> findById(Long id);

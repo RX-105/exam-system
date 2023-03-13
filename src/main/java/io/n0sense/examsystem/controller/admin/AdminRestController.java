@@ -234,27 +234,6 @@ public class AdminRestController {
                 .build();
     }
 
-    @PostMapping({"/publish"})
-    public ModelAndView publishEnrollmentInfo(String majorName, int applicant, int enrollment, int admission, double score, String examName, LocalDateTime start, LocalDateTime end, Model model) {
-        int result = this.adminService.addEnrollmentInfo(majorName, applicant, enrollment, admission, score, examName, start, end);
-        if (result == Status.ERR_MAJOR_EXISTS) {
-            model.addAttribute("msg", "已经有这个专业了。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
-        } else if (result == Status.ERR_EXAM_EXISTS) {
-            model.addAttribute("msg", "已经有这项考试了。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
-        } else if (result == Status.OK) {
-            model.addAttribute("msg", "添加完成。");
-            return new ModelAndView("/" + Identities.ROLE_ADMIN.getKey() +
-                    "/" + Identities.GROUP_RECRUIT_AFFAIRS.getKey() + "/recruit-maintain");
-        } else {
-            this.log.error("publishEnrollmentInfo: Unresolved result " + result);
-            return new ModelAndView("404");
-        }
-    }
-
     @PostMapping("/queryLoginByTime")
     public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model) {
         Page<Log> logPage = logService.queryLogByTimeRange(

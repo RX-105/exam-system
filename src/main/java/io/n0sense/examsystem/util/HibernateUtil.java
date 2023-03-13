@@ -90,7 +90,6 @@ public class HibernateUtil {
             // com/journaldev/hibernate/model/Employee1.hbm.xml (not good)
             configuration.addAnnotatedClass(Admin.class);
             configuration.addAnnotatedClass(Config.class);
-            configuration.addAnnotatedClass(EnrollmentInfo.class);
             configuration.addAnnotatedClass(Exam.class);
             configuration.addAnnotatedClass(Log.class);
             configuration.addAnnotatedClass(Major.class);

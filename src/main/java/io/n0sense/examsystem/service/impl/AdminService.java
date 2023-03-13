@@ -103,63 +103,6 @@ public class AdminService implements IAdminService {
     }
 
     @Override
-    public int addEnrollmentInfo(String majorName, int applicant, int enrollment, int admission,
-                                 double score, String examName, LocalDateTime start,
-                                 LocalDateTime end) {
-        if (this.majorRepository.existsByName(majorName)) {
-            return Status.ERR_MAJOR_EXISTS;
-        } else if (this.examRepository.existsByName(examName)) {
-            return Status.ERR_EXAM_EXISTS;
-        } else {
-//            Major major = new Major(0L, majorName, 100001L, applicant, enrollment, new BigDecimal(score), admission);
-//            major = this.majorRepository.save(major);
-//            Exam exam = new Exam(0L, examName, major.getId(), start, end);
-//            this.examRepository.save(exam);
-            return Status.OK;
-        }
-    }
-
-    @Override
-    public R getEnrollmentInfo(String majorName) {
-        R response = new R();
-        Optional<Major> optionalMajor = this.majorRepository.findByName(majorName);
-        Map<String, Object> data = new HashMap<>();
-        if (optionalMajor.isPresent()) {
-            response.setStatus(0);
-            List<Exam> examList = this.examRepository.findAll();
-            data.put("exam", examList);
-            response.setData(data);
-        } else {
-            response.setStatus(1005);
-        }
-
-        return response;
-    }
-
-    @Override
-    public R getEnrollmentInfo() {
-        R response = new R();
-        Map<String, Object> data = new HashMap<>();
-        List<Major> majorList = this.majorRepository.findAll();
-        List<EnrollmentInfo> enrollmentInfoList = new ArrayList<>();
-        if (majorList.size() == 0) {
-            response.setStatus(Status.ERR_MAJOR_NOT_FOUND);
-        } else {
-
-            for (Major major : majorList) {
-                List<Exam> examList = this.examRepository.findAll();
-                enrollmentInfoList.add(new EnrollmentInfo(major, examList));
-            }
-
-            data.put("info", enrollmentInfoList);
-            response.setStatus(Status.OK);
-            response.setData(data);
-        }
-
-        return response;
-    }
-
-    @Override
     public Optional<Admin> findByName(String name) {
         return this.adminRepository.findByName(name);
     }
