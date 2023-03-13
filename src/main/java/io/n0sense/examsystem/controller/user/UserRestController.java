@@ -44,6 +44,7 @@ public class UserRestController {
     private final StageService stageService;
     private final FileService fileService;
     private final LogService logService;
+    private final ExamService examService;
     private final ThreadLocal<User> localUser = ThreadLocal.withInitial(() -> null);
 
     @ExceptionHandler(NullPointerException.class)
@@ -280,9 +281,11 @@ public class UserRestController {
                     .data(Map.of("location", "/"))
                     .build();
         }
+        User user = userService.findById(id).orElseThrow();
         return R.builder()
                 .status(Status.OK)
-                .data(Map.of("user-info", userService.findById(id).orElseThrow()))
+                .data(Map.of("user-info", user,
+                        "exam-info", examService.findAllByMajorId(user.getMajor().getId())))
                 .build();
     }
 
