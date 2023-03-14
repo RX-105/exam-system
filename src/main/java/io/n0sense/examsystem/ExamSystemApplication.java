@@ -17,10 +17,13 @@
 
 package io.n0sense.examsystem;
 
+import io.n0sense.examsystem.config.HttpServletRequestRuntimeHint;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ImportRuntimeHints;
 
 @SpringBootApplication
+@ImportRuntimeHints(value = HttpServletRequestRuntimeHint.class)
 public class ExamSystemApplication {
 
 	public static void main(String[] args) {
