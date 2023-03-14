@@ -31,9 +31,9 @@ public interface IFileService {
     String saveFile(MultipartFile file, String subdir) throws IOException;
     String saveAvatar(MultipartFile file) throws IOException;
 
-    Optional<FileInputStream> createTempFile(String filename) throws IOException;
+    Optional<FileInputStream> readTempFile(String filename) throws IOException;
 
-    Optional<FileOutputStream> saveTempFile(String filename) throws FileNotFoundException;
+    Optional<FileOutputStream> writeTempFile(String filename) throws IOException;
 
     Resource getFile(String filename, String subdir) throws FileNotFoundException, MalformedURLException;
     Resource getAvatar(String filename) throws FileNotFoundException, MalformedURLException;
