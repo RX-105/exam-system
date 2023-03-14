@@ -67,7 +67,7 @@ public class FileService implements IFileService {
      * @throws IOException 如果无法创建文件，或是出现其他IO异常，将会抛出这个错误。
      */
     @Override
-    public Optional<FileInputStream> createTempFile(String filename) throws IOException {
+    public Optional<FileInputStream> readTempFile(String filename) throws IOException {
         File subdir = new File(applicationProperties.getAppDataLocation()
                 + File.separator + "temp");
         if (!subdir.exists()) {
@@ -96,7 +96,7 @@ public class FileService implements IFileService {
      * @throws FileNotFoundException 表示给定文件名的文件不存在
      */
     @Override
-    public Optional<FileOutputStream> saveTempFile(String filename) throws FileNotFoundException {
+    public Optional<FileOutputStream> writeTempFile(String filename) throws IOException {
         File subdir = new File(applicationProperties.getAppDataLocation() + File.separator + "temp");
         if (!subdir.exists()) {
             if (!subdir.mkdirs()) {
@@ -107,7 +107,9 @@ public class FileService implements IFileService {
                 + File.separator + "temp" + File.separator + filename;
         File file = new File(path);
         if (!file.exists() || file.isDirectory()) {
-            return Optional.empty();
+            if (file.delete() && file.createNewFile()) {
+                return Optional.of(new FileOutputStream(file));
+            }
         }
         return Optional.of(new FileOutputStream(file));
     }
