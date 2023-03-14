@@ -25,7 +25,6 @@ import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.config.properties.DevProperties;
 import io.n0sense.examsystem.entity.*;
 import io.n0sense.examsystem.service.impl.*;
-import io.n0sense.examsystem.util.BarcodeUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
@@ -42,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,6 +62,7 @@ public class UserRestController {
     private final FileService fileService;
     private final LogService logService;
     private final ExamService examService;
+    private final GraphicsService graphicsService;
     private final ThreadLocal<User> localUser = ThreadLocal.withInitial(() -> null);
 
     @ExceptionHandler(NullPointerException.class)
@@ -371,16 +372,19 @@ public class UserRestController {
     }
 
     @GetMapping("/idBarcode")
-    public ResponseEntity<BufferedImage> getIdBarcode() {
+    public ResponseEntity<Object> getIdBarcode() {
         R r = checkStageValidity(Stages.PREPARE_EXAM, null);
         if (r != null) {
             return null;
         }
         String id = "00" + localUser.get().getUserId().toString();
-        BufferedImage barcode;
+        StringBuilder fileName = new StringBuilder();
         try {
-            barcode = BarcodeUtil.renderBarcode(id);
-            return getBufferedImage(barcode, "barcode.png", MediaType.IMAGE_PNG);
+            Optional<FileOutputStream> temp = graphicsService.renderEAN8Code(id, fileName);
+            if (temp.isEmpty()) {
+                return null;
+            }
+            return getFile(fileService.getTempFile(fileName.toString()), MediaType.IMAGE_PNG);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -388,16 +392,19 @@ public class UserRestController {
     }
 
     @GetMapping("/idQRCode")
-    public ResponseEntity<BufferedImage> getIdQRCode() {
+    public ResponseEntity<Object> getIdQRCode() {
         R r = checkStageValidity(Stages.PREPARE_EXAM, null);
         if (r != null) {
             return null;
         }
         String id = "00" + localUser.get().getUserId().toString();
-        BufferedImage barcode;
+        StringBuilder fileName = new StringBuilder();
         try {
-            barcode = BarcodeUtil.renderQRCode(id);
-            return getBufferedImage(barcode, "qrcode.png", MediaType.IMAGE_PNG);
+            Optional<FileOutputStream> temp = graphicsService.renderQRCode(id, fileName);
+            if (temp.isEmpty()) {
+                return null;
+            }
+            return getFile(fileService.getTempFile(fileName.toString()), MediaType.IMAGE_PNG);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -416,18 +423,5 @@ public class UserRestController {
                 .contentLength(file.contentLength())
                 .contentType(mediaType)
                 .body(file);
-    }
-
-    public ResponseEntity<BufferedImage> getBufferedImage(BufferedImage image, String fileName, MediaType mediaType) throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", String.format("attachment;filename=\"%s", fileName));
-        headers.add("Cache-Control", "no-cache,no-store,must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(mediaType)
-                .body(image);
     }
 }
