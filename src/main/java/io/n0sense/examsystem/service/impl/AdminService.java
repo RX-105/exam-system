@@ -56,8 +56,6 @@ import java.util.*;
 public class AdminService implements IAdminService {
     private final AdminRepository adminRepository;
     private final RegistryRepository registryRepository;
-    private final MajorRepository majorRepository;
-    private final ExamRepository examRepository;
     private final UserRepository userRepository;
     private final FileService fileService;
     private final HttpServletRequest request;
@@ -241,7 +239,7 @@ public class AdminService implements IAdminService {
             LocalDate seed = LocalDate.now().plusDays(counter);
             String suffix = PasswordEncoder.MD5Encrypt(seed.toString()).substring(0, 6);
             fileName = seed.getYear() + "年" + schoolName + "考试座位安排表-" + suffix + ".xlsx";
-            optional = fileService.createTempFile(fileName);
+            optional = fileService.readTempFile(fileName);
         }
 
         // 创建工作簿和工作表
@@ -273,7 +271,7 @@ public class AdminService implements IAdminService {
         // 根据之前的文件名拉取FileOutputStream，并保存工作簿
         FileOutputStream os;
         try {
-            Optional<FileOutputStream> opOs = fileService.saveTempFile(fileName);
+            Optional<FileOutputStream> opOs = fileService.writeTempFile(fileName);
             if (opOs.isEmpty()){
                 return Optional.empty();
             }
