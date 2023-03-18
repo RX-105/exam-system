@@ -79,6 +79,20 @@ application:
     validate-stage-time: 
 ```
 
+## 构建与运行
+
+这个项目同时支持普通JVM运行方式和GraalVM的Native Image运行方式，你可以任选其一。不过无论哪个方式，最低JDK版本都是17。
+
+### JVM运行方式
+
+拉取代码之后，在项目根目录运行`mvn install`拉取依赖，然后运行`mvn -DskipTests=true spring-boot:run`启动运行。也可以运行`mvn -DskipTests=true package`打包成独立的Jar包，然后使用`java -jar <executable_jar>.jar`运行启动。如果你没有安装Maven，也可以使用Maven Wrapper，将前面的命令中的`mvn`换成`./mvnw`就可以了。
+
+### Native Image运行方式
+
+确保你按照[官方指导](https://www.graalvm.org/latest/docs/getting-started/)配置好了GraalVM JDK。你可以运行`java -version`查看输出来确定配置无误。除此之外，你还需要完成额外的环境配置。对于Linux平台，你需要安装C语言工具链和其他的一些库，以Debian系为例，可以运行`sudo apt-get install build-essential libz-dev zlib1g-dev`安装。对于Windows平台，你需要安装Visual Studio构建工具，然后在它提供的Native Tools命令行环境下继续。GraalVM的[官网](https://www.graalvm.org/latest/reference-manual/native-image/)提供了更多详细信息。
+
+在项目根目录下运行`mvn -Pnative -DskipTests=true package`就可以开始构建，然后在target目录输出二进制文件，运行即可。
+
 ## 致谢
 
 直到参与到开发中才知道，学的东西和写的东西区别甚大。
