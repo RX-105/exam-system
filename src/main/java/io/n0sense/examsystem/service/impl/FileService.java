@@ -23,6 +23,9 @@ import io.n0sense.examsystem.util.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,34 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FileService implements IFileService {
     private final ApplicationProperties applicationProperties;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void validateConfig() {
+        checkDirectory(applicationProperties.getAppDataLocation(), "应用数据目录");
+        checkDirectory(applicationProperties.getAppDataLocation()+File.separator+"temp", "临时文件目录");
+        checkDirectory(applicationProperties.getAppDataLocation()+File.separator+"avatars", "用户头像目录");
+    }
+
+    @EventListener(ContextClosedEvent.class)
+    public void emptyTempFiles() {
+        File[] tempFiles = new File(applicationProperties.getAppDataLocation()+File.separator+"temp").listFiles();
+        if (tempFiles != null) {
+            for (File tempFile : tempFiles) {
+                tempFile.deleteOnExit();
+            }
+            log.warning("临时目录的文件将要被清空。");
+        }
+    }
+
+    private void checkDirectory(String path, String desc) {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            if (dir.mkdir())
+                log.info("%s目录%s不存在，已尝试创建。".formatted(desc,path));
+            else
+                log.info("%s目录%s不存在，且无法创建。请检查权限设置。".formatted(desc, path));
+        }
+    }
 
     @Override
     public String saveFile(MultipartFile file, String subdir) throws IOException {
