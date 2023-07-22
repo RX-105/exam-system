@@ -32,6 +32,7 @@ public interface Status {
     int ERR_PARAMETER_NOT_MATCH = 102;
     int ERR_NO_SUCH_ELEMENT = 102;
     int ERR_FILE_NOT_FOUND = 103;
+    int ERR_BAD_REQUEST_INTERVAL = 104;
 
     // 详细错误状态
     int ERR_USERNAME_IN_USE = 1001;
@@ -44,4 +45,5 @@ public interface Status {
     int ERR_TIME_NOT_ALLOWED = 1008;
     int ERR_TIME_NOT_FOUND = 1009;
     int ERR_LOGIN_REQUIRED = 1010;
+    int ERR_INCORRECT_CAPTCHA = 1011;
 }
