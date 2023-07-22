@@ -19,12 +19,17 @@ package io.n0sense.examsystem.controller;
 
 import io.n0sense.examsystem.commons.constants.Status;
 import io.n0sense.examsystem.entity.R;
+import io.n0sense.examsystem.service.impl.CaptchaService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.image.BufferedImage;
 import java.util.Map;
 
 @RestController
@@ -32,6 +37,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CommonRestController {
     private final HttpServletRequest request;
+    private final HttpSession session;
+    private final CaptchaService captchaService;
+
     @PostMapping("/logout")
     public R logout() {
         request.getSession().removeAttribute("username");
@@ -43,5 +51,40 @@ public class CommonRestController {
                 .message("成功退出帐号。")
                 .data(Map.of("location", "/index"))
                 .build();
+    }
+
+    @GetMapping(value = "/captcha", produces = {MediaType.IMAGE_JPEG_VALUE})
+    public BufferedImage generateCaptcha() {
+        String group = (String) session.getAttribute("group");
+        Long uid = (Long) session.getAttribute("uid");
+        if (group == null || uid == null)
+            return null;
+        else {
+            return captchaService.createCaptcha(group, uid);
+        }
+    }
+
+    @PostMapping("/captcha")
+    public R verifyCaptcha(String text) {
+        String group = (String) session.getAttribute("group");
+        Long uid = (Long) session.getAttribute("uid");
+        int status = captchaService.verifyCaptcha(group, uid, text);
+        if (status == Status.OK) {
+            return R.builder()
+                    .status(Status.OK)
+                    .build();
+        } else if (status == Status.ERR_INCORRECT_CAPTCHA) {
+            return R.builder()
+                    .status(Status.ERR_INCORRECT_CAPTCHA)
+                    .build();
+        } else if (status == Status.ERR_BAD_REQUEST_INTERVAL) {
+            return R.builder()
+                    .status(Status.ERR_BAD_REQUEST_INTERVAL)
+                    .build();
+        } else {
+            return R.builder()
+                    .status(Status.ERR_UNSPECIFIED)
+                    .build();
+        }
     }
 }
