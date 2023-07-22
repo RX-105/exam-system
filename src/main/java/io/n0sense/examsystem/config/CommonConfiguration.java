@@ -17,6 +17,8 @@
 
 package io.n0sense.examsystem.config;
 
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 @Configuration
 @ConfigurationPropertiesScan("io.n0sense.examsystem.config.properties")
@@ -49,5 +52,37 @@ public class CommonConfiguration {
         List<Resource> locations = List.of(classPathResource);
         requestHandler.setLocations(locations);
         return requestHandler;
+    }
+
+    @Bean
+    public DefaultKaptcha getKaptcha() {
+        Properties properties = new Properties();
+        // 图片边框
+        properties.setProperty("kaptcha.border", "no");
+        // 边框颜色
+        properties.setProperty("kaptcha.border.color", "105,179,90");
+        // 字体颜色
+        properties.setProperty("kaptcha.textproducer.font.color", "white");
+        // 图片宽
+        properties.setProperty("kaptcha.image.width", "110");
+        // 图片高
+        properties.setProperty("kaptcha.image.height", "40");
+        // 字体大小
+        properties.setProperty("kaptcha.textproducer.font.size", "30");
+        // 验证码长度
+        properties.setProperty("kaptcha.textproducer.char.length", "6");
+        // 字体
+        properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        properties.setProperty("kaptcha.textproducer.font.color", "black");
+//        //加鱼眼效果
+//        properties.setProperty("kaptcha.obscurificator.impl","com.google.code.kaptcha.impl.FishEyeGimpy");
+        //加水纹效果
+        properties.setProperty("kaptcha.obscurificator.impl","com.google.code.kaptcha.impl.WaterRipple");
+//        //加阴影效果
+        //配置
+        Config config = new Config(properties);
+        DefaultKaptcha kaptcha = new DefaultKaptcha();
+        kaptcha.setConfig(config);
+        return kaptcha;
     }
 }
