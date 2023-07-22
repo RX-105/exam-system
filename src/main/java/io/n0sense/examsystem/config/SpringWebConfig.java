@@ -20,9 +20,15 @@ package io.n0sense.examsystem.config;
 import io.n0sense.examsystem.interceptor.SecurityInterceptor;
 import io.n0sense.examsystem.interceptor.StatisticsInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.BufferedImageHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class SpringWebConfig implements WebMvcConfigurer {
@@ -41,5 +47,15 @@ public class SpringWebConfig implements WebMvcConfigurer {
         registry.addInterceptor(securityInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/static/**", "/api/**");
+    }
+
+    @Bean
+    public BufferedImageHttpMessageConverter bufferedImageConverter() {
+        return new BufferedImageHttpMessageConverter();
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(bufferedImageConverter());
     }
 }
