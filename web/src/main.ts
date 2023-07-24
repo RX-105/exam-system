@@ -9,8 +9,9 @@ import axios from "axios";
 import store from "@/stores";
 
 // axios configuration
-axios.defaults.baseURL = '//n0sense.io'
+axios.defaults.baseURL = '//localhost'
 axios.defaults.headers.post['Content-Type'] = 'multipart/form-data'
+axios.defaults.withCredentials = true
 
 const app = createApp(App);
 
