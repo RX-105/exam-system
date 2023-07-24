@@ -213,6 +213,7 @@ public class AdminRestController {
 
             Map<String, Object> data = new HashMap<>();
             data.put("location", "/" + Identities.ROLE_ADMIN.getKey() + "/home");
+            data.put("group", admin.getGroupName());
             return R.builder()
                     .status(result)
                     .message("登陆成功。")
