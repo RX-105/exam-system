@@ -3,7 +3,7 @@
         <img src="../../assets/Frame-c100fb2f.png" class="frame"/>
         <div class="group">
             <v-card class="form">
-                <div class="text-h4">重庆文理学院<br>考务系统</div>
+                <div class="text-h5">登录到<br>重庆文理学院考务系统</div>
                 <div class="mt-4">
                     <v-text-field
                         label="用户名"
@@ -14,7 +14,7 @@
                         v-model="username"
                     ></v-text-field>
                 </div>
-                <div class="my-4">
+                <div>
                     <v-text-field
                         label="密码"
                         type="password"
@@ -25,16 +25,35 @@
                         :rules="[required]"
                     ></v-text-field>
                 </div>
-                <div style="text-align: right">
-                    <v-btn
-                        color="primary"
-                        append-icon="mdi-arrow-right"
-                        size="large"
-                        type="submit"
-                        @click="login">
-                        登录
-                    </v-btn>
+                <div>
+                    <v-checkbox
+                        label="以后自动登入"
+                        v-model="remember"
+                        density="compact"
+                    ></v-checkbox>
                 </div>
+                <v-row>
+                    <v-col>
+                        <v-btn
+                            color="primary"
+                            prepend-icon="mdi-arrow-left"
+                            size="large"
+                            type="button"
+                            :to="'/register?name='+username">
+                            注册
+                        </v-btn>
+                    </v-col>
+                    <v-col>
+                        <v-btn
+                            color="primary"
+                            append-icon="mdi-arrow-right"
+                            size="large"
+                            type="submit"
+                            @click="login">
+                            登录
+                        </v-btn>
+                    </v-col>
+                </v-row>
             </v-card>
             <v-card class="desc">
                 <div class="logo mt-4">
@@ -76,6 +95,7 @@ const router = useRouter()
 
 const username = ref("")
 const password = ref("")
+const remember = ref(false)
 const dialogue = ref()
 
 let showDialogue: Function
@@ -91,13 +111,15 @@ function login() {
     axios.post('/api/student/login', {
         username: username.value,
         password: password.value,
-        remember: true
+        remember: remember.value
     })
         .then(res => {
             if (res.data.status === 0) {
                 store.commit('updateAuthState', {
                     authStat: true,
-                    currUsername: username.value
+                    currUsername: username.value,
+                    userGroup: 'student',
+                    userRole: 'student'
                 })
                 router.push("/")
             } else {
@@ -142,7 +164,7 @@ function required(v: string) {
             width: 360px;
             margin: 0 auto;
             height: 400px;
-            padding: 60px;
+            padding: 40px 60px;
 
             .title {
                 font-size: 36px;
