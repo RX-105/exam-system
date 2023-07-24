@@ -56,12 +56,12 @@ public class User {
     private Boolean isCurrent; // 以true表示应届，false往届
     private Boolean isScience; // 以true表示理科，false文科
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", nullable = false)
+    @JoinColumn(name = "school_id")
     @ToString.Exclude
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private School school;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major", nullable = false)
+    @JoinColumn(name = "major")
     @ToString.Exclude
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Major major;
