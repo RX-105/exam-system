@@ -28,9 +28,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+// TODO: 这个异常处理controller可能会误杀RestAPI的返回结果
+//@Controller
 @Log
-public class GeneralErrorController implements ErrorController {
+public class GeneralErrorController{
     public String getFullURL(HttpServletRequest request) {
         StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
         String queryString = request.getQueryString();
