@@ -58,6 +58,8 @@ public class UserService implements IUserService {
         } else {
             User user = new User();
             user.setName(username);
+            // 在新版web下，计划不考虑可以修改本人学校，所以通通默认CQWU（全部给我去报重庆文理学院！）
+            user.setSchool(School.builder().schoolId(100001L).build());
             user = userRepository.save(user);
             Registry registry = new Registry(
                     user.getUserId(),
