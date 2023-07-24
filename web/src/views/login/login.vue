@@ -90,11 +90,12 @@ import logo from '@/assets/admin-logo.png';
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import {useStore} from "vuex";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import SimpleDialogue from "@/utils/SimpleDialogue.vue";
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 
 const username = ref("")
 const password = ref("")
@@ -103,8 +104,21 @@ const dialogue = ref()
 const isLoading = ref(false)
 
 let showDialogue: Function
-onMounted(() => {
+onMounted(async () => {
     showDialogue = dialogue.value.showDialogue
+    await axios.get("/api/credential")
+        .then(res => {
+            console.log(res)
+            if (res.data.status === 0 && res.data.data.userRole === 'student') {
+                store.commit('updateAuthState', {
+                    authStat: true,
+                    currUsername: res.data.data.username,
+                    userGroup: 'student',
+                    userRole: 'student'
+                })
+                router.push('/student/dashboard')
+            }
+        })
 })
 
 function login() {
