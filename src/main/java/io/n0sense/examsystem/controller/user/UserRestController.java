@@ -40,7 +40,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -94,7 +93,7 @@ public class UserRestController {
      */
     public R checkStageValidity(Map.Entry<String, String> stage, Long schoolId) {
         List<Stage> stages;
-        Long uid = (Long) request.getSession().getAttribute("uid");
+        Long uid = (Long) session.getAttribute("uid");
 
         if (uid == null) {
             return R.builder()
@@ -173,12 +172,14 @@ public class UserRestController {
         if (result == 0) {
             // 判断为信息正确
             Long uid = userService.findByName(username).orElseThrow().getUserId();
-            request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("uid", uid);
-            request.getSession().setAttribute("group", "student");
-            request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getKey());
+            session.setAttribute("username", username);
+            session.setAttribute("uid", uid);
+            session.setAttribute("group", "student");
+            session.setAttribute("role", Identities.ROLE_STUDENT.getKey());
             if (remember != null && remember) {
-                request.getSession().setAttribute("remember", true);
+                session.setAttribute("remember", true);
+            } else {
+                session.setAttribute("remember", false);
             }
 
             Map<String, Object> data = new HashMap<>();
@@ -211,9 +212,9 @@ public class UserRestController {
         int result = userService.register(username, password);
         if (result == Status.OK) {
             // 检查判断为注册成功
-            request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("group", "student");
-            request.getSession().setAttribute("role", Identities.ROLE_STUDENT.getKey());
+            session.setAttribute("username", username);
+            session.setAttribute("group", "student");
+            session.setAttribute("role", Identities.ROLE_STUDENT.getKey());
 
             Map<String, Object> data = new HashMap<>();
             data.put("location", "/" + Identities.ROLE_STUDENT.getKey() + "/home");
