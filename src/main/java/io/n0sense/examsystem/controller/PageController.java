@@ -17,6 +17,7 @@
 
 package io.n0sense.examsystem.controller;
 
+import io.n0sense.examsystem.entity.R;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
 
 @Controller
 public class PageController {
@@ -38,8 +41,10 @@ public class PageController {
     // 只能把用到的页面映射一下
     @GetMapping("/sessionAttr")
     @ResponseBody
-    public String getSessionAttribute(String attribute, HttpServletRequest request) {
-        return (String) request.getSession().getAttribute(attribute);
+    public R getSessionAttribute(String attribute, HttpServletRequest request) {
+        return R.builder()
+                .data(Map.of(attribute, request.getSession().getAttribute(attribute)))
+                .build();
     }
     @GetMapping({"/admin/404", "/student/404"})
     public String get404View(){
