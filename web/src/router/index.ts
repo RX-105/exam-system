@@ -1,5 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 import Layout from '@/layout/layout.vue';
+import store from '@/stores/index'
 
 import {checkVersion} from '@/plugins/pwa';
 
@@ -226,6 +227,37 @@ const router = createRouter({
 router.beforeEach(async (to, _from, next) => {
     next();
 });
+
+router.beforeEach((to, from, next) => {
+    const userInfo = store.getters.userInfo
+    if (to.path.includes('login') || to.path.includes('register') || to.path.includes('404')) {
+        next()
+    } else if (to.path.includes('student')) {
+        if (userInfo.userRole === 'student') {
+            next()
+        } else {
+            next({
+                name: 'login',
+                query: {
+                    redirect: to.path
+                }
+            })
+        }
+    } else if (to.path.includes('admin')) {
+        if (userInfo.userRole === 'admin') {
+            next()
+        } else {
+            next({
+                name: 'login',
+                query: {
+                    redirect: to.path
+                }
+            })
+        }
+    } else {
+        alert('不允许访问这个页面。')
+    }
+})
 
 router.afterEach(() => {
     checkVersion();
