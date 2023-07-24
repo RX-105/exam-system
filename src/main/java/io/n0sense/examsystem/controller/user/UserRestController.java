@@ -62,6 +62,7 @@ public class UserRestController {
     private final LogService logService;
     private final ExamService examService;
     private final GraphicsService graphicsService;
+    private final SchoolService schoolService;
     private final ThreadLocal<User> localUser = ThreadLocal.withInitial(() -> null);
 
     @ExceptionHandler(NullPointerException.class)
@@ -424,5 +425,19 @@ public class UserRestController {
                 .contentLength(file.contentLength())
                 .contentType(mediaType)
                 .body(file);
+    }
+
+    @GetMapping("/registration-notice")
+    public R getRegistrationNotice() {
+        String schoolName = schoolService.findSchool(100001L).orElseThrow().getName();
+        Map<String, Object> notice = Map.of(
+                "stages", stageService.findAllStageBySchoolId(100001L),
+                "schoolName", schoolName,
+                "stageMap", Stages.stages
+        );
+        return R.builder()
+                .status(Status.OK)
+                .data(notice)
+                .build();
     }
 }
