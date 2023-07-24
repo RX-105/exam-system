@@ -87,4 +87,24 @@ public class CommonRestController {
                     .build();
         }
     }
+
+    @GetMapping("/credential")
+    public R getSavedCredentials() {
+        if(session.getAttribute("remember") != null &&
+                (Boolean)session.getAttribute("remember")) {
+            return R.builder()
+                    .status(Status.OK)
+                    .data(Map.of(
+                            "username", session.getAttribute("username"),
+                            "userGroup", session.getAttribute("group"),
+                            "userRole", session.getAttribute("role")
+                    ))
+                    .build();
+        } else {
+            return R.builder()
+                    .status(Status.ERR_LOGIN_REQUIRED)
+                    .build();
+        }
+    }
+
 }
