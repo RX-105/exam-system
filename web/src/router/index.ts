@@ -1,12 +1,12 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import {createRouter, createWebHashHistory} from 'vue-router';
 import Layout from '@/layout/layout.vue';
 
-import { checkVersion } from '@/plugins/pwa';
+import {checkVersion} from '@/plugins/pwa';
 
 const router = createRouter({
     history: createWebHashHistory(),
     scrollBehavior() {
-        return { top: 0 };
+        return {top: 0};
     },
     routes: [
         {
@@ -195,7 +195,7 @@ const router = createRouter({
         {
             path: '/404',
             name: '404',
-            meta: { keepAlive: false, title: 'Not found', icon: 'mdi-paw-off', visible: false },
+            meta: {keepAlive: false, title: 'Not found', icon: 'mdi-paw-off', visible: false},
             component: Layout,
             children: [
                 {
