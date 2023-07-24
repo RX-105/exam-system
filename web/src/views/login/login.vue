@@ -1,4 +1,7 @@
 <template>
+    <v-progress-linear :indeterminate="isLoading" color="primary"
+                       style="position: fixed;z-index: 999">
+    </v-progress-linear>
     <v-card class="login_container">
         <img src="../../assets/Frame-c100fb2f.png" class="frame"/>
         <div class="group">
@@ -97,6 +100,7 @@ const username = ref("")
 const password = ref("")
 const remember = ref(false)
 const dialogue = ref()
+const isLoading = ref(false)
 
 let showDialogue: Function
 onMounted(() => {
@@ -108,6 +112,7 @@ function login() {
         showDialogue("请填写所有字段。")
         return
     }
+    isLoading.value = true
     axios.post('/api/student/login', {
         username: username.value,
         password: password.value,
@@ -121,10 +126,20 @@ function login() {
                     userGroup: 'student',
                     userRole: 'student'
                 })
-                router.push("/")
+                isLoading.value = false
+                const redirect = route.query.redirect as string
+                if (redirect)
+                    router.push(redirect)
+                else
+                    router.push("/")
             } else {
+                isLoading.value = false
                 showDialogue('登陆失败。请检查你的用户名或密码。')
             }
+        })
+        .catch(err => {
+            isLoading.value = false
+            showDialogue(`发生了一些问题，目前你无法登录，请之后再试一次。<br>Error: ${err.code}`)
         })
 }
 
