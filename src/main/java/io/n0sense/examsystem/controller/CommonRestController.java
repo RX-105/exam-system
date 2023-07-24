@@ -42,10 +42,10 @@ public class CommonRestController {
 
     @PostMapping("/logout")
     public R logout() {
-        request.getSession().removeAttribute("username");
-        request.getSession().removeAttribute("groupName");
-        request.getSession().removeAttribute("role");
-        request.getSession().setAttribute("remember", false);
+        session.removeAttribute("username");
+        session.removeAttribute("group");
+        session.removeAttribute("role");
+        session.setAttribute("remember", false);
         return R.builder()
                 .status(Status.OK)
                 .message("成功退出帐号。")
