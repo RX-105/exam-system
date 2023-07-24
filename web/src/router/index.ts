@@ -11,15 +11,27 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            redirect: '/dashboard/home',
-            name: 'Dashboard',
+            redirect: '/student/dashboard',
+            name: 'student-dashboard',
             meta: {
                 visible: true,
-                title: 'Dashboard',
+                title: '考务系统',
                 icon: 'mdi-gauge',
             },
             component: Layout,
             children: [
+                {
+                    path: '/student/dashboard',
+                    name: 'student-dashboard',
+                    meta: {
+                        title: '首页',
+                        icon: 'mdi-alpha-s',
+                        keepAlive: false,
+                        visible: true,
+                    },
+                    component: () => import('@/views/student/dashboard.vue'),
+                    children: [],
+                },
                 {
                     path: '/dashboard/tesla-model-s',
                     name: 'teslaModelS',
@@ -30,18 +42,6 @@ const router = createRouter({
                         visible: true,
                     },
                     component: () => import('@/views/dashboard/teslaModelS.vue'),
-                    children: [],
-                },
-                {
-                    path: '/dashboard/home',
-                    name: 'smartHouse',
-                    meta: {
-                        title: 'Smart House',
-                        icon: 'mdi-alpha-s',
-                        keepAlive: false,
-                        visible: true,
-                    },
-                    component: () => import('@/views/dashboard/smartHouse.vue'),
                     children: [],
                 },
             ],
@@ -183,6 +183,16 @@ const router = createRouter({
                 visible: true,
             },
             component: () => import('@/views/login/login-admin.vue')
+        },
+        {
+            path: "/register",
+            name: "register",
+            meta: {
+                title: 'register',
+                icon: 'mdi-shield-account',
+                visible: true,
+            },
+            component: () => import('@/views/login/register.vue')
         },
         {
             path: '/:pathMatch(.*)',
