@@ -18,6 +18,7 @@ const router = createRouter({
                 visible: true,
                 title: '考务系统',
                 icon: 'mdi-gauge',
+                requiredRole: ['student'],
             },
             component: Layout,
             children: [
@@ -26,23 +27,65 @@ const router = createRouter({
                     name: 'student-dashboard',
                     meta: {
                         title: '首页',
-                        icon: 'mdi-alpha-s',
+                        icon: 'mdi-home',
                         keepAlive: false,
                         visible: true,
+                        requiredRole: ['student'],
                     },
                     component: () => import('@/views/student/dashboard.vue'),
                     children: [],
                 },
+            ],
+        },
+        {
+            path: '/student/system',
+            name: 'student-system',
+            redirect: '/student/system/log',
+            meta: {
+                visible: true,
+                title: '系统功能',
+                icon: 'mdi-gauge',
+                requiredRole: ['student'],
+            },
+            component: Layout,
+            children: [
                 {
-                    path: '/dashboard/tesla-model-s',
-                    name: 'teslaModelS',
+                    path: '/student/system/log',
+                    name: 'student-log',
                     meta: {
-                        title: 'Tesla Model S',
-                        icon: 'mdi-alpha-t',
+                        title: '行为日志',
+                        icon: 'mdi-account-lock',
                         keepAlive: false,
                         visible: true,
+                        requiredRole: ['student'],
                     },
-                    component: () => import('@/views/dashboard/teslaModelS.vue'),
+                    component: () => import('@/views/student/system.vue'),
+                    children: [],
+                },
+            ],
+        },
+        {
+            path: '/misc',
+            name: 'misc',
+            meta: {
+                visible: true,
+                title: '其他',
+                icon: 'mdi-gauge',
+                requiredRole: ['logged-any'],
+            },
+            component: Layout,
+            children: [
+                {
+                    path: '/misc/credits',
+                    name: 'misc-credits',
+                    meta: {
+                        title: '致谢',
+                        icon: 'mdi-star-face',
+                        keepAlive: false,
+                        visible: true,
+                        requiredRole: ['logged-any'],
+                    },
+                    component: () => import('@/views/misc/credits.vue'),
                     children: [],
                 },
             ],
@@ -171,7 +214,8 @@ const router = createRouter({
             meta: {
                 title: 'Login',
                 icon: 'mdi-shield-account',
-                visible: true,
+                visible: false,
+                requiredRole: ['any'],
             },
             component: () => import('@/views/login/login.vue'),
         },
@@ -181,7 +225,8 @@ const router = createRouter({
             meta: {
                 title: 'login-admin',
                 icon: 'mdi-shield-account',
-                visible: true,
+                visible: false,
+                requiredRole: ['any'],
             },
             component: () => import('@/views/login/login-admin.vue')
         },
@@ -191,7 +236,8 @@ const router = createRouter({
             meta: {
                 title: 'register',
                 icon: 'mdi-shield-account',
-                visible: true,
+                visible: false,
+                requiredRole: ['any'],
             },
             component: () => import('@/views/login/register.vue')
         },
@@ -199,14 +245,21 @@ const router = createRouter({
             path: '/:pathMatch(.*)',
             name: 'Match',
             meta: {
-                keepAlive: false
+                keepAlive: false,
+                requiredRole: ['any'],
             },
             redirect: '/404'
         },
         {
             path: '/404',
             name: '404',
-            meta: {keepAlive: false, title: 'Not found', icon: 'mdi-paw-off', visible: false},
+            meta: {
+                keepAlive: false,
+                title: 'Not found',
+                icon: 'mdi-paw-off',
+                visible: false,
+                requiredRole: ['any'],
+            },
             component: Layout,
             children: [
                 {
@@ -215,6 +268,7 @@ const router = createRouter({
                     meta: {
                         title: 'Not found',
                         visible: false,
+                        requiredRole: ['any'],
                     },
                     component: () => import('@/views/feedback/no.vue'),
                     children: [],
