@@ -30,7 +30,7 @@
                 </div>
                 <div>
                     <v-checkbox
-                        label="以后自动登入"
+                        label="维持登录状态"
                         v-model="remember"
                         density="compact"
                     ></v-checkbox>
@@ -108,7 +108,6 @@ onMounted(async () => {
     showDialogue = dialogue.value.showDialogue
     await axios.get("/api/credential")
         .then(res => {
-            console.log(res)
             if (res.data.status === 0 && res.data.data.userRole === 'student') {
                 store.commit('updateAuthState', {
                     authStat: true,
@@ -153,7 +152,7 @@ function login() {
         })
         .catch(err => {
             isLoading.value = false
-            showDialogue(`发生了一些问题，目前你无法登录，请之后再试一次。<br>Error: ${err.code}`)
+            showDialogue(`发生了一些问题，目前你无法登录，请之后再试一次。<br>Error: ${err.message}`)
         })
 }
 
