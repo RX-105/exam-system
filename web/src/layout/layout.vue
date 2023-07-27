@@ -177,8 +177,8 @@ const store = useStore()
 const router = useRouter();
 const navState = reactive({
     menuVisible: true,
-    rail: !mainStore.isMobile,
-    isMini: !mainStore.isMobile,
+    rail: mainStore.isMobile,
+    isMini: mainStore.isMobile,
     routes: router.options.routes,
 });
 const permanent = computed(() => {
