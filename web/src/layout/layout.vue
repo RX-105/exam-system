@@ -25,61 +25,21 @@
             </v-list>
             <!--logo and title-->
             <v-divider></v-divider>
-
-            <v-list nav class="mx-2">
-                <v-list-subheader>Dashboard</v-list-subheader>
-                <template v-for="(item, key) in navState.routes" :key="key">
+            <template v-for="(item, key) in navState.routes" :key="key">
+                <v-list nav class="mx-2"
+                        v-if="routeLoggedAccessible(item) && item.meta.visible"
+                        style="padding: 10px">
+                    <v-list-item-subtitle style="padding-top: 10px;padding-bottom: 10px">{{item.meta.title}}</v-list-item-subtitle>
                     <v-list-item
-                        v-if="item.meta?.visible && !item.children"
-                        :prepend-icon="(item.meta?.icon as any)"
-                        :title="(item.meta?.title as any)"
-                        :to="{ name: item.name }"
+                        v-for="(i1, k1) in item.children" :key="k1"
+                        :prepend-icon="i1.meta.icon"
+                        :title="i1.meta.title"
+                        :to="{ name: i1.name }"
                         class="mx-1"
-                        active-class="nav_active"
-                    ></v-list-item>
-
-                    <v-list-group
-                        v-if="item.meta?.visible && item.children && item.children.length > 0"
-                        class="mx-1"
-                    >
-                        <template v-slot:activator="{ props }">
-                            <v-list-item
-                                v-bind="props"
-                                :prepend-icon="item.meta.icon"
-                                :title="item.meta.title"
-                            />
-                        </template>
-                        <template v-for="(row, i) in item.children">
-                            <v-list-item
-                                v-if="(row.meta?.visible as  any)"
-                                :title="(row.meta?.title as any)"
-                                :prepend-icon="navState.isMini ? (row.meta?.icon as any) : ''"
-                                :key="i"
-                                :to="{ name: row.name }"
-                            />
-                        </template>
-                    </v-list-group>
-                    <v-list-subheader v-if="item.name === 'Dashboard'">Group</v-list-subheader>
-                    <v-list-subheader v-if="item.name === 'map'">Other</v-list-subheader>
-                </template>
-                <v-list-item prepend-icon="mdi-text-box" class="mx-1">
-                    <v-list-item-title
-                        ><a target="_blank" href="https://vuetifyjs.com/" class="link"
-                            >Document</a
-                        ></v-list-item-title
-                    >
-                </v-list-item>
-                <v-list-item prepend-icon="mdi-github" class="mx-1">
-                    <v-list-item-title
-                        ><a
-                            target="_blank"
-                            href="https://github.com/armomu/vue-material-admin"
-                            class="link"
-                            >Github</a
-                        ></v-list-item-title
-                    >
-                </v-list-item>
-            </v-list>
+                        active-class="nav_active">
+                    </v-list-item>
+                </v-list>
+            </template>
         </v-navigation-drawer>
         <!--左侧导航栏-->
         <main class="app_main">
