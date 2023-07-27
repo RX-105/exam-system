@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import './styles/index.scss';
 import App from './App.vue';
-import router from './router';
+import {router} from "@/router";
 import { vuetify } from '@/plugins/vuetify';
 import '@/plugins/pwa';
 import axios from "axios";
