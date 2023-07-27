@@ -5,6 +5,7 @@
             isMobile: mainStore.isMobile,
         }"
     >
+        <!--左侧导航栏-->
         <v-navigation-drawer
             class="my-4 layout_navigation"
             :rail="navState.rail"
@@ -15,12 +16,14 @@
             v-model="navState.menuVisible"
             style="position: fixed"
         >
+            <!--logo and title-->
             <v-list class="py-4 mx-2 logo" nav>
                 <v-list-item :prepend-avatar="logo" class="mx-1">
                     <v-list-item-title class="title">Material UI</v-list-item-title>
                     <v-list-item-subtitle>vue-material-admin</v-list-item-subtitle>
                 </v-list-item>
             </v-list>
+            <!--logo and title-->
             <v-divider></v-divider>
 
             <v-list nav class="mx-2">
@@ -78,6 +81,7 @@
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
+        <!--左侧导航栏-->
         <main class="app_main">
             <header class="header">
                 <Breadcrumbs v-if="!mainStore.isMobile" />
@@ -127,7 +131,7 @@
                         <v-avatar size="x-small" class="avatar mr-2">
                             <v-img :src="wxtx" alt="陈咩啊"></v-img>
                         </v-avatar>
-                        <span v-if="!mainStore.isMobile">陈咩咩啊</span>
+                        <span v-if="!mainStore.isMobile">{{store.getters.userInfo.currUsername}}</span>
                         <v-menu activator="parent">
                             <v-list nav class="h_a_menu">
                                 <v-list-item
@@ -141,7 +145,7 @@
                                     @click="toEmail"
                                 />
                                 <v-list-item
-                                    title="Sign out"
+                                    title="退出登录"
                                     prepend-icon="mdi-login"
                                     to="/login"
                                 />
@@ -160,21 +164,11 @@
 <script setup lang="ts">
 import logo from '@/assets/admin-logo.png';
 import wxtx from '@/assets/wx.png';
-import { RouterView, useRouter } from 'vue-router';
-// import { docsearch } from 'meilisearch-docsearch';
-// import 'meilisearch-docsearch/css';
+import {RouterView, useRouter} from 'vue-router';
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
 import { reactive, computed, watch, onMounted } from 'vue';
 import { useMainStore } from '@/stores/appMain';
 
-onMounted(() => {
-    // docsearch({
-    //     container: '#docsearch',
-    //     host: 'https://ms-4c0f4c604814-2275.sgp.meilisearch.io',
-    //     apiKey: 'be54438b7a46ff7567aa3ca928590a58bdc81abe7aa4e389881f8de597cc9d13',
-    //     indexUid: 'dev_search',
-    // });
-});
 const mainStore = useMainStore();
 const router = useRouter();
 const navState = reactive({
