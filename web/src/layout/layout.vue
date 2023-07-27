@@ -147,7 +147,7 @@
                                 <v-list-item
                                     title="退出登录"
                                     prepend-icon="mdi-login"
-                                    to="/login"
+                                    @click="signOut"
                                 />
                             </v-list>
                         </v-menu>
@@ -166,10 +166,14 @@ import logo from '@/assets/admin-logo.png';
 import wxtx from '@/assets/wx.png';
 import {RouterView, useRouter} from 'vue-router';
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
-import { reactive, computed, watch, onMounted } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import { useMainStore } from '@/stores/appMain';
+import {useStore} from "vuex";
+import axios from "axios";
+import {routeLoggedAccessible} from "@/router";
 
 const mainStore = useMainStore();
+const store = useStore()
 const router = useRouter();
 const navState = reactive({
     menuVisible: true,
@@ -201,5 +205,15 @@ const toGithub = () => {
 const toEmail = () => {
     window.open('mailto:894620576@qq.com', '_blank');
 };
+
+const signOut = () => {
+    axios.post("/api/logout")
+        .then(res => {
+            if (res.data.status === 0) {
+                router.push("/login")
+            }
+        })
+    store.commit('clearAuthState')
+}
 </script>
 <style scoped lang="scss"></style>
