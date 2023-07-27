@@ -1,6 +1,7 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 import Layout from '@/layout/layout.vue';
 import store from '@/stores/index'
+import type {RouteLocationNormalized} from "vue-router";
 
 import {checkVersion} from '@/plugins/pwa';
 
@@ -278,42 +279,50 @@ const router = createRouter({
     ],
 });
 
-router.beforeEach(async (to, _from, next) => {
-    next();
-});
 
-router.beforeEach((to, from, next) => {
-    const userInfo = store.getters.userInfo
-    if (to.path.includes('login') || to.path.includes('register') || to.path.includes('404')) {
-        next()
-    } else if (to.path.includes('student')) {
-        if (userInfo.userRole === 'student') {
+router.beforeEach((to, _from, next) => {
+    const authStat = store.getters.authStat
+    if (authStat) {
+        // 当前是否已经登录
+        console.log(to)
+        if (routeLoggedAccessible(to)) {
             next()
         } else {
-            next({
-                name: 'login',
-                query: {
-                    redirect: to.path
-                }
-            })
-        }
-    } else if (to.path.includes('admin')) {
-        if (userInfo.userRole === 'admin') {
-            next()
-        } else {
-            next({
-                name: 'login',
-                query: {
-                    redirect: to.path
-                }
-            })
+            alert('不允许访问这个页面。')
         }
     } else {
-        alert('不允许访问这个页面。')
+        if (routeAlwaysAccessible(to)) {
+            next()
+        } else {
+            next({
+                name: 'login',
+                query: {
+                    redirect: to.path
+                }
+            })
+        }
     }
 })
 
 router.afterEach(() => {
     checkVersion();
 });
-export default router;
+
+// 判断当前路由是否是登录状态下可访问的公开路由，或者是
+// 当前权限下可以访问的路由。需要验证登陆状态
+const routeLoggedAccessible = (item: RouteLocationNormalized | any) => {
+    return item.meta.requiredRole
+        && (item.meta.requiredRole.includes(store.getters.userInfo.userRole)
+            || item.meta.requiredRole.includes('logged-any')
+            || item.meta.requiredRole.includes('any')
+        )
+}
+
+// 判断当前路由是否是不需要任何验证就可以访问的路由
+// 不验证登陆状态
+const routeAlwaysAccessible = (item: RouteLocationNormalized | any) => {
+    return item.meta.requiredRole
+        && item.meta.requiredRole.includes('any')
+}
+
+export {router, routeLoggedAccessible};
