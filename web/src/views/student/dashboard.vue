@@ -2,14 +2,16 @@
     <v-card class="container">
         <v-card-title>学校公告</v-card-title>
         <v-card-subtitle>查看学校最新报考资讯</v-card-subtitle>
-        <v-expansion-panels>
+        <v-expansion-panels style="padding: 10px">
             <v-expansion-panel
                 v-for="stage in registrationInfo.stages">
                 <v-expansion-panel-title>
                     {{ registrationInfo.stageMap[stage.name] }}
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                    从{{ stage.startTime }}开始到{{ stage.endTime }}结束，{{ stage.remark }}。
+                    开始时间：{{stage.startTime}}<br>
+                    结束时间：{{stage.endTime}}<br>
+                    备注：{{stage.remark}}
                 </v-expansion-panel-text>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -41,6 +43,6 @@ onMounted(() => {
 </script>
 <style lang="scss">
 .container {
-    line-height: 50px;
+    //line-height: 10px;
 }
 </style>
