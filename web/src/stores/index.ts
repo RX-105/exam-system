@@ -22,6 +22,12 @@ const store = createStore({
             state.userGroup = options.userGroup
             state.userRole = options.userRole
         },
+        clearAuthState(state) {
+            state.authStat = false
+            state.currUsername = ''
+            state.userGroup = ''
+            state.userRole = ''
+        },
         showDialogue(state, contentHtml) {
             state.dialogueState = true
             state.dialogueHtml = contentHtml
