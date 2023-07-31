@@ -2,7 +2,7 @@
     <v-card class="container">
         <v-card-title>学校公告</v-card-title>
         <v-card-subtitle>查看学校最新报考资讯</v-card-subtitle>
-        <v-expansion-panels style="padding: 10px">
+        <v-expansion-panels style="padding: 10px" variant="accordion">
             <v-expansion-panel
                 v-for="stage in registrationInfo.stages">
                 <v-expansion-panel-title>
