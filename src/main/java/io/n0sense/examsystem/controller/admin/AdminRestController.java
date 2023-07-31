@@ -256,6 +256,7 @@ public class AdminRestController {
     public ModelAndView queryLoginByTimeRange(String username, LocalDate from, LocalDate to, Integer page, Model model) {
         Page<Log> logPage = logService.queryLogByTimeRange(
                 username,
+                Actions.LOGIN,
                 (page == null ? 0 : page),
                 10,
                 from,
