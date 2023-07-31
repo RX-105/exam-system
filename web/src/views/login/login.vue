@@ -112,8 +112,8 @@ onMounted(async () => {
                 store.commit('updateAuthState', {
                     authStat: true,
                     currUsername: res.data.data.username,
-                    userGroup: 'student',
-                    userRole: 'student'
+                    userGroup: res.data.data.userGroup,
+                    userRole: res.data.data.userRole,
                 })
                 router.push('/student/dashboard')
             }
