@@ -21,7 +21,7 @@
             </v-card>
         </v-dialog>
         <!--全局信息提示snackbar-->
-        <v-snackbar v-model="store.getters.snackbarState">
+        <v-snackbar v-model="snackbarState" timeout="2000">
             {{ store.getters.snackbarText }}
             <template v-slot:actions>
                 <v-btn
@@ -38,9 +38,15 @@
 import { RouterView } from 'vue-router';
 import { useMainStore } from '@/stores/appMain';
 import {useStore} from "vuex";
+import {computed} from "vue";
 
 const mainStore = useMainStore();
 const store = useStore()
+
+const snackbarState = computed({
+    get() { return store.getters.snackbarState },
+    set(_newVal) { store.commit('closeSnackbar') }
+})
 
 </script>
 <style scoped lang="scss"></style>
