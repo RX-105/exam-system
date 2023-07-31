@@ -17,6 +17,8 @@
 
 package io.n0sense.examsystem.commons.constants;
 
+import java.util.List;
+
 public interface Actions {
     String LOGIN = "login";
     String REGISTER = "register";
@@ -25,4 +27,8 @@ public interface Actions {
     String REMOVE_BACKUP = "remove-backup";
     String UPDATE_AVATAR = "update-avatar";
     String ADD_EXAM = "add-exam";
+    List<String> actionList = List.of(
+            LOGIN, REGISTER, CREATE_BACKUP, RESTORE_BACKUP, REMOVE_BACKUP,
+            UPDATE_AVATAR, ADD_EXAM
+    );
 }
