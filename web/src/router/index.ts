@@ -4,6 +4,7 @@ import store from '@/stores/index'
 import type {RouteLocationNormalized} from "vue-router";
 
 import {checkVersion} from '@/plugins/pwa';
+import axios from "axios";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -60,7 +61,7 @@ const router = createRouter({
                         visible: true,
                         requiredRole: ['student'],
                     },
-                    component: () => import('@/views/student/system.vue'),
+                    component: () => import('@/views/student/system-log.vue'),
                     children: [],
                 },
             ],
@@ -281,26 +282,50 @@ const router = createRouter({
 
 
 router.beforeEach((to, _from, next) => {
-    const authStat = store.getters.authStat
-    if (authStat) {
-        // 当前是否已经登录
-        console.log(to)
+    let authStat = store.getters.authStat
+    // 总是排除any权限的路由
+    if (routeAlwaysAccessible(to)) {
+        next()
+    } else if (authStat) {
+        // 当前已经登录，鉴权
         if (routeLoggedAccessible(to)) {
             next()
         } else {
             alert('不允许访问这个页面。')
         }
     } else {
-        if (routeAlwaysAccessible(to)) {
-            next()
-        } else {
-            next({
-                name: 'login',
-                query: {
-                    redirect: to.path
+        axios.get("/api/credential", )
+            .then(res => {
+                if (res.data.status === 0) {
+                    // 从服务器获取到登录状态，保存到状态管理
+                    store.commit('updateAuthState', {
+                        authStat: true,
+                        currUsername: res.data.data.username,
+                        userGroup: res.data.data.userGroup,
+                        userRole: res.data.data.userRole,
+                    })
+                    if (routeLoggedAccessible(to)) {
+                        next()
+                    } else {
+                        alert('不允许访问这个页面。')
+                    }
+                } else {
+                    // 仍然没有登录状态
+                    if (routeAlwaysAccessible(to)) {
+                        next()
+                    } else {
+                        next({
+                            name: 'login',
+                            query: {
+                                redirect: to.path
+                            }
+                        })
+                    }
                 }
             })
-        }
+            .catch(err => {
+                console.error(`failed verifying identity: ${err.message}`)
+            })
     }
 })
 
