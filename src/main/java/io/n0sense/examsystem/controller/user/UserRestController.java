@@ -17,6 +17,7 @@
 
 package io.n0sense.examsystem.controller.user;
 
+import io.n0sense.examsystem.annotation.ApiVersion;
 import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.commons.constants.Identities;
@@ -33,6 +34,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -428,6 +430,7 @@ public class UserRestController {
     }
 
     @GetMapping("/registration-notice")
+    @ApiVersion("2")
     public R getRegistrationNotice() {
         String schoolName = schoolService.findSchool(100001L).orElseThrow().getName();
         Map<String, Object> notice = Map.of(
@@ -438,6 +441,47 @@ public class UserRestController {
         return R.builder()
                 .status(Status.OK)
                 .data(notice)
+                .build();
+    }
+
+    @GetMapping("/all-logs")
+    @ApiVersion("2")
+    public R getAllLogs(Integer pageNum, Integer pageSize, LocalDate from, LocalDate to, String action) {
+        // 检查登录状态
+        if (null == request.getSession().getAttribute("username")) {
+            return R.builder()
+                    .status(Status.ERR_LOGIN_REQUIRED)
+                    .build();
+        }
+        // 检查参数内容
+        String username = (String) request.getSession().getAttribute("username");
+        pageNum = (null == pageNum ? 0 : pageNum);
+        pageSize = (null == pageSize ? 10 : pageSize);
+
+        Page<io.n0sense.examsystem.entity.Log> loginHistoryPage;
+        // 如果后三个参数不为空，则调用带过滤的方法，否则调用普通方法
+        if (null != from && null != to && StringUtils.hasLength(action)
+                && Actions.actionList.contains(action)) {
+            loginHistoryPage = logService.queryLogByTimeRange(
+                    username, action, pageNum, pageSize, from, to
+            );
+        } else {
+            loginHistoryPage = logService.getUserLogins(username, pageNum, pageSize);
+        }
+        Map<String, Object> pageInfo = Map.of(
+                "thisPage", pageNum,
+                "totalPages", loginHistoryPage.getTotalPages(),
+                "currentElements", pageSize,
+                "totalElements", loginHistoryPage.getTotalElements()
+        );
+
+        Map<String, Object> logInfo = Map.of(
+                "pageInfo", pageInfo,
+                "content", loginHistoryPage.toList()
+        );
+        return R.builder()
+                .status(Status.OK)
+                .data(logInfo)
                 .build();
     }
 }
