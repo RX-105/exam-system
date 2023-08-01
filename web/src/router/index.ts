@@ -18,7 +18,7 @@ const router = createRouter({
             name: 'student-dashboard',
             meta: {
                 visible: true,
-                title: '考务系统',
+                title: 'routes.exam_system',
                 icon: 'mdi-gauge',
                 requiredRole: ['student'],
             },
@@ -28,7 +28,7 @@ const router = createRouter({
                     path: '/student/dashboard',
                     name: 'student-dashboard',
                     meta: {
-                        title: '首页',
+                        title: 'routes.dashboard',
                         icon: 'mdi-home',
                         keepAlive: false,
                         visible: true,
@@ -45,7 +45,7 @@ const router = createRouter({
             redirect: '/student/system/log',
             meta: {
                 visible: true,
-                title: '系统功能',
+                title: 'routes.system_functionalities',
                 icon: 'mdi-gauge',
                 requiredRole: ['student'],
             },
@@ -55,7 +55,7 @@ const router = createRouter({
                     path: '/student/system/log',
                     name: 'student-log',
                     meta: {
-                        title: '行为日志',
+                        title: 'routes.action_log',
                         icon: 'mdi-account-lock',
                         keepAlive: false,
                         visible: true,
@@ -71,7 +71,7 @@ const router = createRouter({
             name: 'misc',
             meta: {
                 visible: true,
-                title: '其他',
+                title: 'routes.misc',
                 icon: 'mdi-gauge',
                 requiredRole: ['logged-any'],
             },
@@ -81,7 +81,7 @@ const router = createRouter({
                     path: '/misc/credits',
                     name: 'misc-credits',
                     meta: {
-                        title: '致谢',
+                        title: 'routes.credits',
                         icon: 'mdi-star-face',
                         keepAlive: false,
                         visible: true,
@@ -214,7 +214,7 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             meta: {
-                title: 'Login',
+                title: 'routes.login',
                 icon: 'mdi-shield-account',
                 visible: false,
                 requiredRole: ['any'],
@@ -225,7 +225,7 @@ const router = createRouter({
             path: '/login-admin',
             name: 'login-admin',
             meta: {
-                title: 'login-admin',
+                title: 'routes.login_admin',
                 icon: 'mdi-shield-account',
                 visible: false,
                 requiredRole: ['any'],
@@ -236,7 +236,7 @@ const router = createRouter({
             path: "/register",
             name: "register",
             meta: {
-                title: 'register',
+                title: 'routes.register',
                 icon: 'mdi-shield-account',
                 visible: false,
                 requiredRole: ['any'],
