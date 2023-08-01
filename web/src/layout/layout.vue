@@ -29,11 +29,11 @@
                 <v-list nav class="mx-2"
                         v-if="routeLoggedAccessible(item) && item.meta.visible"
                         style="padding: 10px">
-                    <v-list-item-subtitle style="padding-top: 10px;padding-bottom: 10px">{{item.meta.title}}</v-list-item-subtitle>
+                    <v-list-item-subtitle style="padding-top: 10px;padding-bottom: 10px">{{t(item.meta.title)}}</v-list-item-subtitle>
                     <v-list-item
                         v-for="(i1, k1) in item.children" :key="k1"
                         :prepend-icon="i1.meta.icon"
-                        :title="i1.meta.title"
+                        :title="t(i1.meta.title)"
                         :to="{ name: i1.name }"
                         class="mx-1"
                         active-class="nav_active">
@@ -82,10 +82,21 @@
                             mainStore.theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'
                         "
                     />
-                    <v-btn variant="text" icon="mdi-bell-outline">
-                        <v-badge content="2" color="error">
-                            <v-icon size="small"></v-icon>
-                        </v-badge>
+                    <v-btn variant="text" prepend-icon="mdi-earth"
+                           append-icon="mdi-chevron-down" class="mr-2">
+                        语言
+                        <v-menu activator="parent">
+                            <v-list>
+                                <v-list-item
+                                    v-for="locale in locales"
+                                    :key="locale.locale"
+                                    :value="locale.locale"
+                                    @click="updateLocale(locale.locale)"
+                                >
+                                    <v-list-item-title>{{ locale.name }}</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
                     </v-btn>
                     <v-btn variant="text" append-icon="mdi-chevron-down" class="mr-2">
                         <v-avatar size="x-small" class="avatar mr-2">
@@ -126,11 +137,14 @@ import logo from '@/assets/admin-logo.png';
 import wxtx from '@/assets/wx.png';
 import {RouterView, useRouter} from 'vue-router';
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
-import { reactive, computed, watch } from 'vue';
+import {reactive, computed, watch, ref} from 'vue';
 import { useMainStore } from '@/stores/appMain';
 import {useStore} from "vuex";
 import axios from "axios";
 import {routeLoggedAccessible} from "@/router";
+import {useLocale} from "vuetify";
+
+const {current, t} = useLocale()
 
 const mainStore = useMainStore();
 const store = useStore()
@@ -144,6 +158,10 @@ const navState = reactive({
 const permanent = computed(() => {
     return !mainStore.isMobile;
 });
+const locales = ref([
+    {name: 'English', locale: 'en'},
+    {name: '简体中文', locale: 'zh'},
+])
 
 watch(permanent, () => {
     navState.menuVisible = true;
@@ -174,6 +192,10 @@ const signOut = () => {
             }
         })
     store.commit('clearAuthState')
+}
+
+const updateLocale = (locale: string) => {
+    current.value = locale
 }
 </script>
 <style scoped lang="scss"></style>

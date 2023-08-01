@@ -16,7 +16,7 @@
             <v-card>
                 <v-card-text v-html="store.getters.dialogueHtml"></v-card-text>
                 <v-card-actions>
-                    <v-btn color="primary" block @click="store.commit('closeDialogue')">好</v-btn>
+                    <v-btn color="primary" block @click="store.commit('closeDialogue')">{{t('app.ok')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -28,7 +28,7 @@
                     color="primary"
                     variant="text"
                     @click="store.commit('closeSnackbar')">
-                    关闭
+                    {{t('app.close')}}
                 </v-btn>
             </template>
         </v-snackbar>
@@ -39,6 +39,9 @@ import { RouterView } from 'vue-router';
 import { useMainStore } from '@/stores/appMain';
 import {useStore} from "vuex";
 import {computed} from "vue";
+import {useLocale} from "vuetify";
+
+const { t } = useLocale()
 
 const mainStore = useMainStore();
 const store = useStore()

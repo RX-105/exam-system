@@ -10,12 +10,14 @@
                 </template>
             </v-breadcrumbs>
         </div>
-        <div class="page_title">{{ pageTitle }}</div>
+        <div class="page_title">{{ t(pageTitle) }}</div>
     </div>
 </template>
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import {useLocale} from "vuetify";
+const {t} = useLocale()
 
 const $route = useRoute();
 const routes = ref();
@@ -52,14 +54,14 @@ function init() {
     matched.forEach((route, index) => {
         if (index === matched.length - 1) {
             routes.value.push({
-                text: route.meta.title,
+                text: t(route.meta.title as string),
                 exact: true,
                 disabled: false,
                 to: $route.path,
             });
         } else {
             routes.value.push({
-                text: route.meta.title,
+                text: t(route.meta.title as string),
                 exact: false,
                 disabled: true,
                 to: route.path,

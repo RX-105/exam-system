@@ -18,7 +18,7 @@
                 <v-btn class="btn" variant="flat"
                        prepend-icon="mdi-filter-variant"
                        @click="showFilterPanel" :color="filterBtnColor">
-                    <span> 过滤</span>
+                    <span> {{t('systemLog.filter')}}</span>
                 </v-btn>
             </div>
         </div>
@@ -26,11 +26,11 @@
             <v-table class="table">
                 <thead>
                 <tr>
-                    <th class="text-left">Log ID</th>
-                    <th class="text-left">用户名</th>
-                    <th class="text-left">用户组</th>
-                    <th class="text-left">记录时间</th>
-                    <th class="text-left">行为</th>
+                    <th class="text-left">{{t('systemLog.log_id')}}</th>
+                    <th class="text-left">{{t('systemLog.username')}}</th>
+                    <th class="text-left">{{t('systemLog.user_group')}}</th>
+                    <th class="text-left">{{t('systemLog.record_time')}}</th>
+                    <th class="text-left">{{t('systemLog.action')}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -55,22 +55,22 @@
                class="align-center justify-center">
         <div style="width: 60vw">
             <v-card>
-                <v-card-title>过滤选项</v-card-title>
+                <v-card-title>{{t('systemLog.filter_options')}}</v-card-title>
                 <v-card-item>
                     <v-expansion-panels variant="accordion">
                         <v-expansion-panel>
                             <v-expansion-panel-title>
                                 <v-row no-gutters>
                                     <v-col cols="6" class="d-flex justify-start">
-                                        过滤开始时间和结束时间
+                                        {{t('systemLog.filter_time_prompt')}}
                                     </v-col>
                                     <v-col cols="6">
                                         <v-row>
                                             <v-col cols="6" class="d-flex justify-start">
-                                                开始时间：{{ logFilter.from || '未设置' }}
+                                                {{t('systemLog.start_time')}}{{ logFilter.from || t('systemLog.not_set') }}
                                             </v-col>
                                             <v-col cols="6" class="d-flex justify-start">
-                                                结束时间：{{ logFilter.to || '未设置' }}
+                                                {{t('systemLog.end_time')}}{{ logFilter.to || t('systemLog.not_set') }}
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -81,7 +81,7 @@
                                     <v-col cols="4">
                                         <v-text-field
                                             v-model="logFilter.from"
-                                            label="开始时间"
+                                            :label="t('systemLog.start_time')"
                                             type="date"
                                             :error-messages="logFilter.errorMessage"
                                         ></v-text-field>
@@ -90,7 +90,7 @@
                                     <v-col cols="4">
                                         <v-text-field
                                             v-model="logFilter.to"
-                                            label="结束时间"
+                                            :label="t('systemLog.end_time')"
                                             type="date"
                                             :error-messages="logFilter.errorMessage"
                                         ></v-text-field>
@@ -101,13 +101,13 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title>
                                 <v-row>
-                                    <v-col cols="6">过滤行为类型</v-col>
+                                    <v-col cols="6">{{t('systemLog.filter_action_prompt')}}</v-col>
                                 </v-row>
                             </v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-select v-model="logFilter.action"
                                           :items="actionList"
-                                          label="选择行为类型"
+                                          :label="t('systemLog.select_action')"
                                           item-title="name"
                                           item-value="action">
                                 </v-select>
@@ -117,9 +117,9 @@
                 </v-card-item>
                 <v-card-actions>
                     <v-btn color="primary" @click="applyFilter" :disabled="logFilter.btnDisabled">
-                        完成
+                        {{t('systemLog.done')}}
                     </v-btn>
-                    <v-btn color="primary" @click="clearFilter">重置</v-btn>
+                    <v-btn color="primary" @click="clearFilter">{{t('systemLog.reset')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </div>
@@ -129,6 +129,9 @@
 import {ref, onMounted, computed, watch} from 'vue';
 import axios from "axios";
 import {useStore} from "vuex";
+import {useLocale} from "vuetify";
+
+const { t } = useLocale()
 
 // 日志加载逻辑
 const store = useStore()
@@ -148,7 +151,7 @@ const thisPageReadable = computed({
 watch(thisPageReadable, async (newVal, oldVal) => {
     if (logData.value.pageInfo.thisPage >= logData.value.pageInfo.totalPages
         || logData.value.pageInfo.thisPage < 0) {
-        store.commit('showDialogue', '这样做毫无意义。')
+        store.commit('showDialogue', t('systemLog.devtools_warning'))
         logData.value.pageInfo.thisPage = oldVal - 1
     } else {
         await loadLogs()
@@ -171,13 +174,13 @@ function loadLogs() {
             if (res.data.status == 0) {
                 logData.value = res.data.data as LogData
             } else if (res.data.status == 1010) {
-                store.commit('showSnackbar', '登录过期，请尝试重新登录。')
+                store.commit('showSnackbar', t('systemLog.session_expired'))
             } else {
-                store.commit('showSnackbar', `内容加载失败。Error: ${res.data.message}`)
+                store.commit('showSnackbar', `${t('systemLog.load_failed')}${res.data.message}`)
             }
         })
         .catch(err => {
-            store.commit('showSnackbar', `内容加载失败。Error: ${err.message}`)
+            store.commit('showSnackbar', `${t('systemLog.load_failed')}${err.message}`)
         })
 }
 
@@ -191,15 +194,15 @@ const logFilter = ref({
 })
 const overlayState = ref(false)
 const actionList = ref([
-    { name: '主动登录', action: 'login' },
-    { name: '注册', action: 'register' },
-    { name: '更新头像', action: 'update-avatar' },
+    { name: t('systemLog.action_login'), action: 'login' },
+    { name: t('systemLog.action_register'), action: 'register' },
+    { name: t('systemLog.action_update_avatar'), action: 'update-avatar' },
 ])
 const filterBtnColor = ref('default')
 watch(logFilter, () => {
     if(logFilter.value.from !== '' || logFilter.value.to !== '') {
         if (new Date(logFilter.value.to) < new Date(logFilter.value.from)) {
-            logFilter.value.errorMessage = '时间段不合适。'
+            logFilter.value.errorMessage = t('systemLog.invalid_time_range')
             logFilter.value.btnDisabled = true
         } else {
             logFilter.value.errorMessage = ''
@@ -214,7 +217,7 @@ function applyFilter() {
     overlayState.value = false
     if (logFilter.value.from === '' || logFilter.value.to === '' ||
         logFilter.value.action === '' || logFilter.value.errorMessage !== '') {
-        store.commit('showSnackbar', '过滤选项不完整，过滤搜索将不会生效。')
+        store.commit('showSnackbar', t('systemLog.bad_query'))
     } else {
         filterBtnColor.value = 'primary'
         loadLogs()
