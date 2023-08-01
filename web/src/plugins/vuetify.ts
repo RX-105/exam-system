@@ -2,6 +2,7 @@
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import '@mdi/font/css/materialdesignicons.css';
+import {adaptor} from "@/i18n";
 
 export const vuetify = createVuetify({
     theme: {
@@ -18,4 +19,7 @@ export const vuetify = createVuetify({
         defaultSet: 'mdi',
         sets: {},
     },
+    locale: {
+        adapter: adaptor
+    }
 });

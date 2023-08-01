@@ -7,6 +7,7 @@ import { vuetify } from '@/plugins/vuetify';
 import '@/plugins/pwa';
 import axios from "axios";
 import store from "@/stores";
+import {i18n} from "@/i18n";
 
 // axios configuration
 axios.defaults.baseURL = '//localhost'
@@ -16,6 +17,7 @@ axios.defaults.withCredentials = true
 const app = createApp(App);
 
 app.use(createPinia());
+app.use(i18n)
 app.use(vuetify);
 app.use(router);
 app.use(store)
