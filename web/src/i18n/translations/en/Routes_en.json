@@ -1,0 +1,12 @@
+{
+    "exam_system": "Exam System",
+    "dashboard": "Dashboard",
+    "system_functionalities": "System Functionalities",
+    "action_log": "Action Log",
+    "misc": "Misc",
+    "credits": "Credits",
+    "login": "Login",
+    "login_admin": "Admin Login",
+    "register": "Register",
+    "access_forbidden": "You cannot visit this page."
+}

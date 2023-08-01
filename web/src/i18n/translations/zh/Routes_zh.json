@@ -1,0 +1,12 @@
+{
+    "exam_system": "考务系统",
+    "dashboard": "首页",
+    "system_functionalities": "系统功能",
+    "action_log": "行为日志",
+    "misc": "其他",
+    "credits": "致谢",
+    "login": "登录",
+    "login_admin": "管理员登录",
+    "register": "注册",
+    "access_forbidden": "不允许访问这个页面。"
+}

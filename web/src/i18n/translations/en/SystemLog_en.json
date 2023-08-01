@@ -1,0 +1,26 @@
+{
+    "filter": "Filter",
+    "log_id": "Log ID",
+    "username": "Username",
+    "user_group": "User Group",
+    "record_time": "Record Time",
+    "action": "Action",
+    "filter_options": "Filter Options",
+    "filter_time_prompt": "Filter by start & end time",
+    "start_time": "Start time: ",
+    "end_time": "End time: ",
+    "not_set": "Not set.",
+    "filter_action_prompt": "Filter by action",
+    "select_action": "Select action type: ",
+    "done": "Done",
+    "reset": "Reset",
+    "devtools_warning": "Doing like this is of no meaning.",
+    "session_expired": "Your session has expired, please return to login page.",
+    "load_failed": "Content load failed. Error: ",
+    "action_login": "Login",
+    "action_register": "Register",
+    "action_update_avatar": "Update avatar",
+    "invalid_time_range": "Invalid time range",
+    "bad_query": "Incomplete query options. Filter won't activate."
+}
+
