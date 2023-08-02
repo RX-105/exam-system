@@ -1,7 +1,7 @@
 <template>
     <v-card class="container">
-        <v-card-title>学校公告</v-card-title>
-        <v-card-subtitle>查看学校最新报考资讯</v-card-subtitle>
+        <v-card-title>{{ t('dashboard.school_notice_title') }}</v-card-title>
+        <v-card-subtitle>{{ t('dashboard.school_notice_subtitle') }}</v-card-subtitle>
         <v-expansion-panels style="padding: 10px" variant="accordion">
             <v-expansion-panel
                 v-for="stage in registrationInfo.stages">
@@ -9,9 +9,9 @@
                     {{ registrationInfo.stageMap[stage.name] }}
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                    开始时间：{{stage.startTime}}<br>
-                    结束时间：{{stage.endTime}}<br>
-                    备注：{{stage.remark}}
+                    {{ t('dashboard.start_time') }}{{ stage.startTime }}<br>
+                    {{ t('dashboard.end_time') }}{{ stage.endTime }}<br>
+                    {{ t('dashboard.remarks') }}{{ stage.remark }}
                 </v-expansion-panel-text>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -21,6 +21,9 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import {useStore} from "vuex";
+import {useLocale} from "vuetify";
+
+const { t } = useLocale()
 
 const registrationInfo = ref<RegistrationData>({
     stageMap: {},
@@ -37,7 +40,7 @@ onMounted(() => {
             }
         })
         .catch(err => {
-            store.commit("showDialogue", `加载学校资讯过程中出现了问题。<br/>Error: ${err.message}`)
+            store.commit("showDialogue", `${t('dashboard.failed_fetching_notice_line_1')}<br/>${t('dashboard.failed_fetching_notice_line_2')}${err.message}`)
         })
 })
 </script>
