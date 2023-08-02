@@ -8,6 +8,9 @@
                     ></router-link>
                     <li class="v-breadcrumbs-divider">/</li>
                 </template>
+                <template v-slot:title="{ item }">
+                    {{ t(item.title) }}
+                </template>
             </v-breadcrumbs>
         </div>
         <div class="page_title">{{ t(pageTitle) }}</div>
@@ -54,14 +57,14 @@ function init() {
     matched.forEach((route, index) => {
         if (index === matched.length - 1) {
             routes.value.push({
-                text: t(route.meta.title as string),
+                title: route.meta.title as string,
                 exact: true,
                 disabled: false,
                 to: $route.path,
             });
         } else {
             routes.value.push({
-                text: t(route.meta.title as string),
+                title: route.meta.title as string,
                 exact: false,
                 disabled: true,
                 to: route.path,
