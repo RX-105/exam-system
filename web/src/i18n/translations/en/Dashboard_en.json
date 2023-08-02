@@ -1,0 +1,9 @@
+{
+    "school_notice_title": "School Notice",
+    "school_notice_subtitle": "Find the latest registration news.",
+    "start_time": "Start time: ",
+    "end_time": "End time: ",
+    "remarks": "Remarks: ",
+    "failed_fetching_notice_line_1": "Failed fetching school notice.",
+    "failed_fetching_notice_line_2": "Error: "
+}

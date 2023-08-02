@@ -1,0 +1,9 @@
+{
+    "school_notice_title": "学校公告",
+    "school_notice_subtitle": "查看学校最新报考资讯",
+    "start_time": "开始时间：",
+    "end_time": "结束时间：",
+    "remarks": "备注：",
+    "failed_fetching_notice_line_1": "加载学校资讯过程中出现了问题。",
+    "failed_fetching_notice_line_2": "Error: "
+}
