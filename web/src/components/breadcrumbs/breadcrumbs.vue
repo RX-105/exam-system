@@ -17,7 +17,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import {useLocale} from "vuetify";
 const {t} = useLocale()
@@ -31,7 +31,7 @@ function init() {
     if (matched[0].path === '/dashboard') {
         routes.value = [
             {
-                text: 'Dashboard',
+                title: 'routes.dashboard',
                 disabled: false,
                 to: '/dashboard',
             },
@@ -41,7 +41,7 @@ function init() {
     if (matched[0].path === matched[1].path) {
         routes.value = [
             {
-                text: 'Index',
+                title: 'routes.dashboard',
                 disabled: false,
                 to: '/dashboard',
             },
@@ -73,6 +73,10 @@ function init() {
     });
 }
 init();
+
+watch(() => $route.path,
+    () => { init() }
+)
 </script>
 <style lang="scss">
 .v-breadcrumbs__prepend {
