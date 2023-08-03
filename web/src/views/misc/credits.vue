@@ -107,6 +107,8 @@
     </v-row>
 </template>
 <script setup lang="ts">
+import IntroCard from "@/views/misc/intro-card.vue";
+import adminLogo from '@/assets/admin-logo.png'
 </script>
 <style lang="scss">
 .section-container {
