@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {useStore} from "vuex";
 import {useLocale} from "vuetify";
+import {useAppStore} from "@/stores/appStore";
 
 const { t } = useLocale()
 
@@ -30,7 +30,7 @@ const registrationInfo = ref<RegistrationData>({
     schoolName: '',
     stages: [],
 })
-const store = useStore()
+const appStore = useAppStore()
 
 onMounted(() => {
     axios.get("/api/student/registration-notice")
@@ -40,7 +40,7 @@ onMounted(() => {
             }
         })
         .catch(err => {
-            store.commit("showDialogue", `${t('dashboard.failed_fetching_notice_line_1')}<br/>${t('dashboard.failed_fetching_notice_line_2')}${err.message}`)
+            appStore.showDialogue(`${t('dashboard.failed_fetching_notice_line_1')}<br/>${t('dashboard.failed_fetching_notice_line_2')}${err.message}`)
         })
 })
 </script>

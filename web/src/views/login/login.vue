@@ -89,11 +89,11 @@
 import logo from '@/assets/admin-logo.png';
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
 import SimpleDialogue from "@/utils/SimpleDialogue.vue";
+import {useUserStore} from "@/stores/userStore";
 
-const store = useStore()
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -109,7 +109,7 @@ onMounted(async () => {
     await axios.get("/api/credential")
         .then(res => {
             if (res.data.status === 0 && res.data.data.userRole === 'student') {
-                store.commit('updateAuthState', {
+                userStore.updateAuthState({
                     authStat: true,
                     currUsername: res.data.data.username,
                     userGroup: res.data.data.userGroup,
@@ -133,7 +133,7 @@ function login() {
     })
         .then(res => {
             if (res.data.status === 0) {
-                store.commit('updateAuthState', {
+                userStore.updateAuthState({
                     authStat: true,
                     currUsername: username.value,
                     userGroup: 'student',

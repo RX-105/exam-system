@@ -128,13 +128,13 @@
 <script setup lang="ts">
 import {ref, onMounted, computed, watch} from 'vue';
 import axios from "axios";
-import {useStore} from "vuex";
 import {useLocale} from "vuetify";
+import {useAppStore} from "@/stores/appStore";
 
 const { t } = useLocale()
 
 // 日志加载逻辑
-const store = useStore()
+const appStore = useAppStore()
 const logData = ref<LogData>({
     pageInfo: {
         totalPages: 0,
@@ -151,7 +151,7 @@ const thisPageReadable = computed({
 watch(thisPageReadable, async (newVal, oldVal) => {
     if (logData.value.pageInfo.thisPage >= logData.value.pageInfo.totalPages
         || logData.value.pageInfo.thisPage < 0) {
-        store.commit('showDialogue', t('systemLog.devtools_warning'))
+        appStore.showDialogue(t('systemLog.devtools_warning'))
         logData.value.pageInfo.thisPage = oldVal - 1
     } else {
         await loadLogs()
@@ -174,13 +174,13 @@ function loadLogs() {
             if (res.data.status == 0) {
                 logData.value = res.data.data as LogData
             } else if (res.data.status == 1010) {
-                store.commit('showSnackbar', t('systemLog.session_expired'))
+                appStore.showSnackbar(t('systemLog.session_expired'))
             } else {
-                store.commit('showSnackbar', `${t('systemLog.load_failed')}${res.data.message}`)
+                appStore.showSnackbar(`${t('systemLog.load_failed')}${res.data.message}`)
             }
         })
         .catch(err => {
-            store.commit('showSnackbar', `${t('systemLog.load_failed')}${err.message}`)
+            appStore.showSnackbar(`${t('systemLog.load_failed')}${err.message}`)
         })
 }
 
@@ -217,7 +217,7 @@ function applyFilter() {
     overlayState.value = false
     if (logFilter.value.from === '' || logFilter.value.to === '' ||
         logFilter.value.action === '' || logFilter.value.errorMessage !== '') {
-        store.commit('showSnackbar', t('systemLog.bad_query'))
+        appStore.showSnackbar(t('systemLog.bad_query'))
     } else {
         filterBtnColor.value = 'primary'
         loadLogs()

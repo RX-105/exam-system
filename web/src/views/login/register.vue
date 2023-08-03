@@ -100,8 +100,10 @@ import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
 import SimpleDialogue from "@/utils/SimpleDialogue.vue";
 import {debounce} from "lodash";
+import {useUserStore} from "@/stores/userStore";
 
 const store = useStore()
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -161,7 +163,7 @@ function register() {
     })
         .then(res => {
             if (res.data.status === 0) {
-                store.commit('updateAuthState', {
+                userStore.updateAuthState({
                     authStat: true,
                     currUsername: username.value,
                     userGroup: 'student',

@@ -91,7 +91,7 @@
                                     v-for="locale in locales"
                                     :key="locale.locale"
                                     :value="locale.locale"
-                                    @click="updateLocale(locale.locale)"
+                                    @click="current.value = locale.locale"
                                 >
                                     <v-list-item-title>{{ locale.name }}</v-list-item-title>
                                 </v-list-item>
@@ -102,7 +102,7 @@
                         <v-avatar size="x-small" class="avatar mr-2">
                             <v-img :src="wxtx" alt="陈咩啊"></v-img>
                         </v-avatar>
-                        <span v-if="!mainStore.isMobile">{{store.getters.userInfo.currUsername}}</span>
+                        <span v-if="!mainStore.isMobile">{{ userStore.currUsername }}</span>
                         <v-menu activator="parent">
                             <v-list nav class="h_a_menu">
                                 <v-list-item
@@ -139,15 +139,15 @@ import {RouterView, useRouter} from 'vue-router';
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
 import {reactive, computed, watch, ref} from 'vue';
 import { useMainStore } from '@/stores/appMain';
-import {useStore} from "vuex";
 import axios from "axios";
 import {routeLoggedAccessible} from "@/router";
 import {useLocale} from "vuetify";
+import {useUserStore} from "@/stores/userStore";
 
 const {current, t} = useLocale()
 
 const mainStore = useMainStore();
-const store = useStore()
+const userStore = useUserStore()
 const router = useRouter();
 const navState = reactive({
     menuVisible: true,
@@ -191,7 +191,7 @@ const signOut = () => {
                 router.push("/login")
             }
         })
-    store.commit('clearAuthState')
+    userStore.clearAuthState()
 }
 
 const updateLocale = (locale: string) => {

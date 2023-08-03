@@ -11,23 +11,23 @@
         </v-snackbar>
         <!--全局信息提示对话框-->
         <v-dialog
-            v-model="store.getters.dialogueState"
+            v-model="appStore.dialogueState"
             width="auto">
             <v-card>
-                <v-card-text v-html="store.getters.dialogueHtml"></v-card-text>
+                <v-card-text v-html="appStore.dialogueHtml"></v-card-text>
                 <v-card-actions>
-                    <v-btn color="primary" block @click="store.commit('closeDialogue')">{{t('app.ok')}}</v-btn>
+                    <v-btn color="primary" block @click="appStore.closeDialogue">{{t('app.ok')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <!--全局信息提示snackbar-->
-        <v-snackbar v-model="snackbarState" timeout="2000">
-            {{ store.getters.snackbarText }}
+        <v-snackbar v-model="appStore.snackbarState" timeout="2000">
+            {{ appStore.snackbarText }}
             <template v-slot:actions>
                 <v-btn
                     color="primary"
                     variant="text"
-                    @click="store.commit('closeSnackbar')">
+                    @click="appStore.closeSnackbar()">
                     {{t('app.close')}}
                 </v-btn>
             </template>
@@ -37,19 +37,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import { useMainStore } from '@/stores/appMain';
-import {useStore} from "vuex";
-import {computed} from "vue";
 import {useLocale} from "vuetify";
+import {useAppStore} from "@/stores/appStore";
 
 const { t } = useLocale()
 
 const mainStore = useMainStore();
-const store = useStore()
-
-const snackbarState = computed({
-    get() { return store.getters.snackbarState },
-    set(_newVal) { store.commit('closeSnackbar') }
-})
+const appStore = useAppStore()
 
 </script>
 <style scoped lang="scss"></style>
