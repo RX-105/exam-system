@@ -107,34 +107,6 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import axios from "axios";
-import {useStore} from "vuex";
-import IntroCard from "@/views/misc/intro-card.vue";
-import adminLogo from '@/assets/admin-logo.png'
-
-const registrationInfo = ref<RegistrationData>({
-    stageMap: {},
-    schoolName: '',
-    stages: [],
-})
-const store = useStore()
-
-onMounted(() => {
-    axios.get("/api/student/registration-notice")
-        .then(res => {
-            if (res.data.status === 0) {
-                registrationInfo.value = res.data.data as RegistrationData
-            }
-        })
-        .catch(err => {
-            store.commit("showDialogue", `加载学校资讯过程中出现了问题。<br/>Error: ${err.message}`)
-        })
-})
-
-function openNewTab(addr: string) {
-    window.open(addr, '_blank')
-}
 </script>
 <style lang="scss">
 .section-container {
