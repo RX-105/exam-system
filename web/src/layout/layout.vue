@@ -91,7 +91,7 @@
                                     v-for="locale in locales"
                                     :key="locale.locale"
                                     :value="locale.locale"
-                                    @click="current.value = locale.locale"
+                                    @click="updateLocale(locale.locale)"
                                 >
                                     <v-list-item-title>{{ locale.name }}</v-list-item-title>
                                 </v-list-item>
