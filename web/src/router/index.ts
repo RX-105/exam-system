@@ -1,10 +1,10 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 import Layout from '@/layout/layout.vue';
-import store from '@/stores/index'
 import type {RouteLocationNormalized} from "vue-router";
 
 import {checkVersion} from '@/plugins/pwa';
 import axios from "axios";
+import {useUserStore} from "@/stores/userStore";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -282,7 +282,8 @@ const router = createRouter({
 
 
 router.beforeEach((to, _from, next) => {
-    let authStat = store.getters.authStat
+    const userStore = useUserStore()
+    let authStat = userStore.authStat
     // 总是排除any权限的路由
     if (routeAlwaysAccessible(to)) {
         next()
@@ -298,7 +299,7 @@ router.beforeEach((to, _from, next) => {
             .then(res => {
                 if (res.data.status === 0) {
                     // 从服务器获取到登录状态，保存到状态管理
-                    store.commit('updateAuthState', {
+                    userStore.updateAuthState({
                         authStat: true,
                         currUsername: res.data.data.username,
                         userGroup: res.data.data.userGroup,
@@ -336,8 +337,9 @@ router.afterEach(() => {
 // 判断当前路由是否是登录状态下可访问的公开路由，或者是
 // 当前权限下可以访问的路由。需要验证登陆状态
 const routeLoggedAccessible = (item: RouteLocationNormalized | any) => {
+    const userStore = useUserStore()
     return item.meta.requiredRole
-        && (item.meta.requiredRole.includes(store.getters.userInfo.userRole)
+        && (item.meta.requiredRole.includes(userStore.userRole)
             || item.meta.requiredRole.includes('logged-any')
             || item.meta.requiredRole.includes('any')
         )
