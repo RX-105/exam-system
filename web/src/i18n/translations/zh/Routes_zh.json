@@ -8,5 +8,8 @@
     "login": "登录",
     "login_admin": "管理员登录",
     "register": "注册",
-    "access_forbidden": "不允许访问这个页面。"
+    "access_forbidden": "不允许访问这个页面。",
+    "four_oh_four": "页面不存在",
+    "exam_register": "在线报名",
+    "upload_avatar": "头像上传"
 }

@@ -8,5 +8,8 @@
     "login": "Login",
     "login_admin": "Admin Login",
     "register": "Register",
-    "access_forbidden": "You cannot visit this page."
+    "access_forbidden": "You cannot visit this page.",
+    "four_oh_four": "Page Not Found",
+    "exam_register": "Online Register",
+    "upload_avatar": "Upload Avatar"
 }
