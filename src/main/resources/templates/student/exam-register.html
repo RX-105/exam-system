@@ -322,6 +322,7 @@
         },
         methods: {
             schoolChange: function (e) {
+                // TODO: 用户信息API的返回内容已经改变，这里的内容已经失效了
                 let schoolId, schoolName, major
                 schoolId = this.user.schoolId
                 if (e != null) {
@@ -364,6 +365,7 @@
                     makeModal("不可以选择这个学校。")
                     return
                 }
+                // TODO: 请求参数名变了，需要一起修改
                 doPost("/api/student/registerExam", {
                     "schoolId": this.user.schoolId,
                     "majorId": this.user.major
