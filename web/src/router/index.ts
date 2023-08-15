@@ -48,6 +48,32 @@ const router = createRouter({
                     component: () => import('@/views/student/dashboard.vue'),
                     children: [],
                 },
+                {
+                    path: '/student/dashboard/register',
+                    name: 'student-exam-register',
+                    meta: {
+                        title: 'routes.exam_register',
+                        icon: 'mdi-file-document-plus',
+                        keepAlive: false,
+                        visible: true,
+                        requiredRole: ['student'],
+                    },
+                    component: () => import('@/views/student/exam-register.vue'),
+                    children: [],
+                },
+                {
+                    path: '/student/dashboard/avatar',
+                    name: 'student-upload-avatar',
+                    meta: {
+                        title: 'routes.upload_avatar',
+                        icon: 'mdi-emoticon',
+                        keepAlive: false,
+                        visible: true,
+                        requiredRole: ['student'],
+                    },
+                    component: () => import('@/views/student/upload-avatar.vue'),
+                    children: [],
+                },
             ],
         },
         {
