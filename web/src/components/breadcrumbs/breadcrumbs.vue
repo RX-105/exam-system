@@ -46,7 +46,7 @@ function init() {
                 to: '/dashboard',
             },
             {
-                text: matched[0].meta.title,
+                title: matched[0].meta.title,
                 disabled: true,
                 to: matched[0].path,
             },
