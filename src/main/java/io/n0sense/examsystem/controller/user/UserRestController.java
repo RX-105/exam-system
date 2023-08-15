@@ -252,19 +252,19 @@ public class UserRestController {
     }
 
     @PostMapping("/registerExam")
-    public R registerExam(Long schoolId, Long majorId, String realName, String identity,
+    public R registerExam(Long school, Long major, String realName, String identity,
                           String gender, String nationality, String politics, String source,
                           String home, String gradSchool, YearMonth gradTime, Boolean isCurrent,
                           Boolean isScience, String english, String mailName, String mailAddr,
                           Long zip, String contact, Long phone, LocalDate birthday) {
-        R r = checkStageValidity(Stages.REGISTER, schoolId);
+        R r = checkStageValidity(Stages.REGISTER, school);
         if (r != null) {
             return r;
         }
 
         User user = localUser.get();
-        if (schoolId != null) user.setSchool(School.builder().schoolId(schoolId).build());
-        if (majorId != null) user.setMajor(Major.builder().id(majorId).build());
+        if (school != null) user.setSchool(School.builder().schoolId(school).build());
+        if (major != null) user.setMajor(Major.builder().id(major).build());
         if (StringUtils.hasLength(realName)) user.setRealname(realName);
         if (StringUtils.hasLength(identity)) user.setIdentityId(identity);
         if (StringUtils.hasLength(gender)) user.setGender(gender);
