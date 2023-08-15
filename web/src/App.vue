@@ -14,6 +14,7 @@
             v-model="appStore.dialogueState"
             width="auto">
             <v-card>
+                <v-card-title>{{ t('app.reminder') }}</v-card-title>
                 <v-card-text v-html="appStore.dialogueHtml"></v-card-text>
                 <v-card-actions>
                     <v-btn color="primary" block @click="appStore.closeDialogue">{{t('app.ok')}}</v-btn>
