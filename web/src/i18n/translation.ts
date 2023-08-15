@@ -7,6 +7,8 @@ import routes_en from '@/i18n/translations/en/Routes_en.json'
 import routes_zh from '@/i18n/translations/zh/Routes_zh.json'
 import dashboard_en from '@/i18n/translations/en/Dashboard_en.json'
 import dashboard_zh from '@/i18n/translations/zh/Dashboard_zh.json'
+import exam_register_en from '@/i18n/translations/en/ExamRegister_en.json'
+import exam_register_zh from '@/i18n/translations/zh/ExamRegister_zh.json'
 
 const translation = {
     en: {
@@ -15,6 +17,7 @@ const translation = {
         app: app_en,
         routes: routes_en,
         dashboard: dashboard_en,
+        exam_register: exam_register_en,
     },
     zh: {
         $vuetify: zhHans,
@@ -22,6 +25,7 @@ const translation = {
         app: app_zh,
         routes: routes_zh,
         dashboard: dashboard_zh,
+        exam_register: exam_register_zh,
     }
 }
 
