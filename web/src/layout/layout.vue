@@ -100,7 +100,7 @@
                     </v-btn>
                     <v-btn variant="text" append-icon="mdi-chevron-down" class="mr-2">
                         <v-avatar size="x-small" class="avatar mr-2">
-                            <v-img :src="wxtx" alt="陈咩啊"></v-img>
+                            <v-img :src="axios.defaults.baseURL + '/api/student/avatar?refresh=false'" alt="User avatar"></v-img>
                         </v-avatar>
                         <span v-if="!mainStore.isMobile">{{ userStore.currUsername }}</span>
                         <v-menu activator="parent">
