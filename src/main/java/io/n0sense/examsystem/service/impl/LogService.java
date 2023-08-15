@@ -17,6 +17,7 @@
 
 package io.n0sense.examsystem.service.impl;
 
+import io.n0sense.examsystem.commons.constants.Actions;
 import io.n0sense.examsystem.entity.Log;
 import io.n0sense.examsystem.repository.LogRepository;
 import io.n0sense.examsystem.service.ILogService;
@@ -65,7 +66,7 @@ public class LogService implements ILogService {
      */
     public Page<Log> getUserLogins(String username, int page, int size){
         return logRepository.findAllByUsernameAndAction(
-                username, "login", PageRequest.of(page, size)
+                username, Actions.LOGIN, PageRequest.of(page, size)
         );
     }
 
@@ -78,7 +79,7 @@ public class LogService implements ILogService {
      */
     public Page<Log> getGroupLogin(String groupName, int page, int size){
         return logRepository.findAllByGroupNameAndAction(
-                groupName, "login", PageRequest.of(page, size)
+                groupName, Actions.LOGIN, PageRequest.of(page, size)
         );
     }
 
@@ -96,7 +97,7 @@ public class LogService implements ILogService {
                                          LocalDate from, LocalDate to){
         return logRepository.findAllByUsernameAndActionAndTimeBetween(
                 username,
-                "login",
+                Actions.LOGIN,
                 from.atStartOfDay(),
                 to.atTime(23, 59, 59),
                 PageRequest.of(page, size)
