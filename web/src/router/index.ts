@@ -13,8 +13,19 @@ const router = createRouter({
     },
     routes: [
         {
-            path: '/',
-            redirect: '/student/dashboard',
+          path: "/",
+          redirect: "/student/dashboard",
+          name: "root-route",
+          meta: {
+              visible: false,
+              title: 'routes.exam_system',
+              icon: 'mdi-gauge',
+              requiredRole: ['any'],
+          }
+        },
+        {
+            path: '/student/dashboard',
+            redirect: '/student/dashboard/info',
             name: 'student-dashboard',
             meta: {
                 visible: true,
@@ -25,8 +36,8 @@ const router = createRouter({
             component: Layout,
             children: [
                 {
-                    path: '/student/dashboard',
-                    name: 'student-dashboard',
+                    path: '/student/dashboard/info',
+                    name: 'student-info',
                     meta: {
                         title: 'routes.dashboard',
                         icon: 'mdi-home',
@@ -257,7 +268,7 @@ const router = createRouter({
             name: '404',
             meta: {
                 keepAlive: false,
-                title: 'Not found',
+                title: 'routes.four_oh_four',
                 icon: 'mdi-paw-off',
                 visible: false,
                 requiredRole: ['any'],
@@ -268,7 +279,7 @@ const router = createRouter({
                     path: '',
                     name: 'd404',
                     meta: {
-                        title: 'Not found',
+                        title: 'routes.four_oh_four',
                         visible: false,
                         requiredRole: ['any'],
                     },
