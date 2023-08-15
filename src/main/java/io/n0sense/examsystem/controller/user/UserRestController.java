@@ -484,4 +484,35 @@ public class UserRestController {
                 .data(logInfo)
                 .build();
     }
+
+    @GetMapping("/validateStage/{stage}")
+    public R validateStage(@PathVariable String stage) {
+        if(null != Stages.stages.get(stage)) {
+            Map.Entry<String, String> entry
+                    = new AbstractMap.SimpleImmutableEntry<>(stage, Stages.stages.get(stage));
+            R r = checkStageValidity(entry, null);
+            if(null == r) {
+                return R.builder()
+                        .status(Status.OK)
+                        .build();
+            } else {
+                return R.builder()
+                        .status(Status.ERR_TIME_NOT_ALLOWED)
+                        .build();
+            }
+        } else {
+            return R.builder()
+                    .status(Status.ERR_NO_SUCH_ELEMENT)
+                    .message("%s阶段不存在。".formatted(stage))
+                    .build();
+        }
+    }
+
+    @GetMapping("/schools")
+    public R getSchoolList() {
+        return R.builder()
+                .status(Status.OK)
+                .data(Map.of("schools", schoolService.findAll()))
+                .build();
+    }
 }
