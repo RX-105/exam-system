@@ -138,7 +138,9 @@
                             </v-text-field>
                             <v-select
                                 v-model="userInfo.politicalStatus"
-                                :items="['中共党员', '中共预备党员', '共青团员', '少先队员', '民主党派', '群众', '叛徒', '反革命分子']"
+                                :items="political_status"
+                                item-title="name"
+                                item-value="value"
                                 :label="t('exam_register.form_political_status')"
                                 variant="outlined"
                                 density="comfortable"
@@ -289,6 +291,20 @@ const userInfo = ref<UserInfo>({
 })
 const schools = ref<School[]>([])
 const majors = ref<Major[]>([])
+const test = ref({ name: t('exam_register.form_league_member'), value: "共青团员" })
+const political_status = computed(() => {
+    return [
+        { name: t('exam_register.form_party_member'), value: "中共党员" },
+        { name: t('exam_register.form_party_member_ready'), value: "中共预备党员" },
+        { name: t('exam_register.form_league_member'), value: "共青团员" },
+        { name: t('exam_register.form_pioneer'), value: "少先队员" },
+        { name: t('exam_register.form_democratic'), value: "民主党派" },
+        { name: t('exam_register.form_no_affiliation'), value: "无党派人士" },
+        { name: t('exam_register.form_people'), value: "群众" },
+        { name: t('exam_register.form_traitor'), value: "叛徒" },
+        { name: t('exam_register.form_counter_revolution'), value: "反革命分子" },
+    ]
+})
 const selectedSchool = computed({
     get() {
         return userInfo.value.school.schoolId
