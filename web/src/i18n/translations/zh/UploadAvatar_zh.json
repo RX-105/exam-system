@@ -1,0 +1,17 @@
+{
+    "upload_avatar_title": "上传个人照片",
+    "upload_avatar_subtitle": "图片上传操作提示",
+    "upload_avatar_text_1": "1、考生上传电子版照片必须为近期免冠正面证件照并且能够清晰的反映本人特征，红底、蓝底均可，jpg格式，照片尺寸宽高比例大约为1.3:1.6，大小为130×160像素左右，50kb以下，最终效果以输出后的大小为准。",
+    "upload_avatar_text_2": "2、考生上传的电子照片如果不符合要求，可通过PHOTOSHOP等图像处理软件改变图像格式及大小。",
+    "upload_avatar_text_3": "3、考生一定不要直接修改其它格式照片的扩展名为 .jpg，要使用PHOTOSHOP等图像处理软件改变图像格式，否则上传不成功。",
+    "upload_avatar_text_4": "4、操作说明：考生在下面的照片框下，点击“浏览”按钮，按上述要求选择处理好的照片，然后点击“点击上传”按钮，如果上传成功但是未看到上传的照片出现在上面的照片框内，则点击“照片预览”按钮，将会显示您上传的照片，如果不符合要求，请重新上传您的照片。",
+    "label_upload_avatar": "上传个人头像",
+    "upload": "上传",
+    "file_is_empty": "请先选择文件。",
+    "file_size_exceeded_1": "图片的大小超过5MiB限制，你的图片大小为",
+    "file_size_exceeded_2": "MiB。",
+    "upload_complete": "上传完成。",
+    "bad_response": "从服务器收到了异常回应。Error: ",
+    "request_error": "请求异常。Error: ",
+    "prompt_file_size_limit": "个人头像文件大小应当小于5MiB！"
+}
