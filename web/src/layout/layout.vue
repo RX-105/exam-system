@@ -100,7 +100,7 @@
                     </v-btn>
                     <v-btn variant="text" append-icon="mdi-chevron-down" class="mr-2">
                         <v-avatar size="x-small" class="avatar mr-2">
-                            <v-img :src="axios.defaults.baseURL + '/api/student/avatar?refresh=false'" alt="User avatar"></v-img>
+                            <v-img :src="userStore.userAvatar" alt="User avatar"></v-img>
                         </v-avatar>
                         <span v-if="!mainStore.isMobile">{{ userStore.currUsername }}</span>
                         <v-menu activator="parent">
@@ -134,7 +134,6 @@
 </template>
 <script setup lang="ts">
 import logo from '@/assets/admin-logo.png';
-import wxtx from '@/assets/wx.png';
 import {RouterView, useRouter} from 'vue-router';
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
 import {reactive, computed, watch, ref} from 'vue';
