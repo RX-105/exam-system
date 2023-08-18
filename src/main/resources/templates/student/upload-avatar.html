@@ -123,6 +123,7 @@
             upload: function () {
                 if (!this.avatar_file.length) {
                     makeModal("请先选择文件。")
+                    return
                 }
                 doPost("/api/student/avatar", {
                     file: this.avatar_file[0]
