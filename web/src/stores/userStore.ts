@@ -1,4 +1,5 @@
 import {defineStore} from "pinia";
+import axios from "axios";
 
 export const useUserStore = defineStore('user', {
     state: () => {
@@ -7,6 +8,7 @@ export const useUserStore = defineStore('user', {
             currUsername: '',
             userGroup: '',
             userRole: '',
+            userAvatar: axios.defaults.baseURL + '/api/student/avatar?refresh=1',
         }
     },
     actions: {
@@ -21,6 +23,9 @@ export const useUserStore = defineStore('user', {
             this.currUsername = ''
             this.userGroup = ''
             this.userRole = ''
-        }
+        },
+        refreshUserAvatar() {
+            this.userAvatar = this.userAvatar + '0'
+        },
     }
 })
