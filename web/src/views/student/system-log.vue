@@ -18,7 +18,7 @@
                 <v-btn class="btn" variant="flat"
                        prepend-icon="mdi-filter-variant"
                        @click="showFilterPanel" :color="filterBtnColor">
-                    <span> {{t('systemLog.filter')}}</span>
+                    <span> {{t('system_log.filter')}}</span>
                 </v-btn>
             </div>
         </div>
@@ -26,11 +26,11 @@
             <v-table class="table">
                 <thead>
                 <tr>
-                    <th class="text-left">{{t('systemLog.log_id')}}</th>
-                    <th class="text-left">{{t('systemLog.username')}}</th>
-                    <th class="text-left">{{t('systemLog.user_group')}}</th>
-                    <th class="text-left">{{t('systemLog.record_time')}}</th>
-                    <th class="text-left">{{t('systemLog.action')}}</th>
+                    <th class="text-left">{{t('system_log.log_id')}}</th>
+                    <th class="text-left">{{t('system_log.username')}}</th>
+                    <th class="text-left">{{t('system_log.user_group')}}</th>
+                    <th class="text-left">{{t('system_log.record_time')}}</th>
+                    <th class="text-left">{{t('system_log.action')}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -55,22 +55,22 @@
                class="align-center justify-center">
         <div style="width: 60vw">
             <v-card>
-                <v-card-title>{{t('systemLog.filter_options')}}</v-card-title>
+                <v-card-title>{{t('system_log.filter_options')}}</v-card-title>
                 <v-card-item>
                     <v-expansion-panels variant="accordion">
                         <v-expansion-panel>
                             <v-expansion-panel-title>
                                 <v-row no-gutters>
                                     <v-col cols="6" class="d-flex justify-start">
-                                        {{t('systemLog.filter_time_prompt')}}
+                                        {{t('system_log.filter_time_prompt')}}
                                     </v-col>
                                     <v-col cols="6">
                                         <v-row>
                                             <v-col cols="6" class="d-flex justify-start">
-                                                {{t('systemLog.start_time')}}{{ logFilter.from || t('systemLog.not_set') }}
+                                                {{t('system_log.start_time')}}{{ logFilter.from || t('system_log.not_set') }}
                                             </v-col>
                                             <v-col cols="6" class="d-flex justify-start">
-                                                {{t('systemLog.end_time')}}{{ logFilter.to || t('systemLog.not_set') }}
+                                                {{t('system_log.end_time')}}{{ logFilter.to || t('system_log.not_set') }}
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -81,7 +81,7 @@
                                     <v-col cols="4">
                                         <v-text-field
                                             v-model="logFilter.from"
-                                            :label="t('systemLog.start_time')"
+                                            :label="t('system_log.start_time')"
                                             type="date"
                                             :error-messages="logFilter.errorMessage"
                                         ></v-text-field>
@@ -90,7 +90,7 @@
                                     <v-col cols="4">
                                         <v-text-field
                                             v-model="logFilter.to"
-                                            :label="t('systemLog.end_time')"
+                                            :label="t('system_log.end_time')"
                                             type="date"
                                             :error-messages="logFilter.errorMessage"
                                         ></v-text-field>
@@ -101,13 +101,13 @@
                         <v-expansion-panel>
                             <v-expansion-panel-title>
                                 <v-row>
-                                    <v-col cols="6">{{t('systemLog.filter_action_prompt')}}</v-col>
+                                    <v-col cols="6">{{t('system_log.filter_action_prompt')}}</v-col>
                                 </v-row>
                             </v-expansion-panel-title>
                             <v-expansion-panel-text>
                                 <v-select v-model="logFilter.action"
                                           :items="actionList"
-                                          :label="t('systemLog.select_action')"
+                                          :label="t('system_log.select_action')"
                                           item-title="name"
                                           item-value="action">
                                 </v-select>
@@ -117,9 +117,9 @@
                 </v-card-item>
                 <v-card-actions>
                     <v-btn color="primary" @click="applyFilter" :disabled="logFilter.btnDisabled">
-                        {{t('systemLog.done')}}
+                        {{t('system_log.done')}}
                     </v-btn>
-                    <v-btn color="primary" @click="clearFilter">{{t('systemLog.reset')}}</v-btn>
+                    <v-btn color="primary" @click="clearFilter">{{t('system_log.reset')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </div>
@@ -151,7 +151,7 @@ const thisPageReadable = computed({
 watch(thisPageReadable, async (newVal, oldVal) => {
     if (logData.value.pageInfo.thisPage >= logData.value.pageInfo.totalPages
         || logData.value.pageInfo.thisPage < 0) {
-        appStore.showDialogue(t('systemLog.devtools_warning'))
+        appStore.showDialogue(t('system_log.devtools_warning'))
         logData.value.pageInfo.thisPage = oldVal - 1
     } else {
         await loadLogs()
@@ -174,13 +174,13 @@ function loadLogs() {
             if (res.data.status == 0) {
                 logData.value = res.data.data as LogData
             } else if (res.data.status == 1010) {
-                appStore.showSnackbar(t('systemLog.session_expired'))
+                appStore.showSnackbar(t('system_log.session_expired'))
             } else {
-                appStore.showSnackbar(`${t('systemLog.load_failed')}${res.data.message}`)
+                appStore.showSnackbar(`${t('system_log.load_failed')}${res.data.message}`)
             }
         })
         .catch(err => {
-            appStore.showSnackbar(`${t('systemLog.load_failed')}${err.message}`)
+            appStore.showSnackbar(`${t('system_log.load_failed')}${err.message}`)
         })
 }
 
@@ -194,15 +194,15 @@ const logFilter = ref({
 })
 const overlayState = ref(false)
 const actionList = ref([
-    { name: t('systemLog.action_login'), action: 'login' },
-    { name: t('systemLog.action_register'), action: 'register' },
-    { name: t('systemLog.action_update_avatar'), action: 'update-avatar' },
+    { name: t('system_log.action_login'), action: 'login' },
+    { name: t('system_log.action_register'), action: 'register' },
+    { name: t('system_log.action_update_avatar'), action: 'update-avatar' },
 ])
 const filterBtnColor = ref('default')
 watch(logFilter, () => {
     if(logFilter.value.from !== '' || logFilter.value.to !== '') {
         if (new Date(logFilter.value.to) < new Date(logFilter.value.from)) {
-            logFilter.value.errorMessage = t('systemLog.invalid_time_range')
+            logFilter.value.errorMessage = t('system_log.invalid_time_range')
             logFilter.value.btnDisabled = true
         } else {
             logFilter.value.errorMessage = ''
@@ -217,7 +217,7 @@ function applyFilter() {
     overlayState.value = false
     if (logFilter.value.from === '' || logFilter.value.to === '' ||
         logFilter.value.action === '' || logFilter.value.errorMessage !== '') {
-        appStore.showSnackbar(t('systemLog.bad_query'))
+        appStore.showSnackbar(t('system_log.bad_query'))
     } else {
         filterBtnColor.value = 'primary'
         loadLogs()
