@@ -11,6 +11,8 @@ import exam_register_en from '@/i18n/translations/en/ExamRegister_en.json'
 import exam_register_zh from '@/i18n/translations/zh/ExamRegister_zh.json'
 import upload_avatar_en from '@/i18n/translations/en/UploadAvatar_en.json'
 import upload_avatar_zh from '@/i18n/translations/zh/UploadAvatar_zh.json'
+import register_form_print_en from '@/i18n/translations/en/RegisterFormPrint_en.json'
+import register_form_print_zh from '@/i18n/translations/zh/RegisterFormPrint_zh.json'
 
 const translation = {
     en: {
@@ -21,6 +23,7 @@ const translation = {
         dashboard: dashboard_en,
         exam_register: exam_register_en,
         upload_avatar: upload_avatar_en,
+        register_form_print: register_form_print_en,
     },
     zh: {
         $vuetify: zhHans,
@@ -30,6 +33,7 @@ const translation = {
         dashboard: dashboard_zh,
         exam_register: exam_register_zh,
         upload_avatar: upload_avatar_zh,
+        register_form_print: register_form_print_zh,
     }
 }
 
