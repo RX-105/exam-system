@@ -11,5 +11,7 @@
     "access_forbidden": "You cannot visit this page.",
     "four_oh_four": "Page Not Found",
     "exam_register": "Online Register",
-    "upload_avatar": "Upload Avatar"
+    "upload_avatar": "Upload Avatar",
+    "register_form_print": "Register Form Print",
+    "ticket_print": "Admission Ticket Print"
 }
