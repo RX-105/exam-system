@@ -17,6 +17,11 @@
 
 package io.n0sense.examsystem.controller.user;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.EAN8Writer;
+import com.google.zxing.qrcode.QRCodeWriter;
 import io.n0sense.examsystem.annotation.ApiVersion;
 import io.n0sense.examsystem.annotation.RecordLog;
 import io.n0sense.examsystem.commons.constants.Actions;
@@ -36,13 +41,16 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -376,19 +384,22 @@ public class UserRestController {
     }
 
     @GetMapping("/idBarcode")
-    public ResponseEntity<Object> getIdBarcode() {
+    public ResponseEntity<byte[]> getIdBarcode() {
         R r = checkStageValidity(Stages.PREPARE_EXAM, null);
         if (r != null) {
             return null;
         }
         String id = "00" + localUser.get().getUserId().toString();
-        StringBuilder fileName = new StringBuilder();
         try {
-            Optional<FileOutputStream> temp = graphicsService.renderEAN8Code(id, fileName);
-            if (temp.isEmpty()) {
-                return null;
-            }
-            return getFile(fileService.getTempFile(fileName.toString()), MediaType.IMAGE_PNG);
+            EAN8Writer writer = new EAN8Writer();
+            BitMatrix matrix = writer.encode(id, BarcodeFormat.EAN_8, 300, 150);
+            BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", bos);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"%s_EAN8.png\"".formatted(id))
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(bos.toByteArray());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -396,19 +407,22 @@ public class UserRestController {
     }
 
     @GetMapping("/idQRCode")
-    public ResponseEntity<Object> getIdQRCode() {
+    public ResponseEntity<byte[]> getIdQRCode() {
         R r = checkStageValidity(Stages.PREPARE_EXAM, null);
         if (r != null) {
             return null;
         }
         String id = "00" + localUser.get().getUserId().toString();
-        StringBuilder fileName = new StringBuilder();
         try {
-            Optional<FileOutputStream> temp = graphicsService.renderQRCode(id, fileName);
-            if (temp.isEmpty()) {
-                return null;
-            }
-            return getFile(fileService.getTempFile(fileName.toString()), MediaType.IMAGE_PNG);
+            QRCodeWriter barcodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = barcodeWriter.encode(id, BarcodeFormat.QR_CODE, 200, 200);
+            BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", bos);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"%s_QRCode.png\"".formatted(id))
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(bos.toByteArray());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
