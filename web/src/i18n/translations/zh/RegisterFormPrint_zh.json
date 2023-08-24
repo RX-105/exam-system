@@ -1,0 +1,6 @@
+{
+    "banner_text": "这个页面仅限于预览信息，请勿直接打印。你可以点击下方按钮下载可打印的报名表文档。",
+    "banner_action_download_as_pdf": "下载为PDF",
+    "register_form_preview": "考试信息表预览",
+    "error_fetch_user_info": "用户信息获取异常。Error: "
+}
