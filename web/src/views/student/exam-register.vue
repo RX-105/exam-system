@@ -291,7 +291,6 @@ const userInfo = ref<UserInfo>({
 })
 const schools = ref<School[]>([])
 const majors = ref<Major[]>([])
-const test = ref({ name: t('exam_register.form_league_member'), value: "共青团员" })
 const political_status = computed(() => {
     return [
         { name: t('exam_register.form_party_member'), value: "中共党员" },
