@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -528,5 +529,25 @@ public class UserRestController {
                 .status(Status.OK)
                 .data(Map.of("schools", schoolService.findAll()))
                 .build();
+    }
+
+    @GetMapping("/regFormInfo")
+    public R getRegistrationFormInfo() {
+        R r = checkStageValidity(Stages.REGISTER, null);
+        if (null == r) {
+            Map<String, Object> data = new HashMap<>(3);
+            School school = Hibernate.unproxy(schoolService.findSchool(localUser.get().getSchool().getSchoolId()).orElseThrow(), School.class);
+            Major major = Hibernate.unproxy(majorService.findById(localUser.get().getMajor().getId()).orElseThrow(), Major.class);
+            data.put("user", localUser.get());
+            data.put("school", school);
+            data.put("major", major);
+            localUser.remove();
+            return R.builder()
+                    .status(Status.OK)
+                    .data(data)
+                    .build();
+        } else {
+            return r;
+        }
     }
 }
