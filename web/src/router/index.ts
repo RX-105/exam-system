@@ -74,6 +74,32 @@ const router = createRouter({
                     component: () => import('@/views/student/upload-avatar.vue'),
                     children: [],
                 },
+                {
+                    path: '/student/dashboard/register-form',
+                    name: 'student-register-form-print',
+                    meta: {
+                        title: 'routes.register_form_print',
+                        icon: 'mdi-format-list-numbered',
+                        keepAlive: false,
+                        visible: true,
+                        requiredRole: ['student'],
+                    },
+                    component: () => import('@/views/student/register-form-print.vue'),
+                    children: [],
+                },
+                {
+                    path: '/student/dashboard/ticket-print',
+                    name: 'student-ticket-print',
+                    meta: {
+                        title: 'routes.ticket_print',
+                        icon: 'mdi-ticket-account',
+                        keepAlive: false,
+                        visible: true,
+                        requiredRole: ['student'],
+                    },
+                    component: () => import('@/views/student/ticket-print.vue'),
+                    children: [],
+                },
             ],
         },
         {
