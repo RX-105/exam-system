@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
             this.userRole = ''
         },
         refreshUserAvatar() {
-            this.userAvatar = this.userAvatar + '0'
+            this.userAvatar = `${this.userAvatar}0`
         },
     }
 })
