@@ -11,3 +11,5 @@ declare module 'vue3-drag-resize' {
     };
     export = content;
 }
+
+declare module 'html2pdf.js'
