@@ -8,4 +8,5 @@ ${AnsiColor.GREEN}:: Powered by SpringBoot ::     ${AnsiColor.CYAN}(ver ${spring
 ${AnsiColor.GREEN}${AnsiStyle.ITALIC}${AnsiStyle.BOLD}A Spring app by n0sense.${AnsiStyle.NORMAL}${AnsiColor.WHITE}
 App Name: ${application.title}
 App Version: ${application.version}
+Java: ${java.version}
 ${AnsiColor.DEFAULT}
