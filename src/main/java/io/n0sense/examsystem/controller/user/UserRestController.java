@@ -60,7 +60,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("/api/student")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor()
 @Log
 public class UserRestController {
     private final HttpServletRequest request;
