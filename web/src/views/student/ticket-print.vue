@@ -1,9 +1,9 @@
 <template>
     <v-banner icon="mdi-alert-decagram" style="margin-bottom: 3vh" rounded>
-        <v-banner-text>点击跳转到新页面打印准考证。</v-banner-text>
+        <v-banner-text>{{ t("ticket_preview.redir_prompt") }}</v-banner-text>
         <v-banner-actions>
-            <v-btn color="primary" prepend-icon="mdi-file-download" @click="router.push({name: 'ticket-download'})">
-                转到
+            <v-btn color="primary" prepend-icon="mdi-open-in-new" @click="router.push({name: 'ticket-download'})">
+                {{ t("ticket_preview.redir_btn") }}
             </v-btn>
         </v-banner-actions>
     </v-banner>
@@ -86,11 +86,11 @@ onMounted(() => {
             if (r.status === 0) {
                 userInfo.value = r.data.user as UserInfo
             } else {
-                showSnackbar(`用户信息获取异常。Error: ${r.status} ${r.message}`)
+                showSnackbar(`${t("ticket_preview.error_fetch")}Error: ${r.status} ${r.message}`)
             }
         })
         .catch(err => {
-            showSnackbar(`用户信息获取异常。Error: ${err.message}`)
+            showSnackbar(`${t("ticket_preview.error_fetch")}Error: ${err.message}`)
         })
 })
 

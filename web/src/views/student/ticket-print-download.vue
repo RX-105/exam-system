@@ -2,18 +2,6 @@
     <div class="background" v-if="!loadIncomplete" ref="printArea">
         <v-row>
             <v-col cols="6">
-<!--                <v-col cols="6">-->
-<!--                    <v-img src="/api/student/idQRCode"></v-img>-->
-<!--                </v-col>-->
-<!--                <v-col cols="6">-->
-<!--                    <v-row>-->
-<!--                        {{user.school.recruitYears}}年{{user.school.name}}{{user.school.examName}}考试-->
-<!--                    </v-row>-->
-<!--                    <v-row>准&nbsp;考&nbsp;证</v-row>-->
-<!--                    <v-row>-->
-<!--                        <v-img src="/api/student/idBarcode"></v-img>-->
-<!--                    </v-row>-->
-<!--                </v-col>-->
                 <table class="table-left"><!--共21行-->
                     <tbody>
                     <tr>
@@ -162,17 +150,17 @@
                 color="pink"
                 variant="text"
                 @click="errorSnackbar = false">
-                关闭
+                {{ t("ticket_download.close") }}
             </v-btn>
         </template>
     </v-snackbar>
-    <v-snackbar v-model="getTrue" class="no-print">使用浏览器打印功能打印准考证（Ctrl+P），或者点击“下载为PDF”下载文件。
+    <v-snackbar v-model="getTrue" class="no-print">{{ t("ticket_download.print_prompt") }}
         <template v-slot:actions>
             <v-btn
                 color="pink"
                 variant="text"
                 @click="saveToPdf">
-                下载为PDF
+                {{ t("ticket_download.print_btn") }}
             </v-btn>
         </template>
     </v-snackbar>

@@ -1,0 +1,5 @@
+{
+    "close": "CLOSE",
+    "print_prompt": "Use browser built-in printing to print your ticket(Ctrl+P), or press \"Download As PDF\"to download.",
+    "print_btn": "Download As PDF"
+}

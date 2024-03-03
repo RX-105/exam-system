@@ -13,6 +13,10 @@ import upload_avatar_en from '@/i18n/translations/en/UploadAvatar_en.json'
 import upload_avatar_zh from '@/i18n/translations/zh/UploadAvatar_zh.json'
 import register_form_print_en from '@/i18n/translations/en/RegisterFormPrint_en.json'
 import register_form_print_zh from '@/i18n/translations/zh/RegisterFormPrint_zh.json'
+import ticket_preview_en from '@/i18n/translations/en/TicketPreview_en.json'
+import ticket_preview_zh from  '@/i18n/translations/zh/TicketPreview_zh.json'
+import ticket_download_en from '@/i18n/translations/en/TicketDownload_en.json'
+import ticket_download_zh from '@/i18n/translations/zh/TicketDownload_zh.json'
 
 const translation = {
     en: {
@@ -24,6 +28,8 @@ const translation = {
         exam_register: exam_register_en,
         upload_avatar: upload_avatar_en,
         register_form_print: register_form_print_en,
+        ticket_preview: ticket_preview_en,
+        ticket_download: ticket_download_en,
     },
     zh: {
         $vuetify: zhHans,
@@ -34,6 +40,8 @@ const translation = {
         exam_register: exam_register_zh,
         upload_avatar: upload_avatar_zh,
         register_form_print: register_form_print_zh,
+        ticket_preview: ticket_preview_zh,
+        ticket_download: ticket_download_zh,
     }
 }
 
