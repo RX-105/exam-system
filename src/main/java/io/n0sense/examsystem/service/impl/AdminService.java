@@ -79,7 +79,7 @@ public class AdminService implements IAdminService {
             Admin admin = adminRepository.save(
                     Admin.builder()
                     .name(username)
-                    .password(PasswordEncoder.SHA256Encrypt(password))
+                    .password(PasswordEncoder.SHA256Encode(password))
                     .groupName(groupName)
                     .schoolId(schoolId)
                     .build()
@@ -106,7 +106,7 @@ public class AdminService implements IAdminService {
     public int login(String username, String password){
         Optional<Admin> admin = adminRepository.findAdminByName(username);
         if (admin.isPresent()){
-            String encodedPassword = PasswordEncoder.SHA256Encrypt(password);
+            String encodedPassword = PasswordEncoder.SHA256Encode(password);
             if (encodedPassword.equals(admin.get().getPassword())){
                 return Status.OK;
             } else {
@@ -142,7 +142,7 @@ public class AdminService implements IAdminService {
         Optional<Admin> optionalAdmin = adminRepository.findById(id);
         if (optionalAdmin.isPresent()){
             Admin admin = optionalAdmin.get();
-            admin.setPassword(PasswordEncoder.SHA256Encrypt("1234"));
+            admin.setPassword(PasswordEncoder.SHA256Encode("1234"));
             adminRepository.save(admin);
             Registry adminRegistry = registryRepository.findById(admin.getAdminId()).orElse(
                     Registry.builder()
@@ -237,7 +237,7 @@ public class AdminService implements IAdminService {
                 return Optional.empty();
             }
             LocalDate seed = LocalDate.now().plusDays(counter);
-            String suffix = PasswordEncoder.MD5Encrypt(seed.toString()).substring(0, 6);
+            String suffix = PasswordEncoder.MD5Encode(seed.toString()).substring(0, 6);
             fileName = seed.getYear() + "年" + schoolName + "考试座位安排表-" + suffix + ".xlsx";
             optional = fileService.readTempFile(fileName);
         }

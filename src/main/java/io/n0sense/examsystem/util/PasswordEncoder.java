@@ -31,11 +31,11 @@ public class PasswordEncoder {
         return buffer.toString();
     }
 
-    public static String MD5Encrypt(String x){
+    public static String MD5Encode(String x){
         return encrypt(x, "MD5");
     }
 
-    public static String SHA256Encrypt(String x){
+    public static String SHA256Encode(String x){
         return encrypt(x, "SHA-256");
     }
 }

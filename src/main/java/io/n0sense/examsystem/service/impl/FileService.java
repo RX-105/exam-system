@@ -78,7 +78,7 @@ public class FileService implements IFileService {
         }
         String filename = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."))
                 + "-"
-                + PasswordEncoder.MD5Encrypt(file.getOriginalFilename()).substring(0,6)
+                + PasswordEncoder.MD5Encode(file.getOriginalFilename()).substring(0,6)
                 + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         String path = applicationProperties.getAppDataLocation() + subdir + File.separator + filename;
         file.transferTo(new File(path));

@@ -24,11 +24,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class TestPasswordEncoder {
     @Test
     void testMD5(){
-        System.out.println(PasswordEncoder.MD5Encrypt("123456"));
+        System.out.println(PasswordEncoder.MD5Encode("123456"));
     }
 
     @Test
     void testSHA256(){
-        System.out.println(PasswordEncoder.SHA256Encrypt("123456"));
+        System.out.println(PasswordEncoder.SHA256Encode("123456"));
     }
 }

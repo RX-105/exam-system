@@ -64,7 +64,7 @@ public class UserService implements IUserService {
             Registry registry = new Registry(
                     user.getUserId(),
                     user.getName(),
-                    PasswordEncoder.SHA256Encrypt(password),
+                    PasswordEncoder.SHA256Encode(password),
                     IpUtil.getIpAddress(request),
                     LocalDateTime.now()
             );
@@ -83,7 +83,7 @@ public class UserService implements IUserService {
     public int login(@NonNull String username, @NonNull String password) {
         if (registryRepository.existsByUsername(username)){
             Registry registry = registryRepository.findByUsername(username).orElseThrow();
-            String encryptedPassword = PasswordEncoder.SHA256Encrypt(password);
+            String encryptedPassword = PasswordEncoder.SHA256Encode(password);
             if (encryptedPassword.equals(registry.getPassword())){
                 return Status.OK;
             } else {
