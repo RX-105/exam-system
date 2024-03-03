@@ -5,8 +5,10 @@ import type {RouteLocationNormalized} from "vue-router";
 import {checkVersion} from '@/plugins/pwa';
 import axios from "axios";
 import {useUserStore} from "@/stores/userStore";
+import TicketPrintDownload from "@/views/student/ticket-print-download.vue";
 
 const router = createRouter({
+    end: undefined, sensitive: undefined, strict: undefined,
     history: createWebHashHistory(),
     scrollBehavior() {
         return {top: 0};
@@ -22,6 +24,17 @@ const router = createRouter({
               icon: 'mdi-gauge',
               requiredRole: ['any'],
           }
+        },
+        {
+            path: "/student/dashboard/ticket-download",
+            name: "ticket-download",
+            component: TicketPrintDownload,
+            meta: {
+                visible: false,
+                title: "na",
+                icon: "mdi-gauge",
+                requiredRole: ['any']
+            }
         },
         {
             path: '/student/dashboard',
@@ -88,8 +101,8 @@ const router = createRouter({
                     children: [],
                 },
                 {
-                    path: '/student/dashboard/ticket-print',
-                    name: 'student-ticket-print',
+                    path: '/student/dashboard/ticket-preview',
+                    name: 'student-ticket-preview',
                     meta: {
                         title: 'routes.ticket_print',
                         icon: 'mdi-ticket-account',
@@ -340,7 +353,7 @@ const router = createRouter({
                 },
             ],
         },
-    ],
+    ]
 });
 
 
