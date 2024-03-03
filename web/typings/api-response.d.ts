@@ -96,3 +96,12 @@ type UserInfo = {
     zipcode: number;
     contactNumber: string;
 };
+
+type ExamInfo = {
+    id: number;
+    name: string;
+    majorId: number;
+    startTime: string; // 可以使用具体的日期时间类型
+    endTime: string;   // 可以使用具体的日期时间类型
+};
+
